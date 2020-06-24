@@ -1,0 +1,56 @@
+
+.form-types-group{
+list-style-type: none;
+height:60px;
+padding-left:0;
+}
+.form-types-group li{
+cursor:pointer;
+display:block;
+text-align: center;
+padding:10px;
+line-height: 40px;
+width:80px;
+height:60px;
+float:left;
+border:solid 1px;
+border-radius:3px;
+background:#fff;
+margin-right:10px;
+}
+.form-types-group li i{
+position: relative;
+display:block;
+}
+
+                .margin-bottom{margin-bottom:15px !important}
+
+
+
+
+#editor:empty:after {
+    content:" Click or Drag Form Elements HERE";
+    
+
+}
+
+#editor:before {
+    display:none;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: 2em;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    content: "\f01b";
+    float: left;
+    position: relative;
+    bottom: 4px;
+    color:#888;
+}
+#editor:empty:before {display:inline-block;}
+#editor:empty {
+    
+    border:dashed 1px #080;
+    padding:15px;
+    border-radius:30px;
+    text-align:center
+} 
