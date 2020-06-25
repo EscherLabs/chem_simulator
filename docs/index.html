@@ -49,7 +49,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#"><i class="fa fa-cogs"></i> Chem Simulator</a>
+          <a class="navbar-brand" href="#"><i class="fa fa-flask"></i> Chem Simulator</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
@@ -88,7 +88,7 @@
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <div class="row">
-            <div class="col-md-12 hidden-xs" id="mainform">
+            <div class="col-md-6 well form-horizontal" id="mainform">
 
             </div>
           </div>
@@ -118,84 +118,11 @@
     <script type="text/javascript" src="assets/js/gform_bootstrap.min.js"></script>
     <script type="text/javascript" src="assets/js/lockr.min.js"></script>
     <script type="text/javascript" src="assets/js/lib.js"></script>
-
-    <script>
-    
-    hashParams = QueryStringToHash(document.location.hash.substr(1) || '')
-
-    gform.types['user']= _.extend({}, gform.types['smallcombo'], {
-      toString: function(name,display){
-        if(!display){
-          if(typeof this.combo !== 'undefined'){
-            return '<dt>'+this.label+'</dt> <dd>'+(this.combo.innerText||'(empty)')+'</dd><hr>'
-          }else{
-            return '<dt>'+this.label+'</dt> <dd>'+(this.get()||'(empty)')+'</dd><hr>'
-          }
-        }else{
-          if(typeof this.options !== 'undefined' && this.options.length){
-            return _.find(this.options,{unique_id:this.value})||this.value;
-          }else{
-            return this.value;
-          }
-        }
-      },
-      defaults:{strict:true,search:"/api/users/search/{{search}}{{value}}",format:{title:'{{{label}}}{{^label}}User{{/label}} <span class="text-success pull-right">{{value}}</span>',label:"{{first_name}}{{#last_name}} {{last_name}}{{/last_name}}",value:"{{unique_id}}", display:'{{first_name}} {{last_name}}<div style="color:#aaa">{{email}}</div>'}}
-    })
-    gform.types['user_email']= _.extend({}, gform.types['user'], {
-      toString: function(name,display){
-        if(!display){
-          if(typeof this.combo !== 'undefined'){
-            return '<dt>'+this.label+'</dt> <dd>'+(this.combo.value||'(empty)')+'</dd><hr>'
-          }else{
-            return '<dt>'+this.label+'</dt> <dd>'+(this.get()||'(empty)')+'</dd><hr>'
-          }
-        }else{
-          if(typeof this.options !== 'undefined' && this.options.length){
-            return _.find(this.options,{unique_id:this.value})||this.value;
-          }else{
-            return this.value;
-          }
-        }
-      },
-      defaults:{strict:true,search:"/api/users/search/{{search}}{{value}}",format:{title:'{{{label}}}{{^label}}User{{/label}} <span class="text-success pull-right">{{value}}</span>',label:"{{first_name}}{{#last_name}} {{last_name}}{{/last_name}}",value:"{{email}}", display:'{{first_name}} {{last_name}}<div style="color:#aaa">{{email}}</div>'}}
-    })
-    gform.types['group']= _.extend({}, gform.types['smallcombo'], {
-      toString: function(name,display){
-        if(!display){
-          if(typeof this.combo !== 'undefined'){
-            return '<dt>'+this.label+'</dt> <dd>'+(this.combo.innerText||'(empty)')+'</dd><hr>'
-          }else{
-            return '<dt>'+this.label+'</dt> <dd>'+(this.get()||'(empty)')+'</dd><hr>'
-          }
-        }else{
-          if(typeof this.options !== 'undefined' && this.options.length){
-            return _.find(this.options,{id:parseInt(this.value)})||this.value;
-          }else{
-            return this.value;
-          }
-        }
-      },
-      defaults:{options: '/api/groups?members=20',format:{title:'{{{label}}}{{^label}}Group{{/label}} <span class="text-success pull-right">{{value}}</span>',label:"{{name}}",value:"{{id}}"}}
-    })
-    gform.types['files']= _.extend({}, gform.types['smallcombo'], {
-      toString: function(name,display){
-        if(!display){
-          if(typeof this.combo !== 'undefined'){
-            return '<dt>'+this.label+'</dt> <dd>'+(this.combo.innerText||'(empty)')+'</dd><hr>'
-          }else{
-            return '<dt>'+this.label+'</dt> <dd>'+(this.get()||'(empty)')+'</dd><hr>'
-          }
-        }else{
-          return _.find(this.options,{id:parseInt(this.value)})||{}
-    
-        }
-      },
-      defaults:{options: 'files',format:{title:'<i class="fa fa-paperclip"></i> {{{label}}}{{^label}}Attachement{{/label}}',label:"{{name}}",value:"{{id}}",display:'<div style="height:50px;padding-left:60px;position:relative" href="{{path}}" target="_blank"><div style="outline:dashed 1px #ccc;display:inline-block;text-align:center;width:50px;;height:50px;{{^icon}}background-image: url({{path}});background-size: contain;background-repeat: no-repeat;background-position: center;{{/icon}}position:absolute;top:0px;left:5px">{{{icon}}}</div> {{name}} <span class="pull-right">{{date}}</span></div>'}}
-    })</script>
+<!-- 
     <script type="text/javascript" src="assets/js/math.min.js"></script>
     <script type="text/javascript" src="assets/js/colorpicker.min.js"></script>
     <script type="text/javascript" src="assets/js/grapheneDataGrid.min.js"></script>
-    <script type="text/javascript" src="assets/js/summernote.min.js"></script>
+    <script type="text/javascript" src="assets/js/summernote.min.js"></script> -->
 
     <script type='text/javascript' >
       $('body').keydown(function(event) {
@@ -299,13 +226,86 @@ forms = [
         {name:"Scan Speed (nm/min)",type:"number",value:250,min:250,step:10,max:1000},
       ]}
     ]
+  },
+  {
+    legend:'UV-Vis Spectrophotometer',
+    name:"UV-Vis",
+    sections:'tab',
+    fields:[
+      {legend: 'Acquisition', name: 'label', type: 'fieldset',fields:[
+        {name:"Wavelength range from (nm)",type:"number",value:290,min:290,step:1,max:890},
+        {name:"Wavelength range to (nm)",type:"number",value:300,min:300,step:1,max:900},
+        {name:"Integration time (s)",type:"number",value:0.25,min:0.25,step:0.25,max:2},
+        {name:"Interval (nm)",type:"number",value:1,min:1,step:1,max:4},
+        {name:"Path Length (cm)",type:"number",value:0.5,min:0.5,step:1,max:1}
+      ]},
+      {legend: 'Lamps', name: 'label', type: 'fieldset',fields:[
+        {name:"Tungsten",type:"switch",options:["Off","On"]},
+        {name:"Deuterium",type:"switch",options:["Off","On"]}
+      ]},
+      {legend: 'Spectrum/Peak detection', name: 'label', type: 'fieldset',fields:[
+        {name:"Find and annotate up to ___ peaks",type:"number",value:1,min:1,step:1,max:4},
+        {name:"Data Type",type:"custom_radio",value:"Absorbance",options:["Absorbance","Transmittance"]},
+        {name:"Display spectrum from (nm)",type:"number",value:290,min:290,step:1,max:890},
+        {name:"Display spectrum to (nm)",type:"number",value:300,min:300,step:1,max:900}
+      ]}
+    ]
+  },
+  {
+    legend:'Gas Chromatograph -Mass Spectrometer',
+    name:"GC-MS",
+    fields:[
+      {name:"Filament (eV)",type:"number",value:60,min:60,step:1,max:80},
+      {name:"Scan range start (m/z)",type:"number",value:10,min:10,step:1,max:300},
+      {name:"Scan range End (m/z)",type:"number",value:10,min:10,step:1,max:300},
+      {name:"Scan rate (scan/s)",type:"number",value:1,min:1,step:1,max:5}
+    ]
+  },
+  {
+    legend:'High Performance Liquid Chromatograph',
+    name:"HPLC",
+    sections:'tab',
+    fields:[
+      {legend: 'Solvent Pump', name: 'label', type: 'fieldset',fields:[
+        {legend: 'Solvent', name: 'label', type: 'fieldset',fields:[
+          {name:"A",type:"custom_radio",value:"Water",options:["Water","0.1% formic acid"]},
+          {name:"B",type:"custom_radio",value:"Methanol",options:["Methanol","Acetonitrile"]}
+        ]},   
+        {legend: 'Isocratic', name: 'label', type: 'fieldset',fields:[
+          {name:"Solvent A Fraction (%)",type:"number",value:0,min:0,max:100,step:1},
+          {name:"Solvent B Fraction (%)",type:"number",value:0,min:0,max:100,step:1},
+
+          
+        ]},  
+        {legend: 'Gradient', name: 'label', type: 'fieldset',fields:[
+          {name:"Temperature (°C)",type:"number",value:100,min:100,max:200,step:5},
+          {name:"Run time (min)",type:"number",value:0,min:0,max:10,step:.5},
+
+          
+        ]},
+        
+      ]},
+      {legend: 'Injector', name: 'label', type: 'fieldset',fields:[
+        {name:"Volume (uL)",type:"number",value:10,min:10,step:10,max:50}
+      ]},
+      {legend: 'Detector', name: 'label', type: 'fieldset',fields:[
+        {name:"Wavelength 1 (nm)",type:"number",value:290,min:290,step:1,max:400},
+        {name:"Wavelength 2 (nm)",type:"number",value:290,min:290,step:1,max:400},
+        {name:"Wavelength 3 (nm)",type:"number",value:290,min:290,step:1,max:400},
+        {name:"Wavelength 4 (nm)",type:"number",value:290,min:290,step:1,max:400},
+        {name:"Reference (nm)",type:"number",value:580,min:580,step:1,max:600}
+      ]}
+    ]
   }
+
+
+  
 ]
  
       myForm = new gform(_.extend({
         "default": {
           "horizontal": true
-        }        
+        },"horizontal": true,actions:[]
       },_.find(forms,{name:hashParams.device||"GC"})),'#mainform')
 
     }
