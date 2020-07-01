@@ -88,9 +88,7 @@
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <div class="row">
-            <div class="col-md-6 well form-horizontal" id="mainform">
 
-            </div>
           </div>
         </div>
       </div>
@@ -132,12 +130,8 @@
                   break;
           }
       });
-function init(){
-      hashParams = QueryStringToHash(document.location.hash.substr(1) || '')
-      $('li.active').removeClass('active')
-      $('#'+hashParams.device).addClass('active')
-    
-forms = [
+
+      instrument_components = [
   {
     legend:'Gas Chromatograph',
     sections:'tab',
@@ -252,8 +246,8 @@ forms = [
     ]
   },
   {
-    legend:'Gas Chromatograph -Mass Spectrometer',
-    name:"GC-MS",
+    legend:'Mass Spectrometer',
+    name:"MS",
     fields:[
       {name:"Filament (eV)",type:"number",value:60,min:60,step:1,max:80},
       {name:"Scan range start (m/z)",type:"number",value:10,min:10,step:1,max:300},
@@ -297,18 +291,85 @@ forms = [
       ]}
     ]
   }
-
-
-  
 ]
  
+
+instruments ={
+  "GC":{
+    compontents:['GC'],
+    label:"Gas Chromatograph"
+  },
+  "CV":{
+    compontents:['CV'],
+    label:"Cyclic Voltammeter"
+  },
+  "FTIR":{
+    compontents:['FTIR'],
+    label:"Fourier Transform Infrared Spectrometer"
+  },
+  "F":{
+    compontents:['F'],
+    label:"Fluorimeter"
+  },
+  "UV-Vis":{
+    compontents:['UV-Vis'],
+    label:"UV-Vis Spectrophotometer"
+  },
+  "GC-MS":{
+    compontents:['GC','MS'],
+    label:"Gas Chromatograph - Mass Spectrometer"
+  },
+  "HPLC":{
+    compontents:['HPLC'],
+    label:"High Performance Liquid Chromatograph"
+  },
+  "NMR":{
+    compontents:['NMR'],
+    label:"Nuclear Magnetic Resonance"
+  },
+  "FAAS":{
+    compontents:['FAAS'],
+    label:"Flame Atomic Absorption Spectrophotometer"
+  },
+  "DSC":{
+    compontents:['DSC'],
+    label:"Differential Scanning Calorimeter"
+  },
+  "E":{
+    compontents:['E'],
+    label:"Electrophoresis"
+  }
+
+}
+
+function init(){
+      hashParams = QueryStringToHash(document.location.hash.substr(1) || '')
+      $('li.active').removeClass('active')
+      $('#'+hashParams.device).addClass('active')
+    
+
+compontent = '<div class="col-md-6 form-horizontal" style="padding:15px"><div class="well"></div></div>';
+document.querySelector('.main .row').innerHTML = "";
+_.each(gform.instances,function(form){
+  form.destroy();
+})
+
+instrument = instruments[hashParams.device||"GC"]
+
+_.each(instrument.compontents,function(instrument_component){
+  el = gform.create(compontent);
+document.querySelector('.main .row').append(el)
+
       myForm = new gform(_.extend({
+        "actions":[{type:"save",label:"Run",target:".gform-footer"}],
         "default": {
           "horizontal": true
-        },"horizontal": true,actions:[]
-      },_.find(forms,{name:hashParams.device||"GC"})),'#mainform')
+        },"horizontal": true
+      },_.find(instrument_components, {name:instrument_component||"GC"})),el.querySelector('.well'))
 
-    }
+})
+
+}
     window.onhashchange = init;
 init();
     </script>
