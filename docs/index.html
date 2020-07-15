@@ -53,14 +53,7 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <!-- <li><a href="index.html">Builder</a></li>
-            <li><a href="library.html">Library</a></li> -->
-            <!-- <li><a href="#">Profile</a></li> -->
-            <!-- <li><a href="#">Help</a></li> -->
           </ul>
-          <!-- <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
-          </form> -->
         </div>
       </div>
     </nav>
@@ -69,7 +62,7 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar target">
           <ul class="nav nav-sidebar">
-            <li id="GC"><a href="#device=GC">Gas Chromatograph</a></li>
+            <!-- <li id="GC"><a href="#device=GC">Gas Chromatograph</a></li>
             <li id="CV"><a href="#device=CV">Cyclic Voltammeter</a></li>
             <li id="FTIR"><a href="#device=FTIR">Fourier Transform Infrared Spectrometer</a></li>
             <li id="F"><a href="#device=F">Fluorimeter</a></li>
@@ -79,7 +72,7 @@
             <li id="NMR"><a href="#device=NMR">Nuclear Magnetic Resonance</a></li>
             <li id="FAAS"><a href="#device=FAAS">Flame Atomic Absorption Spectrophotometer</a></li>
             <li id="DSC"><a href="#device=DSC">Differential Scanning Calorimeter</a></li>
-            <li id="E"><a href="#device=E">Electrophoresis</a></li>
+            <li id="E"><a href="#device=E">Electrophoresis</a></li> -->
           </ul>
         </div>
       </div>
@@ -94,285 +87,60 @@
       </div>
     </div>
 
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/sortable.js"></script>
+<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="assets/js/lodash.min.js"></script>
+<script type="text/javascript" src="assets/js/moment.js"></script>
+<script type="text/javascript" src="assets/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="assets/js/popper.min.js"></script>
+<script type="text/javascript" src="assets/js/gform_bootstrap.min.js"></script>
+<script type="text/javascript" src="assets/js/lockr.min.js"></script>
+<script type="text/javascript" src="assets/js/lib.js"></script>
+<script type="text/javascript" src="assets/js/components.js"></script>
+<script type="text/javascript" src="assets/js/instruments.js"></script>
 
-
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js" charset="utf-8"></script>
-
-    <script type="text/javascript" src="assets/js/jquery.min.js"></script>
-    <script type="text/javascript" src="assets/js/sortable.js"></script>
-    <script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
-    
-    <!-- <script type='text/javascript' src="assets/js/jstorage.min.js"></script> -->
-    <script type="text/javascript" src="assets/js/lodash.min.js"></script>
-    
-    
-
-    <script type="text/javascript" src="assets/js/moment.js"></script>
-
-    <script type="text/javascript" src="assets/js/bootstrap-datepicker.js"></script>
-
-    <script type="text/javascript" src="assets/js/popper.min.js"></script>
-
-    <script type="text/javascript" src="assets/js/gform_bootstrap.min.js"></script>
-    <script type="text/javascript" src="assets/js/lockr.min.js"></script>
-    <script type="text/javascript" src="assets/js/lib.js"></script>
-<!-- 
-    <script type="text/javascript" src="assets/js/math.min.js"></script>
-    <script type="text/javascript" src="assets/js/colorpicker.min.js"></script>
-    <script type="text/javascript" src="assets/js/grapheneDataGrid.min.js"></script>
-    <script type="text/javascript" src="assets/js/summernote.min.js"></script> -->
-
-    <script type='text/javascript' >
-      $('body').keydown(function(event) {
-          switch(event.keyCode) {
-              case 27://escape
-                      cb.deactivate();
-                  break;
-          }
-      });
-
-      instrument_components = [
-  {
-    legend:'Gas Chromatograph',
-    sections:'tab',
-    name:'GC',
-    fields:[
-      {legend: 'Detector', name: 'label', type: 'fieldset',fields:[
-        {name:"Temperature (°C)",type:"number",value:100,min:100,max:200,step:5},
-        {name:"Current/Sensitivity",type:"custom_radio",value:"Low",options:["Low","Medium","High"]},
-        {name:"TCD Range",type:"custom_radio",value:"x1",options:["x1","x10"]},
-      ]},
-      {legend: 'Injector', name: 'label', type: 'fieldset',fields:[
-        {name:"Temperature (°C)",type:"number",value:100,min:100,max:200,step:5},
-      ]},
-      {legend: 'Column Oven', name: 'label', type: 'fieldset',fields:[
-        {legend: 'Isothermal', name: 'label', type: 'fieldset',fields:[
-          {name:"Temperature (°C)",type:"number",value:100,min:100,max:200,step:5},
-          {name:"Run time (min)",type:"number",value:0,min:0,max:10,step:.5},
-
-          
-        ]},
-        {legend: 'Temperature Program',array:{min:1}, name: 'label', type: 'table',fields:[
-          {name:"Time (min)",type:"number",format:{value:function(){
-            return 0}}},
-          {name:"Temperature (°C)",type:"number",value:100,min:100,max:250,step:5},
-          {name:"Ramp (°C/min)",type:"number",value:10,min:10,max:20,step:1},
-          {name:"Hold time (min)",type:"number",value:0,min:0,max:5,step:1}
-        ]},
-        
-      ]}
-    ]}
-    ,
-  {
-    legend:'Cyclic Voltammeter',
-    name:"CV",
-    fields:[
-      {name:"Purge time (min)",type:"number",value:1,min:1,step:0.25,max:2},
-      {name:"Range",type:"custom_radio",value:'1uA',options:['1uA','10uA','100uA','1000uA']},
-      {name:"t-equilibration (sec)",type:"number",value:0,min:0,step:10,max:60},
-      {name:"E begin (V)",type:"number",value:-1,min:-1,step:0.05,max:0},
-      {name:"E vertex1 (V)",type:"number",value:-1,min:-1,step:0.05,max:0},
-      {name:"E vertex2 (V)",type:"number",value:0,min:0,step:0.05,max:1},
-      {name:"E step (V)",type:"number",value:0,min:0,step:0.01,max:0.05},
-      {name:"Scan rate (V/s)",type:"number",value:0,min:0,step:0.01,max:0.25},
-      {name:"Number of scans",type:"custom_radio",value:1,options:[1,2]}
-    ]
-  },
-  {
-    legend:'Fourier Transform Infrared Spectrometer',
-    name:"FTIR",
-    sections:'tab',
-    fields:[
-      {legend: 'Sample Holder', name: 'label', type: 'fieldset',fields:[
-        {name:"Number of Accumulations",type:"number",value:1,min:1,step:1,max:16},
-        {name:"Range start (cm-1)",type:"number",value:360,min:360,step:10,max:8300},
-        {name:"Range end (cm-1)",type:"number",value:820,min:820,step:10,max:4000},
-        {name:"Resolution (cm-1)",type:"number",value:1,min:1,step:1,max:4},
-        {name:"Interval (cm-1)",type:"number",value:1,min:1,step:1,max:4},
-
-        {name:"Units",type:"custom_radio",value:"A",options:["A","T"]},
-        {name:"Background",type:"custom_radio",value:"Air",options:["Air","Sample matrix"]},
-      ]}
-    ]
-  },
-  {
-    legend:'Fluorimeter',
-    name:"F",
-    sections:'tab',
-    fields:[
-      {legend: 'Pre-Scan', name: 'label', type: 'fieldset',fields:[
-        {name:"Excitation range from (nm)",type:"number",value:390,min:390,step:1,max:490},
-        {name:"Excitation range to (nm)",type:"number",value:490,min:490,step:1,max:500},
-        {name:"Emission range from (nm)",type:"number",value:400,min:400,step:1,max:740},
-        {name:"Emission range to (nm)",type:"number",value:410,min:410,step:1,max:750},
-        {name:"Scan Speed (nm/min)",type:"number",value:250,min:250,step:10,max:1000},
-      ]},
-      {legend: 'Excitation-Scan', name: 'label', type: 'fieldset',fields:[
-        {name:"Start (nm)",type:"number",value:390,min:390,step:1,max:590},
-        {name:"End (nm)",type:"number",value:490,min:490,step:1,max:600},
-        {name:"Emission (nm)",type:"number",value:400,min:400,step:1,max:740},
-        {name:"Scan Speed (nm/min)",type:"number",value:250,min:250,step:10,max:1000},
-      ]},
-      {legend: 'Emission-Scan', name: 'label', type: 'fieldset',fields:[
-        {name:"Start (nm)",type:"number",value:400,min:400,step:1,max:740},
-        {name:"End (nm)",type:"number",value:410,min:410,step:1,max:750},
-        {name:"Excitation (nm)",type:"number",value:390,min:390,step:1,max:500},
-        {name:"Scan Speed (nm/min)",type:"number",value:250,min:250,step:10,max:1000},
-      ]}
-    ]
-  },
-  {
-    legend:'UV-Vis Spectrophotometer',
-    name:"UV-Vis",
-    sections:'tab',
-    fields:[
-      {legend: 'Acquisition', name: 'label', type: 'fieldset',fields:[
-        {name:"Wavelength range from (nm)",type:"number",value:290,min:290,step:1,max:890},
-        {name:"Wavelength range to (nm)",type:"number",value:300,min:300,step:1,max:900},
-        {name:"Integration time (s)",type:"number",value:0.25,min:0.25,step:0.25,max:2},
-        {name:"Interval (nm)",type:"number",value:1,min:1,step:1,max:4},
-        {name:"Path Length (cm)",type:"number",value:0.5,min:0.5,step:1,max:1}
-      ]},
-      {legend: 'Lamps', name: 'label', type: 'fieldset',fields:[
-        {name:"Tungsten",type:"switch",options:["Off","On"]},
-        {name:"Deuterium",type:"switch",options:["Off","On"]}
-      ]},
-      {legend: 'Spectrum/Peak detection', name: 'label', type: 'fieldset',fields:[
-        {name:"Find and annotate up to ___ peaks",type:"number",value:1,min:1,step:1,max:4},
-        {name:"Data Type",type:"custom_radio",value:"Absorbance",options:["Absorbance","Transmittance"]},
-        {name:"Display spectrum from (nm)",type:"number",value:290,min:290,step:1,max:890},
-        {name:"Display spectrum to (nm)",type:"number",value:300,min:300,step:1,max:900}
-      ]}
-    ]
-  },
-  {
-    legend:'Mass Spectrometer',
-    name:"MS",
-    fields:[
-      {name:"Filament (eV)",type:"number",value:60,min:60,step:1,max:80},
-      {name:"Scan range start (m/z)",type:"number",value:10,min:10,step:1,max:300},
-      {name:"Scan range End (m/z)",type:"number",value:10,min:10,step:1,max:300},
-      {name:"Scan rate (scan/s)",type:"number",value:1,min:1,step:1,max:5}
-    ]
-  },
-  {
-    legend:'High Performance Liquid Chromatograph',
-    name:"HPLC",
-    sections:'tab',
-    fields:[
-      {legend: 'Solvent Pump', name: 'label', type: 'fieldset',fields:[
-        {legend: 'Solvent', name: 'label', type: 'fieldset',fields:[
-          {name:"A",type:"custom_radio",value:"Water",options:["Water","0.1% formic acid"]},
-          {name:"B",type:"custom_radio",value:"Methanol",options:["Methanol","Acetonitrile"]}
-        ]},   
-        {legend: 'Isocratic', name: 'label', type: 'fieldset',fields:[
-          {name:"Solvent A Fraction (%)",type:"number",value:0,min:0,max:100,step:1},
-          {name:"Solvent B Fraction (%)",type:"number",value:0,min:0,max:100,step:1},
-
-          
-        ]},  
-        {legend: 'Gradient', name: 'label', type: 'fieldset',fields:[
-          {name:"Temperature (°C)",type:"number",value:100,min:100,max:200,step:5},
-          {name:"Run time (min)",type:"number",value:0,min:0,max:10,step:.5},
-
-          
-        ]},
-        
-      ]},
-      {legend: 'Injector', name: 'label', type: 'fieldset',fields:[
-        {name:"Volume (uL)",type:"number",value:10,min:10,step:10,max:50}
-      ]},
-      {legend: 'Detector', name: 'label', type: 'fieldset',fields:[
-        {name:"Wavelength 1 (nm)",type:"number",value:290,min:290,step:1,max:400},
-        {name:"Wavelength 2 (nm)",type:"number",value:290,min:290,step:1,max:400},
-        {name:"Wavelength 3 (nm)",type:"number",value:290,min:290,step:1,max:400},
-        {name:"Wavelength 4 (nm)",type:"number",value:290,min:290,step:1,max:400},
-        {name:"Reference (nm)",type:"number",value:580,min:580,step:1,max:600}
-      ]}
-    ]
+<script type='text/javascript' >
+$('body').keydown(function(event) {
+  switch(event.keyCode) {
+    case 27://escape
+      cb.deactivate();
+      break;
   }
-]
- 
-
-instruments ={
-  "GC":{
-    compontents:['GC'],
-    label:"Gas Chromatograph"
-  },
-  "CV":{
-    compontents:['CV'],
-    label:"Cyclic Voltammeter"
-  },
-  "FTIR":{
-    compontents:['FTIR'],
-    label:"Fourier Transform Infrared Spectrometer"
-  },
-  "F":{
-    compontents:['F'],
-    label:"Fluorimeter"
-  },
-  "UV-Vis":{
-    compontents:['UV-Vis'],
-    label:"UV-Vis Spectrophotometer"
-  },
-  "GC-MS":{
-    compontents:['GC','MS'],
-    label:"Gas Chromatograph - Mass Spectrometer"
-  },
-  "HPLC":{
-    compontents:['HPLC'],
-    label:"High Performance Liquid Chromatograph"
-  },
-  "NMR":{
-    compontents:['NMR'],
-    label:"Nuclear Magnetic Resonance"
-  },
-  "FAAS":{
-    compontents:['FAAS'],
-    label:"Flame Atomic Absorption Spectrophotometer"
-  },
-  "DSC":{
-    compontents:['DSC'],
-    label:"Differential Scanning Calorimeter"
-  },
-  "E":{
-    compontents:['E'],
-    label:"Electrophoresis"
-  }
-
-}
+});
 
 function init(){
-      hashParams = QueryStringToHash(document.location.hash.substr(1) || '')
-      $('li.active').removeClass('active')
-      $('#'+hashParams.device).addClass('active')
+
+  hashParams = QueryStringToHash(document.location.hash.substr(1) || '')
+  $('li.active').removeClass('active')
+  $('#'+hashParams.device).addClass('active')
     
+  compontent = '<div class="col-md-6 form-horizontal" style="padding:15px"><div class="well"></div></div>';
+  document.querySelector('.main .row').innerHTML = "";
+  _.each(gform.instances,function(form){
+    form.destroy();
+  })
+  instrument = instruments[hashParams.device||"GC"];
 
-compontent = '<div class="col-md-6 form-horizontal" style="padding:15px"><div class="well"></div></div>';
-document.querySelector('.main .row').innerHTML = "";
-_.each(gform.instances,function(form){
-  form.destroy();
-})
+  _.each(instrument.components,function(instrument_component){
+    el = gform.create(compontent);
+    document.querySelector('.main .row').append(el)
 
-instrument = instruments[hashParams.device||"GC"]
+    myForm = new gform(_.extend({
+      "actions":[{type:"save",label:"Run",target:".gform-footer"}],
+      "default": {
+        "horizontal": true
+      },"horizontal": true
+    },_.find(instrument_components, {name:instrument_component||"GC"})),el.querySelector('.well'))
 
-_.each(instrument.compontents,function(instrument_component){
-  el = gform.create(compontent);
-document.querySelector('.main .row').append(el)
-
-      myForm = new gform(_.extend({
-        "actions":[{type:"save",label:"Run",target:".gform-footer"}],
-        "default": {
-          "horizontal": true
-        },"horizontal": true
-      },_.find(instrument_components, {name:instrument_component||"GC"})),el.querySelector('.well'))
-
-})
-
+  })
 }
-    window.onhashchange = init;
+_.each(instruments,function(item,key){
+    document.querySelector('.target ul.nav-sidebar').append(gform.create(gform.renderString('<li id="{{key}}"><a href="#device={{key}}">{{label}}</a></li>',{key:key,label:item.label})))
+  })
+window.onhashchange = init;
 init();
-    </script>
+</script>
 
   </body>
 </html>
