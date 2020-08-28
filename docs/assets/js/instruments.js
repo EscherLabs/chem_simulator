@@ -43,6 +43,10 @@ instruments ={
     "E":{
       components:['E'],
       label:"Electrophoresis"
+    },
+    "Upload":{
+      components:['Upload'],
+      label:"Upload"
     }
   
   }
