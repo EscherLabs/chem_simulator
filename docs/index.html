@@ -86,6 +86,11 @@
           <div class="row">
 
           </div>
+
+          <div class="row">
+
+            <div class="col-sm-12" id="errors"></div>
+          </div>
           <div class="row">
 
             <div class="col-sm-12" style="height:350px;" id="chart"></div>
@@ -112,6 +117,9 @@
 <script type="text/javascript" src="assets/js/components/ftis.js"></script>
 <script type="text/javascript" src="assets/js/components/f.js"></script>
 <script type="text/javascript" src="assets/js/components/uvvis.js"></script>
+<script type="text/javascript" src="assets/js/components/hplc.js"></script>
+<script type="text/javascript" src="assets/js/components/ms.js"></script>
+
 
 
 
@@ -125,7 +133,7 @@ $('body').keydown(function(event) {
       break;
   }
 });
-
+globalfile = ""
 hash = function(s){
   return s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);              
 }
@@ -134,13 +142,13 @@ hash = function(s){
 
 
 
-      _.download({name:e.form.get('name'),data:_.map(instruments[hashParams.device].components
+      _.download({name:e.form.get('name'),file:(globalfile||""),data:_.map(instruments[hashParams.device].components
       ,function(component){
         debugger;
       return {name:component,data:JSON.stringify(gform.instances[component])}
-      }),check:hash(e.form.get('name'))},hashParams.device)
-
-    }).modal();
+      }),check:hash(e.form.get('name'))},e.form.get('name')+'_'+hashParams.device)
+      e.form.trigger('close');
+    }).on('cancel',function(e){e.form.trigger('close');}).modal();
   }
 
 
@@ -149,6 +157,7 @@ if(typeof c3chart !== 'undefined'){
   c3chart.destroy()
   delete c3chart;
 }
+$('#errors').html('')
 
 
 
@@ -179,10 +188,10 @@ if(typeof c3chart !== 'undefined'){
   })
 }
 _.each(instruments,function(item,key){
-    if(item.disabled !== true){
+    // if(item.disabled !== true){
       document.querySelector('.target ul.nav').append(gform.create(gform.renderString('<li id="{{key}}"><a href="#device={{key}}">{{label}}</a></li>',{key:key,label:item.label})))
       document.querySelector('#navbar ul.nav').append(gform.create(gform.renderString('<li id="{{key}}"><a href="#device={{key}}">{{label}}</a></li>',{key:key,label:item.label})))
-    }
+    // }
 })
 window.onhashchange = init;
 init();

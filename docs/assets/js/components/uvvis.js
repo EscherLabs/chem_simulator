@@ -5,25 +5,27 @@ instrument_components.push(
   
           $.get('assets/data/uvvis/'+file+'.csv',function(e){
             globaltemp = _.csvToArray(e,{skip:0});
-            // globaltemp.pop();
             keys = _.keys(globaltemp[0]);
             var x = ['x']
-            var y = ['Sample']
+            var y = []
             _.each(globaltemp,function(i){
-              if(parseInt(i[keys[0]]) > settings['Wavelength range from (nm)'] && parseInt(i[keys[0]]) < settings['Wavelength range to (nm)']){
+              if(parseInt(i[keys[0]]) >= settings['Wavelength range from (nm)'] && parseInt(i[keys[0]]) <= settings['Wavelength range to (nm)']){
                 x.push(i[keys[0]]);
                 y.push(i[keys[1]]);
               }
             })
-            var maxKey = _.maxBy(_.keys(y), function (o) { return parseFloat(y[o])||0; });
-  
-            
+            var maxKey = _.maxBy(_.keys(y), function (o) {
+              debugger;
+               return parseFloat(y[o])||0; 
+              });
+              maxKey++;
+              // y.unshift()
             c3chart =  c3.generate({
               bindto: '#chart',
               data: {
                   x: 'x',
                   // xFormat: format,
-                  columns: [x,y], 
+                  columns: [x,[_.find(gform.collections.get('uvvis'),{value:file}).label].concat(y)], 
                   type: 'line'
               },
               point: {
@@ -31,7 +33,6 @@ instrument_components.push(
               },
               grid:{
                 x:{
-  
                   lines: [
                     {value: x[maxKey], text: x[maxKey]+"nm ( "+y[maxKey]+")", position: 'start'},
                 ],
@@ -75,43 +76,44 @@ instrument_components.push(
         events:[{
           "event": "save",
           "handler": function(e){
-            var a = '<center><div style="width:510px;height: 310px;background-position:0px -8px;background-image:url(assets/img/uv_vis_2.png)"></div></center>';
-            var b = '<center><div style="width:510px;height: 310px;background-position: -1px -8px;background-image:url(assets/img/uv_vis_1.png)"></div></center>';
-  
-            new gform({name:"animate",fields:[{type:"output",value:'<div style="height:0">'+a+'</div>'+b}],actions:[]}).modal()
-            var field = gform.instances.animate.fields[0];
-            var fA = function(){field.set(a)};
-            var fB = function(){field.set(b)};
-  
-            var actions = [
-              fA,fB,fA,fB,fA,fB,//,
-              // function(){field.set('<center><i class=\"fa fa-spinner fa-spin\" style=\"font-size:60px;margin:20px auto;color:#d8d8d8\"></i></center>')},,
-              function(){gform.instances.animate.trigger('close');},
-              function(){
-  
-                var files = [
-                  {"label":"Blank",value:"BLANK2"},
-                  {"label":"1.00 PPM",value:"1PPM1"},
-                  {"label":"4.00 PPM",value:"4PPM1"},
-                  {"label":"10.0 PPM",value:"10PPM1"},
-                  {"label":"25.0 PPM",value:"25PPM1"},
-                  {"label":"Unknown Solution",value:"UNKNOWN1"}
-                ];
-                new gform({
-                  legend:"Sample Name",
-                  name:"modal",
-                  fields:[
-                    {type:"smallcombo",name:"file",label:false,options:files,value:"BLANK2"}
-                  ]
-                }).on('save',function(form,e){
-                  
+            // var files = [
+            //   {"label":"Blank",value:"BLANK2"},
+            //   {"label":"1.00 PPM",value:"1PPM1"},
+            //   {"label":"4.00 PPM",value:"4PPM1"},
+            //   {"label":"10.0 PPM",value:"10PPM1"},
+            //   {"label":"25.0 PPM",value:"25PPM1"},
+            //   {"label":"Unknown Solution",value:"UNKNOWN1"}
+            // ];
+            new gform({
+              legend:"Sample Name",
+              name:"modal",
+              fields:[
+                {type:"smallcombo",name:"file",label:false,options:'uvvis',value:"BLANK2"}
+              ]
+            }).on('save',function(form,e){
+              
+              var a = '<center><div style="width:510px;height: 310px;background-position:0px -8px;background-image:url(assets/img/uv_vis_2.png)"></div></center>';
+              var b = '<center><div style="width:510px;height: 310px;background-position: -1px -8px;background-image:url(assets/img/uv_vis_1.png)"></div></center>';
+    
+              new gform({legend:"Scanning...",name:"animate",fields:[{type:"output",value:'<div style="height:0">'+a+'</div>'+b}],actions:[]}).modal()
+              var field = gform.instances.animate.fields[0];
+              var fA = function(){field.set(a)};
+              var fB = function(){field.set(b)};
+    
+              var actions = [
+                fA,fB,fA,fB,//fA,fB,//,
+                // function(){field.set('<center><i class=\"fa fa-spinner fa-spin\" style=\"font-size:60px;margin:20px auto;color:#d8d8d8\"></i></center>')},,
+                function(){gform.instances.animate.trigger('close');},
+                function(){
+
+                  globalfile = e.form.get('file');
                   _.find(instrument_components,{legend:instruments['UV-Vis'].label}).chart(e.form.get('file'),gform.instances['UV-Vis'].get('acquisition'))
-                }.bind(null,e.form)).modal()
-                
-              }
-            ];
-  
-            myint = launchInterval(actions,1000);
+                }
+              ];
+    
+              myint = launchInterval(actions,1000);
+              e.form.trigger('close')
+            }.bind(null,e.form)).on('cancel',function(){gform.instances.modal.trigger('close');}).modal()
           }
         }],
         name:"UV-Vis",
@@ -138,3 +140,11 @@ instrument_components.push(
       }
     
     )
+    gform.collections.add('uvvis',[
+      {"label":"Blank",value:"BLANK2"},
+      {"label":"1.00 PPM",value:"1PPM1"},
+      {"label":"4.00 PPM",value:"4PPM1"},
+      {"label":"10.0 PPM",value:"10PPM1"},
+      {"label":"25.0 PPM",value:"25PPM1"},
+      {"label":"Unknown Solution",value:"UNKNOWN1"}
+    ])

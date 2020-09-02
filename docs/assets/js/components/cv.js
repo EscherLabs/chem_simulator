@@ -5,23 +5,34 @@ instrument_components.push(
           {
             "event":"save",
             "handler":function(e){
-              debugger;
-              if([20,50,100,150].indexOf(e.form.get('scan_rate'))== -1)return false;
-              var files = [
-                'BLANK',
-                'Standard 1, 2mM',
-                'Standard 2, 4mM',
-                'Standard 3, 6mM',
-                'Standard 4, 8mM',
-                'Unkown'
-  
-              ];
+              $('#errors').html('')
+              if([20,50,100,150].indexOf(e.form.get('scan_rate'))== -1){
+                
+                $('#errors').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
+                return false;
+              }
+  // if(e.form.get('E begin (V)')){
+    // debugger;
+  // }
+              /*
+Purge time: 1-2 min
+any range
+any t-equil
+E begin = -0.25
+E vertex 1 = -0.25
+E vertex 2 = 0.4
+E step = 0.001 to 0.005
+Scan rates of ONLY 0.020, 0.050, 0.100, and 0.150  V/s.
+Number of scans: Only 1
+              */
               var modalForm = new gform({
                 legend:"Sample Name",
                 fields:[
-                  {type:"smallcombo",name:"file",label:false,options:files}
+                  {type:"smallcombo",name:"file",label:false,options:'cv'}
                 ]
               }).on('save',function(form,e){
+
+                globalfile = e.form.get('file');
               $.get('assets/data/cv/CV_'+e.form.get('file')+'_scan rate '+form.get('scan_rate')+'.csv',function(e){
                 globaltemp = _.csvToArray(e,{skip:5});
                 keys = _.keys(globaltemp[0]);
@@ -61,7 +72,7 @@ instrument_components.push(
               })
   
             }.bind(null,e.form)
-          ).modal()}
+          ).on('cancel',function(){gform.instances.modal.trigger('close');}).modal()}
           }
         ],
         name:"CV",
@@ -79,3 +90,12 @@ instrument_components.push(
       }
     
 )
+
+gform.collections.add('cv', [
+  'BLANK',
+  'Standard 1, 2mM',
+  'Standard 2, 4mM',
+  'Standard 3, 6mM',
+  'Standard 4, 8mM',
+  'Unkown'
+])

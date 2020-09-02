@@ -2,6 +2,7 @@ instrument_components = [
       {
         legend:'Upload',
         name:"Upload",
+        "actions":[{type:"save",label:"View",target:".gform-footer"}],
         events:[
           {event:"save",handler:function(e){
             var files = e.form.find('upload').el.querySelector('input').files
@@ -23,9 +24,30 @@ instrument_components = [
                       i.data = JSON.parse(i.data);
                       return i;
                     })
-                    debugger;
+// _.each()
 
-                    _.find(instrument_components,{legend:instruments[globdata.data[0].name].label}).chart("UNKNOWN1",globdata.data[0].data.acquisition);
+document.querySelector('.main #errors').innerHTML = "";
+_.each(gform.instances,function(form){
+  if(form.options.name !== "Upload"){
+  form.destroy();
+  }
+})
+_.each(globdata.data,function(instrument_component){
+  el = gform.create(compontent);
+  document.querySelector('.main #errors').append(el)
+
+  myForm = new gform(_.extend({
+    "actions":[{type:"save",label:"Run",target:".gform-footer"}],
+    "data":instrument_component.data,
+    "default": {
+      "horizontal": true,edit:false
+    },"horizontal": true
+  },_.find(instrument_components, {name:instrument_component.name||"GC"})),el.querySelector('.well'))
+
+})
+
+
+                    _.find(instrument_components,{legend:instruments[globdata.data[0].name].label}).chart(globdata.file,globdata.data[0].data.acquisition);
                   }
                 };
               })(f);
