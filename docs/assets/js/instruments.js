@@ -2,7 +2,8 @@
 instruments ={
     "GC":{
       components:['GC'],
-      label:"Gas Chromatograph"
+      label:"Gas Chromatograph",
+      disabled:true
     },
     "CV":{
       components:['CV'],
@@ -22,28 +23,30 @@ instruments ={
     },
     "GC-MS":{
       components:['GC','MS'],
-      label:"Gas Chromatograph - Mass Spectrometer"
+      label:"Gas Chromatograph - Mass Spectrometer",
+      disabled:true
     },
     "HPLC":{
       components:['HPLC'],
-      label:"High Performance Liquid Chromatograph"
+      label:"High Performance Liquid Chromatograph",
+      disabled:true
     },
     // "NMR":{
     //   components:['NMR'],
     //   label:"Nuclear Magnetic Resonance"
     // },
-    "FAAS":{
-      components:['FAAS'],
-      label:"Flame Atomic Absorption Spectrophotometer"
-    },
-    "DSC":{
-      components:['DSC'],
-      label:"Differential Scanning Calorimeter"
-    },
-    "E":{
-      components:['E'],
-      label:"Electrophoresis"
-    },
+    // "FAAS":{
+    //   components:['FAAS'],
+    //   label:"Flame Atomic Absorption Spectrophotometer"
+    // },
+    // "DSC":{
+    //   components:['DSC'],
+    //   label:"Differential Scanning Calorimeter"
+    // },
+    // "E":{
+    //   components:['E'],
+    //   label:"Electrophoresis"
+    // },
     "Upload":{
       components:['Upload'],
       label:"Upload"

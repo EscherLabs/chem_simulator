@@ -37,11 +37,7 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <style>
-      .c3-circles {
-        display: none;
-      }
-    </style>
+
   </head>
 
   <body>
@@ -92,7 +88,7 @@
           </div>
           <div class="row">
 
-            <div class="col-sm-12" style="height:200px;" id="chart"></div>
+            <div class="col-sm-12" style="height:350px;" id="chart"></div>
           </div>
         </div>
       </div>
@@ -111,6 +107,14 @@
 <script type="text/javascript" src="assets/js/c3.min.js"></script>
 <script type="text/javascript" src="assets/js/lib.js"></script>
 <script type="text/javascript" src="assets/js/components.js"></script>
+<script type="text/javascript" src="assets/js/components/cv.js"></script>
+<script type="text/javascript" src="assets/js/components/gc.js"></script>
+<script type="text/javascript" src="assets/js/components/ftis.js"></script>
+<script type="text/javascript" src="assets/js/components/f.js"></script>
+<script type="text/javascript" src="assets/js/components/uvvis.js"></script>
+
+
+
 <script type="text/javascript" src="assets/js/instruments.js"></script>
 
 <script type='text/javascript' >
@@ -122,8 +126,7 @@ $('body').keydown(function(event) {
   }
 });
 
-function init(){
-  hash = function(s){
+hash = function(s){
   return s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);              
 }
   download = function(){
@@ -139,6 +142,14 @@ function init(){
 
     }).modal();
   }
+
+
+function init(){
+if(typeof c3chart !== 'undefined'){
+  c3chart.destroy()
+  delete c3chart;
+}
+
 
 
 
@@ -168,9 +179,11 @@ function init(){
   })
 }
 _.each(instruments,function(item,key){
-  document.querySelector('.target ul.nav').append(gform.create(gform.renderString('<li id="{{key}}"><a href="#device={{key}}">{{label}}</a></li>',{key:key,label:item.label})))
-  document.querySelector('#navbar ul.nav').append(gform.create(gform.renderString('<li id="{{key}}"><a href="#device={{key}}">{{label}}</a></li>',{key:key,label:item.label})))
-  })
+    if(item.disabled !== true){
+      document.querySelector('.target ul.nav').append(gform.create(gform.renderString('<li id="{{key}}"><a href="#device={{key}}">{{label}}</a></li>',{key:key,label:item.label})))
+      document.querySelector('#navbar ul.nav').append(gform.create(gform.renderString('<li id="{{key}}"><a href="#device={{key}}">{{label}}</a></li>',{key:key,label:item.label})))
+    }
+})
 window.onhashchange = init;
 init();
 function launchInterval(actions,interval){
