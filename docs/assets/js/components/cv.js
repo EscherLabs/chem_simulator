@@ -33,7 +33,7 @@ Number of scans: Only 1
               }).on('save',function(form,e){
 
                 globalfile = e.form.get('file');
-              $.get('assets/data/CV/CV_'+e.form.get('file')+'_scan rate '+form.get('scan_rate')+'.csv',function(e){
+              $.get('assets/data/cv/CV_'+e.form.get('file')+'_scan rate '+form.get('scan_rate')+'.csv',function(e){
                 globaltemp = _.csvToArray(e,{skip:5});
                 keys = _.keys(globaltemp[0]);
                 var x = []
