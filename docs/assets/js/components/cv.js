@@ -48,7 +48,7 @@ Number of scans: Only 1
                   });
                   // maxKey++;
                   debugger;
-                  y2 = y.splice(maxKey)
+                  y2 = _.reverse(y.splice(maxKey))
 
                 c3chart =  c3.generate({
                   bindto: '#chart',
