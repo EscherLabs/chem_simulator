@@ -3,7 +3,7 @@ instrument_components.push(
         legend:'UV-Vis Spectrophotometer',
         chart:function(file, settings){
   
-          $.get('assets/data/uvvis/'+file+'.csv',function(e){
+          $.get('assets/data/uvvis/'+file+'.CSV',function(e){
             globaltemp = _.csvToArray(e,{skip:0});
             keys = _.keys(globaltemp[0]);
             var x = ['x']

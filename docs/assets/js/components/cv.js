@@ -33,22 +33,29 @@ Number of scans: Only 1
               }).on('save',function(form,e){
 
                 globalfile = e.form.get('file');
-              $.get('assets/data/cv/CV_'+e.form.get('file')+'_scan rate '+form.get('scan_rate')+'.csv',function(e){
+              $.get('assets/data/CV/CV_'+e.form.get('file')+'_scan rate '+form.get('scan_rate')+'.csv',function(e){
                 globaltemp = _.csvToArray(e,{skip:5});
                 keys = _.keys(globaltemp[0]);
-                var x = ['x']
-                var y = [modalForm.get('file')]
+                var x = []
+                var y = []
                 _.each(globaltemp,function(i){
                   x.push(i[keys[0]]);
                   y.push(i[keys[1]]);
                 })
-    
+
+                var maxKey = _.maxBy(_.keys(x), function (o) {
+                   return parseFloat(x[o])||0; 
+                  });
+                  // maxKey++;
+                  debugger;
+                  y2 = y.splice(maxKey)
+
                 c3chart =  c3.generate({
                   bindto: '#chart',
                   data: {
                       x: 'x',
                       // xFormat: format,
-                      columns: [x,y], 
+                      columns: [['x'].concat(x),[modalForm.get('file')].concat(y),[modalForm.get('file')+'(reverse)'].concat(y2)], 
                       type: 'line'
                   },
                   point: {
