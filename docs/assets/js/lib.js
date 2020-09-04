@@ -283,3 +283,39 @@ var CSVParser = (function(){
     };
     return Parser;
 })();
+
+
+
+
+function processFilter(options){
+  options = options || {};
+	var	currentTarget = options.currentTarget || this.currentTarget;
+	var collection;
+	if(this.selector){
+		collection = $(this.selector).find('.filterable')
+	}else{
+		collection = $('.filterable');
+	}
+	collection.each(
+	function(){
+    if(_.score($(this).text().replace(/\s+/g, " ").toLowerCase(), $(currentTarget).val().toLowerCase() ) > ($(currentTarget).data('score') || 0.40)){
+      $(this).removeClass('hidden');
+		}else{
+			$(this).addClass('hidden');
+		}
+	});
+}
+
+
+filterTimer = null;
+$('body').on('keyup','[name=filter]', function(event){
+debugger;
+	this.currentTarget = event.currentTarget;
+	this.selector = $(this).data('selector');
+	if(!$(this).hasClass("delay")){
+		processFilter.call(this);
+	}else{
+  	clearTimeout(filterTimer);
+  	filterTimer=setTimeout($.proxy(processFilter, this), 300);
+	}
+});

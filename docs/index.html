@@ -37,13 +37,32 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+<style>
 
+/* .c3-lines {
+    display: none;
+} */
+body{
+  /* background: #005a43; */
+  /* background-image:radial-gradient(#fff,rgb(228,241,221) 60%); */
+  /* background-repeat:no-repeat */
+}
+/*#home a img,*/
+.device{
+  opacity:85%
+}
+/*#home a img:hover,*/.device:hover{
+  opacity:95%
+}
+a{color:#005a43;cursor: pointer;}
+a:hover,a:focus{text-decoration:none;color:#005a43;cursor: pointer;}
+</style>
   </head>
 
   <body>
 
     <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container-fluid">
+      <div class="container-fluid" style="background: #005a43;">
         <div class="navbar-header" style="width:100%">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
@@ -51,7 +70,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#"><i class="fa fa-flask"></i> Chem Simulator</a>
+          <a class="navbar-brand" style="color:#efefef" href="#"><i class="fa fa-flask"></i> Binghamton University Chemestry Simulator</a>
           <button class="btn btn-info pull-right" style="margin-top: 10px;margin-right:15px" onclick=download()><i class="fa fa-download"></i> Download</button>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
@@ -61,7 +80,7 @@
       </div>
     </nav>
 
-    <div class="container-fluid">
+    <div class="container-fluid hidden">
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar target">
           <ul class="nav nav-sidebar">
@@ -82,19 +101,7 @@
     </div>
 
         </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <div class="row">
-
-          </div>
-
-          <div class="row">
-
-            <div class="col-sm-12" id="errors"></div>
-          </div>
-          <div class="row">
-
-            <div class="col-sm-12" style="height:350px;" id="chart"></div>
-          </div>
+        <div class="main container-fluid"><!--9 col-sm-offset-3 col-md-10 col-md-offset-2 main-->
         </div>
       </div>
     </div>
@@ -111,6 +118,8 @@
 <script type="text/javascript" src="assets/js/d3.min.js"></script>
 <script type="text/javascript" src="assets/js/c3.min.js"></script>
 <script type="text/javascript" src="assets/js/lib.js"></script>
+<script type="text/javascript" src="assets/js/instruments.js"></script>
+
 <script type="text/javascript" src="assets/js/components.js"></script>
 <script type="text/javascript" src="assets/js/components/cv.js"></script>
 <script type="text/javascript" src="assets/js/components/gc.js"></script>
@@ -123,7 +132,6 @@
 
 
 
-<script type="text/javascript" src="assets/js/instruments.js"></script>
 
 <script type='text/javascript' >
 $('body').keydown(function(event) {
@@ -144,7 +152,6 @@ hash = function(s){
 
       _.download({name:e.form.get('name'),file:(globalfile||""),data:_.map(instruments[hashParams.device].components
       ,function(component){
-        debugger;
       return {name:component,data:JSON.stringify(gform.instances[component])}
       }),check:hash(e.form.get('name'))},e.form.get('name')+'_'+hashParams.device)
       e.form.trigger('close');
@@ -157,33 +164,49 @@ if(typeof c3chart !== 'undefined'){
   c3chart.destroy()
   delete c3chart;
 }
-$('#errors').html('')
-
-
+// $('#errors').html('')
 
 
   gform.types['file'] = gform.types['text'] 
+
+  gform.types['number']= _.extend({}, gform.types['input'],{get:function(){
+    return parseFloat(this.el.querySelector('input[name="' + this.name + '"]').value);
+}, render: function(){
+    return gform.render(this.type, this).split('value=""').join('value="'+this.value+'"')
+},});
+
   hashParams = QueryStringToHash(document.location.hash.substr(1) || '')
   $('li.active').removeClass('active')
   $('#'+hashParams.device).addClass('active')
     
-  compontent = '<div class="col-md-6 form-horizontal" style="padding:15px"><div class="well"></div></div>';
-  document.querySelector('.main .row').innerHTML = "";
+  compontent = `<div class="row">
+      <div class="col-md-4 form-horizontal" style=""><div class="well form"></div></div>
+      <div class="col-md-8" style="">
+        <div class="well" style="overflow:hidden"><div><img style="float:right;height:150px" src="{{img}}"></div><span><h3>{{legend}}</h3><p>{{description}}</p></span></div>
+        <div class="" id="errors"></div>
+        <div class="well target" style="height:350px;"><div id="chart"></div></div></div>
+      </div>
+`;
+  document.querySelector('.main').innerHTML = "";
   _.each(gform.instances,function(form){
     form.destroy();
   })
-  instrument = instruments[hashParams.device||"GC"];
+  instrument = instruments[hashParams.device||"HOME"];
 
   _.each(instrument.components,function(instrument_component){
-    el = gform.create(compontent);
-    document.querySelector('.main .row').append(el)
+    if(_.find(instrument_components, {name:instrument_component||"HOME"}).fields){
+      el = gform.create(gform.renderString(compontent,_.find(instrument_components, {name:instrument_component||"HOME"})));
+      document.querySelector('.main').append(el)
 
-    myForm = new gform(_.extend({
-      "actions":[{type:"save",label:"Run",target:".gform-footer"}],
-      "default": {
-        "horizontal": true
-      },"horizontal": true
-    },_.find(instrument_components, {name:instrument_component||"GC"})),el.querySelector('.well'))
+      myForm = new gform(_.extend({
+        "actions":[{type:"save",label:"Run",target:".gform-footer"}],
+        "default": {
+          "horizontal": true
+        },"horizontal": true
+      },_.find(instrument_components, {name:instrument_component||"HOME"})),el.querySelector('.well'))
+    }else if(_.find(instrument_components, {name:instrument_component||"HOME"}).html){
+      document.querySelector('.main').append(gform.create(_.find(instrument_components, {name:instrument_component||"HOME"}).html))
+    }
 
   })
 }
