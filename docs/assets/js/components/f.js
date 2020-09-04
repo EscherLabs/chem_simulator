@@ -2,6 +2,7 @@ instrument_components.push(
     {
         legend:'Fluorimeter',
         name:"F",
+        image:"ls-45.jpg",
         chart:function(file, settings){
 
           $.get('assets/data/f/'+file+'.csv',function(file,e){

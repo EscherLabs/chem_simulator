@@ -1,6 +1,7 @@
 instrument_components.push(
     {
         legend:'UV-Vis Spectrophotometer',
+        image:"UVVis1.png",
         chart:function(file, settings){
   
           $.get('assets/data/uvvis/'+file+'.CSV',function(e){
@@ -9,7 +10,7 @@ instrument_components.push(
             var x = ['x']
             var y = []
             _.each(globaltemp,function(i){
-              if(parseInt(i[keys[0]]) >= settings['Wavelength range from (nm)'] && parseInt(i[keys[0]]) <= settings['Wavelength range to (nm)']){
+              if(parseInt(i[keys[0]]) >= settings['acquisition']['Wavelength range from (nm)'] && parseInt(i[keys[0]]) <= settings['acquisition']['Wavelength range to (nm)']){
                 x.push(i[keys[0]]);
                 y.push(i[keys[1]]);
               }
@@ -106,7 +107,7 @@ instrument_components.push(
                 function(){
 
                   globalfile = e.form.get('file');
-                  _.find(instrument_components,{legend:instruments['UV-Vis'].label}).chart(e.form.get('file'),gform.instances['UV-Vis'].get('acquisition'))
+                  _.find(instrument_components,{legend:instruments['UV-Vis'].label}).chart(e.form.get('file'),gform.instances['UV-Vis'].get())
                 }
               ];
     

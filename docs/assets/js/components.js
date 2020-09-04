@@ -19,7 +19,6 @@ instrument_components = [
         </div>
         </a>
       </div>`;
-
       return gform.renderString(`<div><div class="row" style="margin:20px 0">
       <div class="col-md-9">
       <div class="input-group">
@@ -34,14 +33,17 @@ instrument_components = [
       </div>
       `,{filter:{selector:"#home"}})+'<div id="home" style="background-image:url(assets/img/molecule_40.png);overflow:hidden;background-repeat:no-repeat;background-position:center;min-height:1000px">'+
       // '<center><img style="width:100px" src="assets/img/molecule.png"></a></center>'+
-      
-      gform.renderString(template,instruments["FTIR"])+
-      gform.renderString(template,instruments["UV-Vis"])+
-      gform.renderString(template,instruments["F"])+
-      gform.renderString(template,instruments["GC-MS"])+
-      gform.renderString(template,instruments["GC"])+
-      gform.renderString(template,instruments["HPLC"])+
-      gform.renderString(template,instruments["CV"])+
+      _.reduce(instruments,function(template,r,instrument){
+        if(['Home','Upload'].indexOf(instrument.label) >=0)return r;
+        return r+ gform.renderString(template,instrument);
+      }.bind(null,template),"")+
+      // gform.renderString(template,instruments["GC"])+
+      // gform.renderString(template,instruments["CV"])+
+      // gform.renderString(template,instruments["FTIR"])+
+      // gform.renderString(template,instruments["UV-Vis"])+
+      // gform.renderString(template,instruments["F"])+
+      // gform.renderString(template,instruments["GC-MS"])+
+      // gform.renderString(template,instruments["HPLC"])+
     '</div></div>';
   }()
     // fields:[

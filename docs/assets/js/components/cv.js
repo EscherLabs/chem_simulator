@@ -1,10 +1,9 @@
 instrument_components.push(
     {
         legend:'Cyclic Voltammeter',
-        img:"assets/img/CV1.png",
+        image:"CV1.png",
         description:"Here is a description of what this is maybe how it works, maybe some links to reference materials, or maybe some instructions",
         chart:function(file, settings){
-          debugger;
           $.get('assets/data/CV/CV_'+file+'_scan rate '+(settings.scan_rate*1000)+'.csv',function(e){
             globaltemp = _.csvToArray(e,{skip:5});
             keys = _.keys(globaltemp[0]);
@@ -70,29 +69,41 @@ instrument_components.push(
               $('.chart').html('')
 
 
-e.form.validate();
+if(!e.form.validate())return false;
               var errors = [];
-debugger;
-              if([20,50,100,150].indexOf((e.form.get('scan_rate')*1000))== -1){
-                
-                $('.chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
-                return false;
+              var data = e.form.get();
+              if([20,50,100,150].indexOf((data.scan_rate*1000))== -1){
+                errors.push('Check your Scan Rate')
+
+                // return false;
               }
-  // if(e.form.get('E begin (V)')){
-    // debugger;
-  // }
-              /*
-Purge time: 1-2 min
-any range
-any t-equil
-E begin = -0.25
-E vertex 1 = -0.25
-E vertex 2 = 0.4
-E step = 0.001 to 0.005
-Scan rates of ONLY 0.020, 0.050, 0.100, and 0.150  V/s.
-Number of scans: Only 1
-              */
-             
+              if(data.e_begin !== -0.25){
+                errors.push('Check your E Begin Voltage')
+              } 
+              if(data.e_vertex1 !== -0.25){
+                errors.push('Check your E Vertex 1')
+              }
+              if(data.e_vertex2 !== 0.4){
+                errors.push('Check your E Vertex 2')
+              }
+              if(data.e_step <= -0.001 || data.e_step >=0.005){
+                errors.push('Check your E Step')
+              }
+
+              if(data.scans !== "1"){
+                errors.push('Check your number of scans')
+              }
+
+              
+             if(errors.length >1){
+              $('.chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
+              return false;
+             }
+             if(errors.length == 1){
+              $('.chart').append('<div class="alert alert-danger">'+errors[0]+'</div>')
+              return false;
+             }
+
               var modalForm = new gform({
                 legend:"Sample Name",
                 name:"modal",
@@ -112,13 +123,13 @@ Number of scans: Only 1
         ],
         name:"CV",
         fields:[
-          {label:"Purge time (min)",name:"purge_time",type:"number",value:1,min:1,step:0.25,max:2},
+          {label:"Purge time (min)",name:"purge_time",type:"number",value:1,min:1,step:0.25,max:2,validate:[{type:'numeric'}]},
           {label:"Range",name:"range",type:"custom_radio",value:'1uA',options:['1uA','10uA','100uA','1000uA']},
-          {label:"t-equilibration (sec)",name:"t_equilibration",type:"number",value:0,min:0,step:10,max:60},
-          {label:"E begin (V)",name:"e_begin",type:"number",value:-1,min:-1,step:0.05,max:0},
-          {label:"E vertex1 (V)",name:"e_vertex1",type:"number",value:-1,min:-1,step:0.05,max:0},
-          {label:"E vertex2 (V)",name:"e_vertex2",type:"number",value:0,min:0,step:0.05,max:1},
-          {label:"E step (V)",name:"e_step",type:"number",value:0,min:0,step:0.01,max:0.05},
+          {label:"t-equilibration (sec)",name:"t_equilibration",type:"number",value:0,min:0,step:10,max:60,validate:[{type:'numeric'}]},
+          {label:"E begin (V)",name:"e_begin",type:"number",value:-1,min:-1,step:0.05,max:0,validate:[{type:'numeric'}]},
+          {label:"E vertex1 (V)",name:"e_vertex1",type:"number",value:-1,min:-1,step:0.05,max:0,validate:[{type:'numeric'}]},
+          {label:"E vertex2 (V)",name:"e_vertex2",type:"number",value:0,min:0,step:0.05,max:1,validate:[{type:'numeric'}]},
+          {label:"E step (V)",name:"e_step",type:"number",value:0,min:0,step:0.01,max:0.05,validate:[{type:'numeric'}]},
           {label:"Scan rate (V/s)",name:"scan_rate",type:"number",value:0,min:0,step:0.01,max:0.25,validate:[{type:'numeric'}]},
           {label:"Number of scans",name:"scans",type:"custom_radio",value:1,options:[1,2]}
         ]

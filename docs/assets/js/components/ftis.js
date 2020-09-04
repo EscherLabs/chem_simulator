@@ -1,6 +1,7 @@
 instrument_components.push(
     {
         legend:'Fourier Transform Infrared Spectrometer',
+        image:"spectrum 2.jpg",
         chart:function(file, settings){
 
           $.get('assets/data/ftir/'+file+'.csv',function(file,e){

@@ -36,7 +36,7 @@ instruments ={
       device:"UV-Vis",
       components:['UV-Vis'],
       label:"UV-Vis Spectrophotometer",
-      image:"UVVis1.jpg"
+      image:"UVVis1.png"
     },
     "GC-MS":{
       device:"GC-MS",
