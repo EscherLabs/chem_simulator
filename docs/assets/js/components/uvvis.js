@@ -15,13 +15,12 @@ instrument_components.push(
               }
             })
             var maxKey = _.maxBy(_.keys(y), function (o) {
-              debugger;
                return parseFloat(y[o])||0; 
               });
               maxKey++;
               // y.unshift()
             c3chart =  c3.generate({
-              bindto: '#chart',
+              bindto: '.chart',
               data: {
                   x: 'x',
                   // xFormat: format,

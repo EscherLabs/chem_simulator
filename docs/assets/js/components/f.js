@@ -19,7 +19,7 @@ instrument_components.push(
               // }
             })
             c3chart =  c3.generate({
-              bindto: '#chart',
+              bindto: '.chart',
               data: {
                   x: 'x',
                   // xFormat: format,

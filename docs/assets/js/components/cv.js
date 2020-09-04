@@ -3,11 +3,71 @@ instrument_components.push(
         legend:'Cyclic Voltammeter',
         img:"assets/img/CV1.png",
         description:"Here is a description of what this is maybe how it works, maybe some links to reference materials, or maybe some instructions",
+        chart:function(file, settings){
+          debugger;
+          $.get('assets/data/CV/CV_'+file+'_scan rate '+(settings.scan_rate*1000)+'.csv',function(e){
+            globaltemp = _.csvToArray(e,{skip:5});
+            keys = _.keys(globaltemp[0]);
+            var x = []
+            var y = []
+            _.each(globaltemp,function(i){
+              x.push(i[keys[0]]);
+              y.push(i[keys[1]]);
+            })
+
+            var maxKey = _.maxBy(_.keys(x), function (o) {
+               return parseFloat(x[o])||0; 
+              });
+
+            y2 = _.reverse(y.splice(maxKey))
+            var maxKey1 = _.maxBy(_.keys(y), function (o) {
+                return parseFloat(y[o])||0; 
+              });
+
+            var maxKey2 = _.minBy(_.keys(y2), function (o) {
+                return parseFloat(y2[o])||0; 
+              });
+
+            c3chart =  c3.generate({
+              bindto: '.chart',
+              data: {
+                  x: 'x',
+                  // xFormat: format,
+                  columns: [['x'].concat(x),[file].concat(y),[file+' '].concat(y2)], 
+                  type: 'line'
+              },
+              // point: {
+              //     show: false
+              // },
+
+          grid:{
+            x:{
+              lines: [
+                {value: x[maxKey1], text: x[maxKey1]+"V ( "+y[maxKey1]+")", position: 'start'},
+                {value: x[maxKey2], text: x[maxKey2]+"V ( "+y2[maxKey2]+")", position: 'start'},
+            ],
+            }
+          },
+              axis: {
+                  x: {
+                      label: keys[0]
+},
+                  y: {
+                      label: keys[1]
+                  }
+              }
+            });
+            $('.c3-lines').hide();
+
+            gform.instances.modal.trigger('close');
+          })
+
+        },
         events:[
           {
             "event":"save",
             "handler":function(e){
-              $('#chart').html('')
+              $('.chart').html('')
 
 
 e.form.validate();
@@ -15,7 +75,7 @@ e.form.validate();
 debugger;
               if([20,50,100,150].indexOf((e.form.get('scan_rate')*1000))== -1){
                 
-                $('#chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
+                $('.chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
                 return false;
               }
   // if(e.form.get('E begin (V)')){
@@ -35,69 +95,17 @@ Number of scans: Only 1
              
               var modalForm = new gform({
                 legend:"Sample Name",
+                name:"modal",
                 fields:[
                   {type:"smallcombo",name:"file",label:false,options:'cv'}
                 ]
               }).on('save',function(form,e){
 
                 globalfile = e.form.get('file');
-              $.get('assets/data/CV/CV_'+e.form.get('file')+'_scan rate '+(form.get('scan_rate')*1000)+'.csv',function(e){
-                globaltemp = _.csvToArray(e,{skip:5});
-                keys = _.keys(globaltemp[0]);
-                var x = []
-                var y = []
-                _.each(globaltemp,function(i){
-                  x.push(i[keys[0]]);
-                  y.push(i[keys[1]]);
-                })
 
-                var maxKey = _.maxBy(_.keys(x), function (o) {
-                   return parseFloat(x[o])||0; 
-                  });
+                
+                _.find(instrument_components,{legend:instruments['CV'].label}).chart(e.form.get('file'),form.get())
 
-                y2 = _.reverse(y.splice(maxKey))
-                var maxKey1 = _.maxBy(_.keys(y), function (o) {
-                    return parseFloat(y[o])||0; 
-                  });
-
-                var maxKey2 = _.minBy(_.keys(y2), function (o) {
-                    return parseFloat(y2[o])||0; 
-                  });
-
-                c3chart =  c3.generate({
-                  bindto: '#chart',
-                  data: {
-                      x: 'x',
-                      // xFormat: format,
-                      columns: [['x'].concat(x),[modalForm.get('file')].concat(y),[modalForm.get('file')+' '].concat(y2)], 
-                      type: 'line'
-                  },
-                  // point: {
-                  //     show: false
-                  // },
-
-              grid:{
-                x:{
-                  lines: [
-                    {value: x[maxKey1], text: x[maxKey1]+"V ( "+y[maxKey1]+")", position: 'start'},
-                    {value: x[maxKey2], text: x[maxKey2]+"V ( "+y2[maxKey2]+")", position: 'start'},
-                ],
-                }
-              },
-                  axis: {
-                      x: {
-                          label: keys[0]
-},
-                      y: {
-                          label: keys[1]
-                      }
-                  }
-                });
-                $('.c3-lines').hide();
-
-                modalForm.trigger('close');
-              })
-  
             }.bind(null,e.form)
           ).on('cancel',function(){gform.instances.modal.trigger('close');}).modal()}
           }
