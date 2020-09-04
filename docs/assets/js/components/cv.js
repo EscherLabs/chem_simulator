@@ -9,14 +9,21 @@ instrument_components.push(
             keys = _.keys(globaltemp[0]);
             var x = []
             var y = []
-            _.each(globaltemp,function(i){
-              x.push(i[keys[0]]);
-              y.push(i[keys[1]]);
-            })
+            // _.each(globaltemp,function(i){
+            //   x.push(i[keys[0]]);
+            //   y.push(i[keys[1]]);
+            // })
 
+            _.each(globaltemp,function(i){
+              if(parseFloat(i[keys[0]]) >= settings['e_begin'] && parseFloat(i[keys[0]]) <= settings['e_end']){
+                x.push(i[keys[0]]);
+                y.push(i[keys[1]]);
+              }
+            })
             var maxKey = _.maxBy(_.keys(x), function (o) {
                return parseFloat(x[o])||0; 
               });
+              maxKey++
 
             y2 = _.reverse(y.splice(maxKey))
             var maxKey1 = _.maxBy(_.keys(y), function (o) {
@@ -77,18 +84,19 @@ if(!e.form.validate())return false;
 
                 // return false;
               }
-              if(data.e_begin !== -0.25){
+              debugger;
+              if(data.e_begin < -0.25){
                 errors.push('Check your E Begin Voltage')
               } 
-              if(data.e_vertex1 !== -0.25){
-                errors.push('Check your E Vertex 1')
-              }
-              if(data.e_vertex2 !== 0.4){
-                errors.push('Check your E Vertex 2')
-              }
+              // // if(data.e_vertex1 !== -0.25){
+              // //   errors.push('Check your E Vertex 1')
+              // // }
+              // if(data.e_end !== 0.4){
+              //   errors.push('Check your E Vertex 2')
+              // }
               if(data.e_step <= -0.001 || data.e_step >=0.005){
                 errors.push('Check your E Step')
-              }
+              }//.1 .05
 
               if(data.scans !== "1"){
                 errors.push('Check your number of scans')
@@ -127,8 +135,8 @@ if(!e.form.validate())return false;
           {label:"Range",name:"range",type:"custom_radio",value:'1uA',options:['1uA','10uA','100uA','1000uA']},
           {label:"t-equilibration (sec)",name:"t_equilibration",type:"number",value:0,min:0,step:10,max:60,validate:[{type:'numeric'}]},
           {label:"E begin (V)",name:"e_begin",type:"number",value:-1,min:-1,step:0.05,max:0,validate:[{type:'numeric'}]},
-          {label:"E vertex1 (V)",name:"e_vertex1",type:"number",value:-1,min:-1,step:0.05,max:0,validate:[{type:'numeric'}]},
-          {label:"E vertex2 (V)",name:"e_vertex2",type:"number",value:0,min:0,step:0.05,max:1,validate:[{type:'numeric'}]},
+          // {label:"E vertex1 (V)",name:"e_vertex1",type:"number",value:-1,min:-1,step:0.05,max:0,validate:[{type:'numeric'}]},
+          {label:"E end",name:"e_end",type:"number",value:0,min:0,step:0.05,max:1,validate:[{type:'numeric'}]},
           {label:"E step (V)",name:"e_step",type:"number",value:0,min:0,step:0.01,max:0.05,validate:[{type:'numeric'}]},
           {label:"Scan rate (V/s)",name:"scan_rate",type:"number",value:0,min:0,step:0.01,max:0.25,validate:[{type:'numeric'}]},
           {label:"Number of scans",name:"scans",type:"custom_radio",value:1,options:[1,2]}
@@ -137,7 +145,7 @@ if(!e.form.validate())return false;
 )
 
 gform.collections.add('cv', [
-  'BLANK',
+  'Blank',
   'Standard 1, 2mM',
   'Standard 2, 4mM',
   'Standard 3, 6mM',
