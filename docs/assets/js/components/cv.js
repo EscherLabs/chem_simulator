@@ -2,7 +2,7 @@ instrument_components.push(
     {
         legend:'Cyclic Voltammeter',
         image:"CV1.png",
-        description:"Here is a description of what this is maybe how it works, maybe some links to reference materials, or maybe some instructions",
+        description:"",
         chart:function(file, settings){
           $.get('assets/data/CV/CV_'+file+'_scan rate '+(settings.scan_rate*1000)+'.csv',function(e){
             globaltemp = _.csvToArray(e,{skip:5});
@@ -20,20 +20,20 @@ instrument_components.push(
                 y.push(i[keys[1]]);
               }
             })
-            var maxKey = _.maxBy(_.keys(x), function (o) {
+            var splitKey = _.maxBy(_.keys(x), function (o) {
                return parseFloat(x[o])||0; 
               });
-              maxKey++
-
-            y2 = _.reverse(y.splice(maxKey))
-            var maxKey1 = _.maxBy(_.keys(y), function (o) {
+            if(x[(parseInt(splitKey)-1)] !== x[(parseInt(splitKey)+1)]){
+              splitKey++
+            }
+            y2 = _.reverse(y.splice(splitKey))
+            var maxKey = _.maxBy(_.keys(y), function (o) {
                 return parseFloat(y[o])||0; 
               });
 
-            var maxKey2 = _.minBy(_.keys(y2), function (o) {
+            var minKey = _.minBy(_.keys(y2), function (o) {
                 return parseFloat(y2[o])||0; 
               });
-
             c3chart =  c3.generate({
               bindto: '.chart',
               data: {
@@ -48,10 +48,14 @@ instrument_components.push(
 
           grid:{
             x:{
-              lines: [
-                {value: x[maxKey1], text: x[maxKey1]+"V ( "+y[maxKey1]+")", position: 'start'},
-                {value: x[maxKey2], text: x[maxKey2]+"V ( "+y2[maxKey2]+")", position: 'start'},
-            ],
+              lines: function(){
+                if(minKey != 0 && maxKey != (y.length-1)){
+                return [
+                {value: x[maxKey], text: x[maxKey]+"V ( "+y[maxKey]+")", position: 'start'},
+                {value: x[minKey], text: x[minKey]+"V ( "+y2[minKey]+")", position: 'start'},
+                ]
+                }else{return [];}
+            }(),
             }
           },
               axis: {
@@ -77,14 +81,15 @@ instrument_components.push(
 
 
 if(!e.form.validate())return false;
+
+//todo -- look at using gform validation for the following
+
               var errors = [];
               var data = e.form.get();
               if([20,50,100,150].indexOf((data.scan_rate*1000))== -1){
                 errors.push('Check your Scan Rate')
 
-                // return false;
               }
-              debugger;
               if(data.e_begin < -0.25){
                 errors.push('Check your E Begin Voltage')
               } 
