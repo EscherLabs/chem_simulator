@@ -11,7 +11,7 @@ instruments ={
       device:"GC",
       components:['GC'],
       label:"Gas Chromatograph",
-      image:"GC.JPG",
+      image:"GC.png",
       disabled:true
     },
     "CV":{
@@ -24,13 +24,13 @@ instruments ={
       device:"FTIR",
       components:['FTIR'],
       label:"Fourier Transform Infrared Spectrometer",
-      image:"spectrum 2.jpg"
+      image:"spectrum 2.png"
     },
     "F":{
       device:"F",
       components:['F'],
       label:"Fluorimeter",
-      image:"ls-45.jpg"
+      image:"ls-45.png"
     },
     "UV-Vis":{
       device:"UV-Vis",
@@ -42,14 +42,14 @@ instruments ={
       device:"GC-MS",
       components:['GC','MS'],
       label:"Gas Chromatograph - Mass Spectrometer",
-      image:"ag gcms.png",
+      image:"ag_gcms.png",
       disabled:true
     },
     "HPLC":{
       device:"HPLC",
       components:['HPLC'],
       label:"High Performance Liquid Chromatograph",
-      image:"HPLC1.JPG",
+      image:"HPLC1.png",
       disabled:true
     },
     // "NMR":{

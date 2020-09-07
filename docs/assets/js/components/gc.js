@@ -3,6 +3,7 @@ instrument_components.push(
         legend:'Gas Chromatograph',
         sections:'tab',
         name:'GC',
+        image:"GC.png",
         methods:{
           onAdd:function(e){
             if(e.field.index > 0){
