@@ -319,3 +319,28 @@ debugger;
   	filterTimer=setTimeout($.proxy(processFilter, this), 300);
 	}
 });
+
+ 
+function localAcceptHandler(file, done) {
+  this._sendIntercept(file).then(result => {
+    file.contents = result;
+    if(typeof(this.localSuccess) === 'function') {
+      this.localSuccess(file, done);
+    } else {
+      done(); // empty done signals success
+    }
+  }).catch(result => {
+    debugger;
+    if(typeof(this.localFailure) === 'function') {
+      file.contents = result;
+      this.localFailure(file, done);
+    } else {
+      if(typeof(this.localFailure) === 'string') {
+        done(this.localFailure);
+      }else{
+        done(`Failed to upload file ${file.name}`);
+        console.warn(file);
+      }
+    }
+  });
+}Dropzone.autoDiscover = false;

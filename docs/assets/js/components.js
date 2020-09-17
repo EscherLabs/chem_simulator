@@ -53,66 +53,93 @@ instrument_components = [
       {
         legend:'Upload',
         name:"Upload",
-        "actions":[{type:"save",label:"View",target:".gform-footer"}],
+        // "actions":[{type:"save",label:"View",target:".gform-footer"}],
+        html:'<div class="well"><div class="dropzone" id="my-dropzone"></div></div>',
+        actions:[],
         events:[
-          {event:"save",handler:function(e){
-            var files = e.form.find('upload').el.querySelector('input').files
+          {event:"initialized",handler:function(e){
+            // if(typeof myDropzone !== 'undefined')return;
+            myDropzone = new Dropzone("#my-dropzone",{
+              maxFilesize: 10, // Mb
+              accept: localAcceptHandler,url:"#"
+            ,
+            init:function(){
+            this._sendIntercept = function(file, options={}) {
+              return new Promise((resolve,reject) => {
+                if(!options.readType) {
+                  const mime = file.type;
+                  // const textType = a(_textTypes).any(type => {
+                  //   const re = new RegExp(type);
+                  //   return re.test(mime);
+                  // });
+                  options.readType = 'readAsText';//textType ? 'readAsText' : 'readAsDataURL';
+                }
+                let reader = new window.FileReader();
 
-            // use the 1st file from the list
-            f = files[0];
-        
-            var reader = new FileReader();
-        
-            // Closure to capture the file information.
-            reader.onload = (function(theFile) {
-                return function(e) {
-                  globdata = JSON.parse(e.target.result);
-
-                   if(hash(globdata.name) !== globdata.check){
-                    console.error("imposter")
-                  }else{
-                    globdata.data = _.map(globdata.data,function(i){
-                      i.data = JSON.parse(i.data);
-                      return i;
-                    })
-// _.each()
-
-// document.querySelector('.main #errors').innerHTML = "";
-_.each(gform.instances,function(form){
-  if(form.options.name !== "Upload"){
-  form.destroy();
-  }
-})
-$('.main >.row >.col-md-8 > .target,.main >.row >.col-md-12 > .target').html('').removeClass('well').parent().removeClass('col-md-8').addClass('col-md-12')
-_.each(globdata.data,function(instrument_component){
-  debugger;
-  el = gform.create(gform.renderString(compontent,{}));
-  
-  $('.main >.row >.col-md-12 > .target').append(el);//.parent().removeClass('well')
-
-  myForm = new gform(_.extend({
-    "actions":[{type:"save",label:"Run",target:".gform-footer"}],
-    "data":instrument_component.data,
-    "default": {
-      "horizontal": true,edit:false
-    },"horizontal": true
-  },_.find(instrument_components, {name:instrument_component.name})),el.querySelector('.form'))
-
-})
-
-
-                    _.find(instrument_components,{legend:instruments[globdata.data[0].name].label}).chart(globdata.file,globdata.data[0].data);
-                  }
+                reader.onload = () => {
+                  resolve(reader.result);
                 };
-              })(f);
-        
-              // Read in the image file as a data URL.
-              reader.readAsText(f);
+                reader.onerror = () => {
+                  reject(reader.result);
+                };
+            
+                // run the reader
+                reader[options.readType](file);
+              });
+            }
+            this.localSuccess = function(file,done) {
+              _.each(gform.instances,function(form){
+                if(form.options.name !== "Upload"){
+                form.destroy();
+                }
+              })
+              $('.main >.row >.col-md-8 > .target,.main >.row >.col-md-12 > .target').html('').removeClass('well').parent().removeClass('col-md-8').addClass('col-md-12')
+
+
+              debugger;
+              globdata = JSON.parse(file.contents);
+
+               if(hash(globdata.name) !== globdata.check){
+                console.error("imposter")
+                done(`Imposter`);
+                return;
+              }else{
+                globdata.data = _.map(globdata.data,function(i){
+                  i.data = JSON.parse(i.data);
+                  return i;
+                })
+                // _.each()
+
+                // document.querySelector('.main #errors').innerHTML = "";
+                
+                _.each(globdata.data,function(instrument_component){
+                  el = gform.create(gform.renderString(compontent,{}));
+
+                  $('.main >.row >.col-md-12 > .target').append(el);//.parent().removeClass('well')
+
+                  myForm = new gform(_.extend({
+                  "actions":[{type:"save",label:"Run",target:".gform-footer"}],
+                  "data":instrument_component.data,
+                  "default": {
+                    "horizontal": true,edit:false
+                  },"horizontal": true
+                  },_.find(instrument_components, {name:instrument_component.name})),el.querySelector('.form'))
+
+                })
+
+
+                _.find(instrument_components,{legend:instruments[globdata.data[0].name].label}).chart(globdata.file,globdata.data[0].data);
+              }
+              myDropzone.removeAllFiles()
+
+              done();
+
+            }
+          }});
 
           }}
         ],
         fields:[
-            {label:"Upload",type:"file"}
         ]
       }
   ]

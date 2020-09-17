@@ -58,7 +58,7 @@ instrument_components.push(
                   }
               }
             });
-            gform.instances.modal.trigger('close');
+            if(typeof gform.instances.modal !== 'undefined')gform.instances.modal.trigger('close');
           }.bind(null,file))
         },
         events:[
@@ -76,7 +76,7 @@ instrument_components.push(
                 _.find(instrument_components,{legend:instruments['FTIR'].label}).chart(e.form.get('file'))
 
               }.bind(null,e.form)
-            ).on('cancel',function(){gform.instances.modal.trigger('close');}).modal()}
+            ).on('cancel',function(e){e.form.trigger('close');}).modal()}
           }
           
         ],

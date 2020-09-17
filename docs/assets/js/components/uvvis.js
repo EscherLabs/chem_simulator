@@ -10,7 +10,7 @@ instrument_components.push(
             var x = ['x']
             var y = []
             _.each(globaltemp,function(i){
-              if(parseInt(i[keys[0]]) >= settings['acquisition']['Wavelength range from (nm)'] && parseInt(i[keys[0]]) <= settings['acquisition']['Wavelength range to (nm)']){
+              if(parseInt(i[keys[0]]) >= settings['detection']['from'] && parseInt(i[keys[0]]) <= settings['detection']['to']){
                 x.push(i[keys[0]]);
                 y.push(i[keys[1]]);
               }
@@ -59,7 +59,7 @@ instrument_components.push(
                             temp.push(i)
                             }
                             return temp;
-                          }(100,1200,100)
+                          }(100,1200,10)
                           
                       },
                       label: keys[0]
@@ -70,7 +70,7 @@ instrument_components.push(
                   }
               }
             });
-            gform.instances.modal.trigger('close');
+            if(typeof gform.instances.modal !== 'undefined')gform.instances.modal.trigger('close');
           })
         },
         events:[{
@@ -113,7 +113,7 @@ instrument_components.push(
     
               myint = launchInterval(actions,1000);
               e.form.trigger('close')
-            }.bind(null,e.form)).on('cancel',function(){gform.instances.modal.trigger('close');}).modal()
+            }.bind(null,e.form)).on('cancel',function(e){e.form.trigger('close');}).modal()
           }
         }],
         name:"UV-Vis",
@@ -130,11 +130,11 @@ instrument_components.push(
             {name:"Tungsten",type:"switch",options:["Off","On"]},
             {name:"Deuterium",type:"switch",options:["Off","On"]}
           ]},
-          {legend: 'Spectrum/Peak detection', type: 'fieldset',fields:[
+          {legend: 'Spectrum/Peak detection',name:"detection", type: 'fieldset',fields:[
             {name:"Find and annotate up to ___ peaks",type:"number",value:1,min:1,step:1,max:4},
             {name:"Data Type",type:"custom_radio",value:"Absorbance",options:["Absorbance","Transmittance"]},
-            {name:"Display spectrum from (nm)",type:"number",value:290,min:290,step:1,max:890},
-            {name:"Display spectrum to (nm)",type:"number",value:300,min:300,step:1,max:900}
+            {label:"Display spectrum from (nm)",name:"from",type:"number",value:290,min:290,step:1,max:890},
+            {label:"Display spectrum to (nm)",name:"to",type:"number",value:300,min:300,step:1,max:900}
           ]}
         ]
       }
@@ -148,3 +148,6 @@ instrument_components.push(
       {"label":"25.0 PPM",value:"25PPM1"},
       {"label":"Unknown Solution",value:"UNKNOWN1"}
     ])
+
+
+    //ftir and uvvis need to run blank first

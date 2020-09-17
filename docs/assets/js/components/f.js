@@ -50,7 +50,7 @@ instrument_components.push(
                             temp.push(i)
                             }
                             return temp;
-                          }(400,4000,100)
+                          }(400,750,5)
                           
                       },
                       label: keys[0]
@@ -61,7 +61,7 @@ instrument_components.push(
               }
             });
             $('.c3-lines').hide();
-            gform.instances.modal.trigger('close');
+            if(typeof gform.instances.modal !== 'undefined')gform.instances.modal.trigger('close');
           }.bind(null,file))
         },
         events:[
@@ -79,7 +79,7 @@ instrument_components.push(
                 _.find(instrument_components,{legend:instruments['F'].label}).chart(e.form.get('file'))
 
               }.bind(null,e.form)
-            ).on('cancel',function(){gform.instances.modal.trigger('close');}).modal()}
+            ).on('cancel',function(e){e.form.trigger('close');}).modal()}
           }
           
         ],

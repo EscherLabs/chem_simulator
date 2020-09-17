@@ -69,10 +69,17 @@ instrument_components.push(
             });
             $('.c3-lines').hide();
 
-            gform.instances.modal.trigger('close');
+            if(typeof gform.instances.modal !== 'undefined')gform.instances.modal.trigger('close');
           })
 
         },
+        validationFields:[
+          {name:'scan_rate',options:[{value:null,label:''},.02,.05,.1,.15],type:"select",validate:[{type:"required",message:"Check your Scan Rate"}]},
+          {name:'e_begin',validate:[{type:"numeric",min:-0.25,message:'Check your E Begin Voltage'}]},
+          // {name:'e_step',validate:[{type:"numeric",min:-0.25}]},
+          // {name:'scans',validate:[{type:"matches",value:"1",message:"Check your number of scans"}]},
+          // {name:'scan_rate',validate:[]},
+        ],
         events:[
           {
             "event":"save",
@@ -80,42 +87,54 @@ instrument_components.push(
               $('.chart').html('')
 
 
+
+
 if(!e.form.validate())return false;
 
 //todo -- look at using gform validation for the following
 
-              var errors = [];
-              var data = e.form.get();
-              if([20,50,100,150].indexOf((data.scan_rate*1000))== -1){
-                errors.push('Check your Scan Rate')
+              // var errors = [];
+              // var data = e.form.get();
 
+              var testForm = new gform({fields:_.find(instrument_components,{legend:instruments['CV'].label}).validationFields,data:e.form})
+
+              if(!testForm.validate(true)){
+                var errors = _.values(testForm.errors);
+                debugger;
+                if(errors.length>1){
+                  $('.chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
+                }else{
+                  $('.chart').append('<div class="alert alert-danger">'+errors[0]+'</div>')
+                }
+                testForm.destroy();
+                return false;
               }
-              if(data.e_begin < -0.25){
-                errors.push('Check your E Begin Voltage')
-              } 
-              // // if(data.e_vertex1 !== -0.25){
-              // //   errors.push('Check your E Vertex 1')
-              // // }
-              // if(data.e_end !== 0.4){
-              //   errors.push('Check your E Vertex 2')
+              testForm.destroy();
+
+              // if([20,50,100,150].indexOf((data.scan_rate*1000))== -1){
+              //   errors.push('Check your Scan Rate')
               // }
-              if(data.e_step <= -0.001 || data.e_step >=0.005){
-                errors.push('Check your E Step')
-              }//.1 .05
+              // if(data.e_begin < -0.25){
+              //   errors.push('Check your E Begin Voltage')
+              // } 
 
-              if(data.scans !== "1"){
-                errors.push('Check your number of scans')
-              }
+              // if(data.e_step <= -0.001 || data.e_step >=0.005){
+              //   errors.push('Check your E Step')
+              // }//.1 .05
+
+              // if(data.scans !== "1"){
+              //   errors.push('Check your number of scans')
+              // }
 
               
-             if(errors.length >1){
-              $('.chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
-              return false;
-             }
-             if(errors.length == 1){
-              $('.chart').append('<div class="alert alert-danger">'+errors[0]+'</div>')
-              return false;
-             }
+            //  if(errors.length >1){
+            //   $('.chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
+            //   return false;
+            //  }
+            //  if(errors.length == 1){
+            //   $('.chart').append('<div class="alert alert-danger">'+errors[0]+'</div>')
+            //   return false;
+            //  }
 
               var modalForm = new gform({
                 legend:"Sample Name",
@@ -131,7 +150,7 @@ if(!e.form.validate())return false;
                 _.find(instrument_components,{legend:instruments['CV'].label}).chart(e.form.get('file'),form.get())
 
             }.bind(null,e.form)
-          ).on('cancel',function(){gform.instances.modal.trigger('close');}).modal()}
+          ).on('cancel',function(e){e.form.trigger('close');}).modal()}
           }
         ],
         name:"CV",
@@ -141,10 +160,10 @@ if(!e.form.validate())return false;
           {label:"t-equilibration (sec)",name:"t_equilibration",type:"number",value:0,min:0,step:10,max:60,validate:[{type:'numeric'}]},
           {label:"E begin (V)",name:"e_begin",type:"number",value:-1,min:-1,step:0.05,max:0,validate:[{type:'numeric'}]},
           // {label:"E vertex1 (V)",name:"e_vertex1",type:"number",value:-1,min:-1,step:0.05,max:0,validate:[{type:'numeric'}]},
-          {label:"E end",name:"e_end",type:"number",value:0,min:0,step:0.05,max:1,validate:[{type:'numeric'}]},
+          {label:"E end (V)",name:"e_end",type:"number",value:0,min:0,step:0.05,max:1,validate:[{type:'numeric'}]},
           {label:"E step (V)",name:"e_step",type:"number",value:0,min:0,step:0.01,max:0.05,validate:[{type:'numeric'}]},
           {label:"Scan rate (V/s)",name:"scan_rate",type:"number",value:0,min:0,step:0.01,max:0.25,validate:[{type:'numeric'}]},
-          {label:"Number of scans",name:"scans",type:"custom_radio",value:1,options:[1,2]}
+          {label:"Number of scans",name:"scans",type:"custom_radio",value:"1",options:["1","2"]}
         ]
       }
 )
