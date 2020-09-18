@@ -103,6 +103,11 @@ instrument_components.push(
                 globalfile = e.form.get('file');
                 _.find(instrument_components,{legend:instruments['FTIR'].label}).chart(e.form.get('file'))
 
+                gform.collections.update('ftir',["Background",
+                "Cyclohexane reference",
+                "Polystyrene standard",
+                "Sample 1 in Cyclohexane"])
+
               }.bind(null,e.form)
             ).on('cancel',function(e){e.form.trigger('close');}).modal()}
           }
@@ -139,9 +144,6 @@ instrument_components.push(
     
     )
 
-    gform.collections.add('ftir',["Background",
-    "Cyclohexane reference",
-    "Polystyrene standard",
-    "Sample 1 in Cyclohexane"])
+    gform.collections.add('ftir',["Background"])
 
 

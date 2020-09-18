@@ -129,6 +129,15 @@ instrument_components.push(
     
               myint = launchInterval(actions,1000);
               e.form.trigger('close')
+
+              gform.collections.update('uvvis',[
+                {"label":"Blank",value:"BLANK2"},
+                {"label":"1.00 PPM",value:"1PPM1"},
+                {"label":"4.00 PPM",value:"4PPM1"},
+                {"label":"10.0 PPM",value:"10PPM1"},
+                {"label":"25.0 PPM",value:"25PPM1"},
+                {"label":"Unknown Solution",value:"UNKNOWN1"}
+              ])
             }.bind(null,e.form)).on('cancel',function(e){e.form.trigger('close');}).modal()
           }
         }],
@@ -139,8 +148,8 @@ instrument_components.push(
           {legend: 'Acquisition', type: 'fieldset',fields:[
             {label:"Wavelength range from (nm)",name:"from",type:"number",value:190,min:190,step:1,max:890},
             {label:"Wavelength range to (nm)",name:"to",type:"number",value:300,min:300,step:1,max:1100},
-            {label:"Integration time (s)",type:"number",value:0.25,min:0.25,step:0.25,max:2,validate:[{type:"matches",value:0.5}]},
-            {label:"Interval (nm)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"matches",value:1}]},
+            {label:"Integration time (s)",type:"number",value:0.25,min:0.25,step:0.25,max:2,validate:[{type:"matches",value:0.5,message:"Check Integration time "}]},
+            {label:"Interval (nm)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"matches",value:1, message:"Check Interval"}]},
           ]},
           {legend: 'Lamps',name:'lamps', type: 'fieldset',fields:[
             {label:"Tungsten",type:"switch",options:["Off","On"],validate:[{type:"matches", value:"On", message:"Check Lamp Settings","conditions": [
@@ -189,12 +198,7 @@ instrument_components.push(
     
     )
     gform.collections.add('uvvis',[
-      {"label":"Blank",value:"BLANK2"},
-      {"label":"1.00 PPM",value:"1PPM1"},
-      {"label":"4.00 PPM",value:"4PPM1"},
-      {"label":"10.0 PPM",value:"10PPM1"},
-      {"label":"25.0 PPM",value:"25PPM1"},
-      {"label":"Unknown Solution",value:"UNKNOWN1"}
+      {"label":"Blank",value:"BLANK2"}
     ])
 
 
