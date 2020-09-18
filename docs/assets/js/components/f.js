@@ -127,9 +127,7 @@ instrument_components.push(
 
         validationFields:[
 
-          {legend: 'Pre-Scan', type: 'fieldset',fields:[
             {name:"Slit Width (nm)",type:"number",validate:[{type:"matches",value:10,message:"Slit Width"}]},
-          ]},
           {legend: 'Emission-Scan', type: 'fieldset',fields:[
             {name:"Start (nm)",type:"number",validate:[{type:"numeric",min:480,max:520,message:"Check Emission-Scan Start"}]},
             {name:"End (nm)",type:"number",validate:[{type:"numeric",min:521,max:550,message:"Check Emission-Scan End"}]},
@@ -141,13 +139,13 @@ instrument_components.push(
           ]}
   ],
         fields:[
+
           {legend: 'Pre-Scan', type: 'fieldset',fields:[
             {name:"Excitation range from (nm)",type:"number",value:390,min:390,step:1,max:490},
             {name:"Excitation range to (nm)",type:"number",value:490,min:490,step:1,max:500},
             {name:"Emission range from (nm)",type:"number",value:400,min:400,step:1,max:740},
             {name:"Emission range to (nm)",type:"number",value:410,min:410,step:1,max:750},
             {name:"Scan Speed (nm/min)",type:"number",value:250,min:250,step:10,max:1000},
-            {name:"Slit Width (nm)",type:"number",value:5,min:5,step:1,max:10},
             
           ]},
           {legend: 'Excitation-Scan', type: 'fieldset',fields:[
@@ -161,7 +159,9 @@ instrument_components.push(
             {name:"End (nm)",type:"number",value:410,min:410,step:1,max:750},
             {name:"Excitation (nm)",type:"number",value:390,min:390,step:1,max:500},
             {name:"Scan Speed (nm/min)",type:"number",value:250,min:250,step:10,max:1000},
-          ]}
+          ]},
+          {name:"Slit Width (nm)",type:"number",value:5,min:5,step:1,max:10}
+
         ]
       }
     )
