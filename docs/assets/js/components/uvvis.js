@@ -3,7 +3,6 @@ instrument_components.push(
         legend:'UV-Vis Spectrophotometer',
         image:"UVVis1.png",
         chart:function(file, settings){
-  
           $.get('assets/data/uvvis/'+file+'.CSV',function(e){
             globaltemp = _.csvToArray(e,{skip:0});
             keys = _.keys(globaltemp[0]);
@@ -16,10 +15,9 @@ instrument_components.push(
               }
             })
             var maxKey = _.maxBy(_.keys(y), function (o) {
-               return parseFloat(y[o])||0; 
-              });
-              maxKey++;
-              // y.unshift()
+              return parseFloat(y[o])||0; 
+            });
+            maxKey++;
             c3chart =  c3.generate({
               bindto: '.chart',
               data: {
@@ -76,14 +74,31 @@ instrument_components.push(
         events:[{
           "event": "save",
           "handler": function(e){
-            // var files = [
-            //   {"label":"Blank",value:"BLANK2"},
-            //   {"label":"1.00 PPM",value:"1PPM1"},
-            //   {"label":"4.00 PPM",value:"4PPM1"},
-            //   {"label":"10.0 PPM",value:"10PPM1"},
-            //   {"label":"25.0 PPM",value:"25PPM1"},
-            //   {"label":"Unknown Solution",value:"UNKNOWN1"}
-            // ];
+            $('.chart').html('')
+
+            if(!e.form.validate())return false;
+
+            //todo -- look at using gform validation for the following
+            
+                          // var errors = [];
+                          // var data = e.form.get();
+            debugger;
+                          var testForm = new gform({fields:_.find(instrument_components,{legend:instruments['UV-Vis'].label}).validationFields,data:e.form.get()})
+            
+                          if(!testForm.validate(true)){
+                            var errors = _.uniq(_.values(testForm.errors));
+                            debugger;
+                            if(errors.length>1){
+                              $('.chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
+                            }else{
+                              $('.chart').append('<div class="alert alert-danger">'+errors[0]+'</div>')
+                            }
+                            testForm.destroy();
+                            return false;
+                          }
+                          testForm.destroy();
+            
+
             new gform({
               legend:"Sample Name",
               name:"modal",
@@ -91,7 +106,8 @@ instrument_components.push(
                 {type:"smallcombo",name:"file",label:false,options:'uvvis',value:"BLANK2"}
               ]
             }).on('save',function(form,e){
-              
+
+
               var a = '<center><div style="width:510px;height: 310px;background-position:0px -8px;background-image:url(assets/img/uv_vis_2.png)"></div></center>';
               var b = '<center><div style="width:510px;height: 310px;background-position: -1px -8px;background-image:url(assets/img/uv_vis_1.png)"></div></center>';
     
@@ -118,21 +134,53 @@ instrument_components.push(
         }],
         name:"UV-Vis",
         sections:'tab',
+        validationFields:[
+
+          {legend: 'Acquisition', type: 'fieldset',fields:[
+            {label:"Wavelength range from (nm)",name:"from",type:"number",value:190,min:190,step:1,max:890},
+            {label:"Wavelength range to (nm)",name:"to",type:"number",value:300,min:300,step:1,max:1100},
+            {label:"Integration time (s)",type:"number",value:0.25,min:0.25,step:0.25,max:2,validate:[{type:"matches",value:0.5}]},
+            {label:"Interval (nm)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"matches",value:1}]},
+          ]},
+          {legend: 'Lamps',name:'lamps', type: 'fieldset',fields:[
+            {label:"Tungsten",type:"switch",options:["Off","On"],validate:[{type:"matches", value:"On", message:"Check Lamp Settings","conditions": [
+              {
+                    "type": "test",
+                    "test": function(e){
+                      return ((e.owner.find({map:'acquisition.to'}).value >400) || (e.owner.find({map:'lamps.deuterium'}).value == "Off" && e.owner.find({map:'acquisition.from'}).value < 400 ));
+                    }
+              }
+            ]}
+          ]},
+            {label:"Deuterium",type:"switch",options:["Off","On"],validate:[{type:"matches", value:"On", message:"Check Lamp Settings","conditions": [
+              {
+                    "type": "test",
+                    "test": function(e){
+                      return ((e.owner.find({map:'acquisition.from'}).value <300) || (e.owner.find({map:'lamps.tungsten'}).value == "Off" && e.owner.find({map:'acquisition.to'}).value > 300 ));
+
+                    }
+                    
+                
+              }
+            ]}
+          ]}
+          ]},
+        ],
         fields:[
           {legend: 'Acquisition', type: 'fieldset',fields:[
-            {name:"Wavelength range from (nm)",type:"number",value:290,min:290,step:1,max:890},
-            {name:"Wavelength range to (nm)",type:"number",value:300,min:300,step:1,max:900},
-            {name:"Integration time (s)",type:"number",value:0.25,min:0.25,step:0.25,max:2},
-            {name:"Interval (nm)",type:"number",value:1,min:1,step:1,max:4},
-            {name:"Path Length (cm)",type:"number",value:0.5,min:0.5,step:1,max:1}
+            {label:"Wavelength range from (nm)",name:"from",type:"number",value:190,min:190,step:1,max:890,validate:[{type:"numeric"}]},
+            {label:"Wavelength range to (nm)",name:"to",type:"number",value:300,min:300,step:1,max:1100,validate:[{type:"numeric"}]},
+            {label:"Integration time (s)",type:"number",value:0.25,min:0.25,step:0.25,max:2},
+            {label:"Interval (nm)",type:"number",value:1,min:1,step:1,max:4},
+            {label:"Path Length (cm)",type:"number",value:0.5,min:0.5,step:1,max:1}
           ]},
-          {legend: 'Lamps', type: 'fieldset',fields:[
-            {name:"Tungsten",type:"switch",options:["Off","On"]},
-            {name:"Deuterium",type:"switch",options:["Off","On"]}
+          {legend: 'Lamps',name:'lamps', type: 'fieldset',fields:[
+            {label:"Tungsten",type:"switch",options:["Off","On"]},
+            {label:"Deuterium",type:"switch",options:["Off","On"]}
           ]},
           {legend: 'Spectrum/Peak detection',name:"detection", type: 'fieldset',fields:[
-            {name:"Find and annotate up to ___ peaks",type:"number",value:1,min:1,step:1,max:4},
-            {name:"Data Type",type:"custom_radio",value:"Absorbance",options:["Absorbance","Transmittance"]},
+            {label:"Find and annotate up to ___ peaks",type:"number",value:1,min:1,step:1,max:4},
+            {label:"Data Type",type:"custom_radio",value:"Absorbance",options:["Absorbance","Transmittance"]},
             {label:"Display spectrum from (nm)",name:"from",type:"number",value:290,min:290,step:1,max:890},
             {label:"Display spectrum to (nm)",name:"to",type:"number",value:300,min:300,step:1,max:900}
           ]}

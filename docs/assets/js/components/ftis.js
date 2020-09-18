@@ -65,6 +65,34 @@ instrument_components.push(
           {
             "event":"save",
             "handler":function(e){
+              $('.chart').html('')
+
+              if(!e.form.validate())return false;
+  
+              //todo -- look at using gform validation for the following
+              
+                            // var errors = [];
+                            // var data = e.form.get();
+              debugger;
+                            var testForm = new gform({fields:_.find(instrument_components,{legend:instruments['FTIR'].label}).validationFields,data:e.form.get()})
+              
+                            if(!testForm.validate(true)){
+                              var errors = _.uniq(_.values(testForm.errors));
+                              debugger;
+                              if(errors.length>1){
+                                $('.chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
+                              }else{
+                                $('.chart').append('<div class="alert alert-danger">'+errors[0]+'</div>')
+                              }
+                              testForm.destroy();
+                              return false;
+                            }
+                            testForm.destroy();
+              
+
+
+
+
               var modalForm = new gform({
                 legend:"Sample Name",
                 name:"modal",
@@ -82,13 +110,26 @@ instrument_components.push(
         ],
         name:"FTIR",
         sections:'tab',
+
+        validationFields:[
+          {legend: 'Sample Holder', type: 'fieldset',fields:[
+
+          {name:"Number of Accumulations",type:"number",value:1,min:1,step:1,max:16,validate:[{type:"matches",value:4,message:"Check Accumulations"}]},
+          {name:"Range start (cm-1)",type:"number",value:360,min:360,step:10,max:8300,validate:[{type:"matches",value:450,message:"Check Range Start"}]},
+          {name:"Range end (cm-1)",type:"number",value:820,min:820,step:10,max:4000,validate:[{type:"matches",value:4000,message:"Check Range End"}]},
+          {name:"Resolution (cm-1)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"matches",value:4,message:"Check Resolution"}]},
+          {name:"Interval (cm-1)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"matches",value:1,message:"Check Interval"}]},
+  
+          {name:"Units",type:"custom_radio",value:"A",options:["A","T"],validate:[{type:"matches",value:"A",message:"Check Units"}]},
+          {name:"Background",type:"custom_radio",value:"Air",options:["Air","Sample matrix"],validate:[{type:"matches",value:"Air",message:"Check Background"}]},
+        ]}],
         fields:[
           {legend: 'Sample Holder', type: 'fieldset',fields:[
-            {name:"Number of Accumulations",type:"number",value:1,min:1,step:1,max:16},
-            {name:"Range start (cm-1)",type:"number",value:360,min:360,step:10,max:8300},
-            {name:"Range end (cm-1)",type:"number",value:820,min:820,step:10,max:4000},
-            {name:"Resolution (cm-1)",type:"number",value:1,min:1,step:1,max:4},
-            {name:"Interval (cm-1)",type:"number",value:1,min:1,step:1,max:4},
+            {name:"Number of Accumulations",type:"number",value:1,min:1,step:1,max:16,validate:[{type:"numeric"}]},
+            {name:"Range start (cm-1)",type:"number",value:360,min:360,step:10,max:8300,validate:[{type:"numeric"}]},
+            {name:"Range end (cm-1)",type:"number",value:820,min:820,step:10,max:4000,validate:[{type:"numeric"}]},
+            {name:"Resolution (cm-1)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"numeric"}]},
+            {name:"Interval (cm-1)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"numeric"}]},
     
             {name:"Units",type:"custom_radio",value:"A",options:["A","T"]},
             {name:"Background",type:"custom_radio",value:"Air",options:["Air","Sample matrix"]},
@@ -102,3 +143,5 @@ instrument_components.push(
     "Cyclohexane reference",
     "Polystyrene standard",
     "Sample 1 in Cyclohexane"])
+
+

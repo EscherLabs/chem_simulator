@@ -96,7 +96,7 @@ if(!e.form.validate())return false;
               // var errors = [];
               // var data = e.form.get();
 
-              var testForm = new gform({fields:_.find(instrument_components,{legend:instruments['CV'].label}).validationFields,data:e.form})
+              var testForm = new gform({fields:_.find(instrument_components,{legend:instruments['CV'].label}).validationFields,data:e.form.get()})
 
               if(!testForm.validate(true)){
                 var errors = _.values(testForm.errors);
