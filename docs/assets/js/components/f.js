@@ -41,9 +41,9 @@ instrument_components.push(
               axis: {
                   x: {
                       tick: {
-                          format(d) {
-                            return this.data.xs[_.keys(this.data.xs)[0]][this.data.xs[_.keys(this.data.xs)[0]].length-(1+this.data.xs[_.keys(this.data.xs)[0]].indexOf(d))]
-                          },
+                          // format(d) {
+                          //   return this.data.xs[_.keys(this.data.xs)[0]][this.data.xs[_.keys(this.data.xs)[0]].length-(1+this.data.xs[_.keys(this.data.xs)[0]].indexOf(d))]
+                          // },
                           values: function(start,end,interval){
                             var temp = [];
                             for(var i = start; i<=end; i+=interval){
