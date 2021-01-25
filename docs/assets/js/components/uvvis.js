@@ -80,24 +80,21 @@ instrument_components.push(
 
             //todo -- look at using gform validation for the following
             
-                          // var errors = [];
-                          // var data = e.form.get();
-            debugger;
-                          var testForm = new gform({fields:_.find(instrument_components,{legend:instruments['UV-Vis'].label}).validationFields,data:e.form.get()})
-            
-                          if(!testForm.validate(true)){
-                            var errors = _.uniq(_.values(testForm.errors));
-                            debugger;
-                            if(errors.length>1){
-                              $('.chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
-                            }else{
-                              $('.chart').append('<div class="alert alert-danger">'+errors[0]+'</div>')
-                            }
-                            testForm.destroy();
-                            return false;
-                          }
-                          testForm.destroy();
-            
+                var testForm = new gform({fields:_.find(instrument_components,{legend:instruments['UV-Vis'].label}).validationFields2021,data:e.form.get()})
+  
+                if(!testForm.validate(true)){
+                  var errors = _.uniq(_.values(testForm.errors));
+                  if(errors.length>1){
+                    console.log(errors)
+                    $('.chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
+                  }else{
+                    $('.chart').append('<div class="alert alert-danger">'+errors[0]+'</div>')
+                  }
+                  testForm.destroy();
+                  return false;
+                }
+                testForm.destroy();
+  
 
             new gform({
               legend:"Sample Name",
@@ -131,12 +128,18 @@ instrument_components.push(
               e.form.trigger('close')
 
               gform.collections.update('uvvis',[
+                // {"label":"Blank",value:"BLANK2"},
+                // {"label":"1.00 PPM",value:"1PPM1"},
+                // {"label":"4.00 PPM",value:"4PPM1"},
+                // {"label":"10.0 PPM",value:"10PPM1"},
+                // {"label":"25.0 PPM",value:"25PPM1"},
+                // {"label":"Unknown Solution",value:"UNKNOWN1"}
+
                 {"label":"Blank",value:"BLANK2"},
-                {"label":"1.00 PPM",value:"1PPM1"},
-                {"label":"4.00 PPM",value:"4PPM1"},
-                {"label":"10.0 PPM",value:"10PPM1"},
-                {"label":"25.0 PPM",value:"25PPM1"},
-                {"label":"Unknown Solution",value:"UNKNOWN1"}
+                {"label":"1.00 ppm Dye",value:"2021-1ppm"},
+                {"label":"5.00 ppm Dye",value:"2021-5ppm"},
+                {"label":"10.00 ppm Dye",value:"2021-10ppm"},
+                {"label":"Dye Unknown",value:"2021-unknown"}
               ])
             }.bind(null,e.form)).on('cancel',function(e){e.form.trigger('close');}).modal()
           }
@@ -175,13 +178,49 @@ instrument_components.push(
           ]}
           ]},
         ],
+        validationFields2021:[
+
+          {legend: 'Acquisition', type: 'fieldset',fields:[
+            {label:"Wavelength range from (nm)",name:"from",type:"number",min:300,step:1,max:450,validate:[{type:"numeric"}]},
+            {label:"Wavelength range to (nm)",name:"to",type:"number",min:700,step:1,max:750,validate:[{type:"numeric"}]},
+            {label:"Integration time (s)",type:"number",value:0.25,min:0.25,step:0.25,max:2,validate:[{type:"matches",value:0.5,message:"Check Integration time "}]},
+            {label:"Interval (nm)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"matches",value:1, message:"Check Interval"}]},
+            {label:"Path Length (cm)",type:"number",value:0.5,min:0.5,step:0.5,max:1,validate:[{type:"matches",value:1, message:"Check Path Length"}]}
+          ]},
+          {legend: 'Lamps',name:'lamps', type: 'fieldset',fields:[
+            {label:"Tungsten",type:"switch",options:["Off","On"],validate:[{type:"matches", value:"On", message:"Check Lamp Settings","conditions": [
+              {
+                  "type": "test",
+                  "test": function(e){
+                    return ((e.owner.find({map:'acquisition.to'}).value >400) || (e.owner.find({map:'lamps.deuterium'}).value == "Off" && e.owner.find({map:'acquisition.from'}).value < 400 ));
+                  }
+              }
+            ]}
+          ]},
+            {label:"Deuterium",type:"switch",options:["Off","On"],validate:[{type:"matches", value:"On", message:"Check Lamp Settings","conditions": [
+              {
+                    "type": "test",
+                    "test": function(e){
+                      return ((e.owner.find({map:'acquisition.from'}).value <300) || (e.owner.find({map:'lamps.tungsten'}).value == "Off" && e.owner.find({map:'acquisition.to'}).value > 300 ));
+                    }
+              }
+            ]}
+          ]}
+          ]},
+          {legend: 'Spectrum/Peak detection',name:"detection", type: 'fieldset',fields:[
+            {label:"Find and annotate up to ___ peaks",type:"number",min:1,step:1,max:2,validate:[{type:"numeric"}]},
+            {label:"Data Type",type:"custom_radio",value:"Absorbance",options:["Absorbance","Transmittance"],validate:[{type:"matches",value:"Absorbance", message:"Check Data Type"}]},
+            {label:"Display spectrum from (nm)",name:"from",type:"number",min:300,step:1,max:450,validate:[{type:"numeric"}]},
+            {label:"Display spectrum to (nm)",name:"to",type:"number",min:700,step:1,max:750,validate:[{type:"numeric"}]},
+          ]}
+        ],
         fields:[
           {legend: 'Acquisition', type: 'fieldset',fields:[
             {label:"Wavelength range from (nm)",name:"from",type:"number",value:190,min:190,step:1,max:890,validate:[{type:"numeric"}]},
             {label:"Wavelength range to (nm)",name:"to",type:"number",value:300,min:300,step:1,max:1100,validate:[{type:"numeric"}]},
             {label:"Integration time (s)",type:"number",value:0.25,min:0.25,step:0.25,max:2},
             {label:"Interval (nm)",type:"number",value:1,min:1,step:1,max:4},
-            {label:"Path Length (cm)",type:"number",value:0.5,min:0.5,step:1,max:1}
+            {label:"Path Length (cm)",type:"number",value:0.5,min:0.5,step:0.5,max:1}
           ]},
           {legend: 'Lamps',name:'lamps', type: 'fieldset',fields:[
             {label:"Tungsten",type:"switch",options:["Off","On"]},

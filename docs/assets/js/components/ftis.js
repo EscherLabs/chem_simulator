@@ -121,10 +121,10 @@ instrument_components.push(
           {legend: 'Sample Holder', type: 'fieldset',fields:[
 
           {name:"Number of Accumulations",type:"number",value:1,min:1,step:1,max:16,validate:[{type:"matches",value:4,message:"Check Accumulations"}]},
-          {name:"Range start (cm-1)",type:"number",value:360,min:360,step:10,max:8300,validate:[{type:"matches",value:450,message:"Check Range Start"}]},
-          {name:"Range end (cm-1)",type:"number",value:820,min:820,step:10,max:4000,validate:[{type:"matches",value:4000,message:"Check Range End"}]},
-          {name:"Resolution (cm-1)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"matches",value:4,message:"Check Resolution"}]},
-          {name:"Interval (cm-1)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"matches",value:1,message:"Check Interval"}]},
+          {name:"Range start (cm<sup>-1</sup>)",type:"number",value:360,min:360,step:10,max:8300,validate:[{type:"matches",value:450,message:"Check Range Start"}]},
+          {name:"Range end (cm<sup>-1</sup>)",type:"number",value:820,min:820,step:10,max:4000,validate:[{type:"matches",value:4000,message:"Check Range End"}]},
+          {name:"Resolution (cm<sup>-1</sup>)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"matches",value:4,message:"Check Resolution"}]},
+          {name:"Interval (cm<sup>-1</sup>)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"matches",value:1,message:"Check Interval"}]},
   
           {name:"Units",type:"custom_radio",value:"A",options:["A","T"],validate:[{type:"matches",value:"A",message:"Check Units"}]},
           {name:"Background",type:"custom_radio",value:"Air",options:["Air","Sample matrix"],validate:[{type:"matches",value:"Air",message:"Check Background"}]},
@@ -132,10 +132,10 @@ instrument_components.push(
         fields:[
           {legend: 'Sample Holder', type: 'fieldset',fields:[
             {name:"Number of Accumulations",type:"number",value:1,min:1,step:1,max:16,validate:[{type:"numeric"}]},
-            {name:"Range start (cm-1)",type:"number",value:360,min:360,step:10,max:8300,validate:[{type:"numeric"}]},
-            {name:"Range end (cm-1)",type:"number",value:820,min:820,step:10,max:4000,validate:[{type:"numeric"}]},
-            {name:"Resolution (cm-1)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"numeric"}]},
-            {name:"Interval (cm-1)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"numeric"}]},
+            {name:"Range start (cm<sup>-1</sup>)",type:"number",value:360,min:360,step:10,max:8300,validate:[{type:"numeric"}]},
+            {name:"Range end (cm<sup>-1</sup>)",type:"number",value:820,min:820,step:10,max:4000,validate:[{type:"numeric"}]},
+            {name:"Resolution (cm<sup>-1</sup>)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"numeric"}]},
+            {name:"Interval (cm<sup>-1</sup>)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"numeric"}]},
     
             {name:"Units",type:"custom_radio",value:"A",options:["A","T"]},
             {name:"Background",type:"custom_radio",value:"Air",options:["Air","Sample matrix"]},

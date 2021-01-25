@@ -40,7 +40,7 @@ instruments ={
     },
     "GC-MS":{
       device:"GC-MS",
-      components:['GC','MS'],
+      components:['GC-MS'],
       label:"Gas Chromatograph - Mass Spectrometer",
       image:"ag_gcms.png",
       disabled:true
@@ -57,11 +57,12 @@ instruments ={
     //   components:['NMR'],
     //   label:"Nuclear Magnetic Resonance"
     // },
-    // "FAAS":{
-    //   device:"FAAS",
-    //   components:['FAAS'],
-    //   label:"Flame Atomic Absorption Spectrophotometer"
-    // },
+    "FAAS":{
+      device:"FAAS",
+      components:['FAAS'],
+      label:"Flame Atomic Absorption Spectrophotometer",
+      image:"HPLC1.png"
+    },
     // "DSC":{
     //   device:"DSC",
     //   components:['DSC'],
