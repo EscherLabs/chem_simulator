@@ -78,24 +78,20 @@ instrument_components.push(
                             // var errors = [];
                             // var data = e.form.get();
               debugger;
-                            var testForm = new gform({fields:_.find(instrument_components,{legend:instruments['F'].label}).validationFields,data:e.form.get()})
-              
-                            if(!testForm.validate(true)){
-                              var errors = _.uniq(_.values(testForm.errors));
-                              debugger;
-                              if(errors.length>1){
-                                $('.chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
-                              }else{
-                                $('.chart').append('<div class="alert alert-danger">'+errors[0]+'</div>')
-                              }
-                              testForm.destroy();
-                              return false;
-                            }
-                            testForm.destroy();
-              
+              var testForm = new gform({fields:_.find(instrument_components,{legend:instruments['F'].label}).validationFields,data:e.form.get()})
 
-
-
+              if(!testForm.validate(true)){
+                var errors = _.uniq(_.values(testForm.errors));
+                debugger;
+                if(errors.length>1){
+                  $('.chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
+                }else{
+                  $('.chart').append('<div class="alert alert-danger">'+errors[0]+'</div>')
+                }
+                testForm.destroy();
+                return false;
+              }
+              testForm.destroy();
 
               var modalForm = new gform({
                 legend:"Sample Name",
@@ -127,7 +123,7 @@ instrument_components.push(
 
         validationFields:[
 
-            {name:"Slit Width (nm)",type:"number",validate:[{type:"matches",value:10,message:"Slit Width"}]},
+          {name:"Slit Width (nm)",type:"number",validate:[{type:"matches",value:10,message:"Slit Width"}]},
           {legend: 'Emission-Scan', type: 'fieldset',fields:[
             {name:"Start (nm)",type:"number",validate:[{type:"numeric",min:480,max:520,message:"Check Emission-Scan Start"}]},
             {name:"End (nm)",type:"number",validate:[{type:"numeric",min:521,max:550,message:"Check Emission-Scan End"}]},

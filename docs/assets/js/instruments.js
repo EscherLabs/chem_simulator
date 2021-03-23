@@ -63,11 +63,12 @@ instruments ={
       label:"Flame Atomic Absorption Spectrophotometer",
       image:"HPLC1.png"
     },
-    // "DSC":{
-    //   device:"DSC",
-    //   components:['DSC'],
-    //   label:"Differential Scanning Calorimeter"
-    // },
+    "DSC":{
+      device:"DSC",
+      components:['DSC'],
+      label:"Differential Scanning Calorimeter",
+      image:"DSC.png"
+    },
     // "E":{
     //   device:"E",
     //   components:['E'],
