@@ -4,10 +4,11 @@ instrument_components.push(
         name:"DSC",
         // sections:'tab',
         fields:[
-          {label:"Sample ID",name:"sample_id",type:"select",options:"DSC"},
+
+          {label:"Sample ID",name:"sample_id",type:"select",options:"DSC",edit:[{type:"matches",name:"running",value:false}]},
           {label:"Nitrogen Flow (mL/min)",name:"nitrogen_flow", value:20,edit:false},
 
-          {label:"Sample Weight (mg)",name:"sample_weight",type:"number",value:5.8998,min:2.5,max:6,step:.001},
+          {label:"Sample Weight (mg)",name:"sample_weight",type:"number",value:3,min:2.5,max:6,step:.001,edit:[{type:"matches",name:"running",value:false}]},
             {legend: 'Temperature Program',name:"temperature_program",array:{min:1}, type: 'table',fields:[
               {label:"Time (min)",edit:false,name:"time",type:"number",template:"{{value}}{{^value}}(origin){{/value}}",value:function(e){
                   if(e.initial.parent.index == e.field.parent.index && e.field.name == "time"){
@@ -24,7 +25,9 @@ instrument_components.push(
               {label:"Temperature (°C)",name:"temperature",type:"number",value:100,step:5,validate:[{type:'numeric'}]},
               {label:"Rate (°C/min)",name:"rate",type:"number",value:10,min:10,max:20,step:1},
               {label:"Hold time (min)",name:"hold_time",type:"number",value:0,min:0,max:5,step:1}
-            ]},
+            ]},          
+            {label:false,value:false,name:"running",type:"switch",options:[{label:'',value:false},{label:"Collecting Data",value:true}],show:[{type:"matches",name:"running",value:true}]},
+
             
           // ]}
         ],
@@ -32,24 +35,32 @@ instrument_components.push(
 
           $.get('assets/data/dsc/'+file+index+'.csv',function(file,e){
             globaltemp = _.csvToArray('sec,J/s\n'+e,{skip:0});
-            debugger;
             keys = ['sec','J/s']//_.keys(globaltemp[0]);
             // Time (sec),Heat Flow (J/s)
             var x = []
 
             var y = []
-           
+           debugger;
             c3chart =  c3.generate({
               bindto: '.chart',
               data: {
                   x: 'x',
                   // xFormat: format,
                   columns: [['x'],[_.find(gform.collections.get('DSC'),{search:file}).display]], 
-                  type: 'line'
+                  type: 'line',
+                  onclick: function(d, i) {
+debugger;
+c3chart.regions([
+  {axis: 'x', start: 0, end: d.x, class: 'regionX'},
+])
+                  },
               },
               point: {
                   show: true
               },
+              zoom: {
+                enabled: true
+            },
               // tooltip: {
               //   format: {
               //     title: function (x, index) {
@@ -91,15 +102,27 @@ instrument_components.push(
             //     }
             //   // }
             // },500))
-            _.each(globaltemp, function ( i) {
-              setTimeout(function () {
+            gform.instances.DSC.find('running').set(true)
+            gform.types.button.edit.call(gform.instances.DSC.find('run'),false);
+
+            (function (data) {
+              var dataLength = data.length;
+              var datapointer = 0;
+              var caller = function () {
+                var i = data[datapointer++];
                 if(!isNaN(i[keys[0]] ) ) {
                   x.push(i[keys[0]]);
                   y.push(i[keys[1]]);
                   c3chart.load({columns:[['x'].concat(x),[_.find(gform.collections.get('DSC'),{search:file}).display].concat(y)]})
-                  }
-              }, 500);
-          });
+                }
+                if(datapointer<dataLength && gform.instances.DSC.get('running')){
+                  setTimeout(caller, 50);
+                }else{
+                  gform.types.button.edit.call(gform.instances.DSC.find('run'),true)
+                }
+              }
+              setTimeout(caller, 200);
+            })(globaltemp);
 
             if(typeof gform.instances.modal !== 'undefined')gform.instances.modal.trigger('close');
           }.bind(null,file))
@@ -109,6 +132,7 @@ instrument_components.push(
             "event":"save",
             "handler":function(e){
 
+              if(typeof c3chart !== 'undefined'){c3chart.destroy();delete c3chart;              }
               $('.chart').html('')
 
               if(!e.form.validate())return false;
@@ -118,10 +142,8 @@ instrument_components.push(
                             // var errors = [];
                             // var data = e.form.get();
               var testForm = new gform({fields:_.find(instrument_components,{legend:instruments['DSC'].label}).validationFields,data:e.form.get()})
-
-              if(!testForm.validate(true)){
+              if((hashParams.validate !== "false") && !testForm.validate(true)){
                 var errors = _.uniq(_.values(testForm.errors));
-                debugger;
                 if(errors.length>1){
                   $('.chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
                 }else{
