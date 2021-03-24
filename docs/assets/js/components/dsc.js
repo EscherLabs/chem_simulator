@@ -7,7 +7,7 @@ instrument_components.push(
           {label:"Sample ID",name:"sample_id",type:"select",options:"DSC"},
           {label:"Nitrogen Flow (mL/min)",name:"nitrogen_flow", value:20,edit:false},
 
-          {label:"Sample Weight (mg)",name:"sample_weight",type:"number",value:3,min:2.5,max:6,step:.001},
+          {label:"Sample Weight (mg)",name:"sample_weight",type:"number",value:5.8998,min:2.5,max:6,step:.001},
             {legend: 'Temperature Program',name:"temperature_program",array:{min:1}, type: 'table',fields:[
               {label:"Time (min)",edit:false,name:"time",type:"number",template:"{{value}}{{^value}}(origin){{/value}}",value:function(e){
                   if(e.initial.parent.index == e.field.parent.index && e.field.name == "time"){
@@ -37,19 +37,14 @@ instrument_components.push(
             // Time (sec),Heat Flow (J/s)
             var x = []
 
-            var y = [_.find(gform.collections.get('DSC'),{search:file}).display]
-            _.each(globaltemp,function(i){
-              // if(parseInt(i[keys[0]]) >= gform.instances['F'].get('sample_holder')['Range start (cm-1)'] && parseInt(i[keys[0]]) <= gform.instances['FTIR'].get('sample_holder')['Range end (cm-1)']){
-                x.push(i[keys[0]]);
-                y.push(i[keys[1]]);
-              // }
-            })
+            var y = []
+           
             c3chart =  c3.generate({
               bindto: '.chart',
               data: {
                   x: 'x',
                   // xFormat: format,
-                  columns: [['x'].concat(x),y], 
+                  columns: [['x'],[_.find(gform.collections.get('DSC'),{search:file}).display]], 
                   type: 'line'
               },
               point: {
@@ -86,6 +81,26 @@ instrument_components.push(
               }
             });
             $('.c3-lines').hide();
+            // _.each(globaltemp,_.delay(function(i){
+            //   debugger;
+            //   // if(parseInt(i[keys[0]]) >= gform.instances['F'].get('sample_holder')['Range start (cm-1)'] && parseInt(i[keys[0]]) <= gform.instances['FTIR'].get('sample_holder')['Range end (cm-1)']){
+            //     if(!isNaN(i[keys[0]] ) ) {
+            //     x.push(i[keys[0]]);
+            //     y.push(i[keys[1]]);
+            //     c3chart.load({columns:[['x'].concat(x),[_.find(gform.collections.get('DSC'),{search:file}).display].concat(y)]})
+            //     }
+            //   // }
+            // },500))
+            _.each(globaltemp, function ( i) {
+              setTimeout(function () {
+                if(!isNaN(i[keys[0]] ) ) {
+                  x.push(i[keys[0]]);
+                  y.push(i[keys[1]]);
+                  c3chart.load({columns:[['x'].concat(x),[_.find(gform.collections.get('DSC'),{search:file}).display].concat(y)]})
+                  }
+              }, 500);
+          });
+
             if(typeof gform.instances.modal !== 'undefined')gform.instances.modal.trigger('close');
           }.bind(null,file))
         },
@@ -159,8 +174,8 @@ instrument_components.push(
           {legend: 'Temperature Program',name:"temperature_program",array:{min:1}, type: 'table',fields:[],validate:[{type:"custom",test:function(a){
             if(a.form.options.data.temperature_program.length !==2)return "Invalid temperature Profile";
             switch(a.form.options.data.sample_id){
-              case "dppc":
-              case "dspc":
+              case "DPPC":
+              case "DSPC":
                 if(a.form.options.data.temperature_program[0].temperature != 30 ||
                 a.form.options.data.temperature_program[0].rate != 0 ||
                 a.form.options.data.temperature_program[0].hold_time != 0 ||
