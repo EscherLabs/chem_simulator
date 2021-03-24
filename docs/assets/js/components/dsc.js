@@ -142,8 +142,8 @@ instrument_components.push(
                 }
                 _.find(instrument_components,{legend:instruments['DSC'].label}).chart(sample_id,(closestFind+1))
               }else{
-               $('.chart').append('<div class="alert alert-danger">Invalid Sample - Check Mass again</div>')
-              }
+               $('.chart').append('<div class="alert alert-danger">Invalid Sample - Check Sample Mass</div>')
+              } 
               
             
 
@@ -155,7 +155,33 @@ instrument_components.push(
 
         validationFields:[
 
-          {label:"Nitrogen Flow (mL/min)",name:"nitrogen_flow", value:20,edit:false},
+          // {label:"Nitrogen Flow (mL/min)",name:"nitrogen_flow", value:20,edit:false},
+          {legend: 'Temperature Program',name:"temperature_program",array:{min:1}, type: 'table',fields:[],validate:[{type:"custom",test:function(a){
+            if(a.form.options.data.temperature_program.length !==2)return "Invalid temperature Profile";
+            switch(a.form.options.data.sample_id){
+              case "dppc":
+              case "dspc":
+                if(a.form.options.data.temperature_program[0].temperature != 30 ||
+                a.form.options.data.temperature_program[0].rate != 0 ||
+                a.form.options.data.temperature_program[0].hold_time != 0 ||
+                a.form.options.data.temperature_program[1].temperature != 60 ||
+                a.form.options.data.temperature_program[1].rate != 5 ||
+                a.form.options.data.temperature_program[1].hold_time != 0 
+                )return "Invalid temperature Profile";
+                break;
+              default:
+                if(a.form.options.data.temperature_program[0].temperature != 100 ||
+                  a.form.options.data.temperature_program[0].rate != 0 ||
+                  a.form.options.data.temperature_program[0].hold_time != 0 ||
+                  a.form.options.data.temperature_program[1].temperature != 180 ||
+                  a.form.options.data.temperature_program[1].rate != 20 ||
+                  a.form.options.data.temperature_program[1].hold_time != 0 
+                )return "Invalid temperature Profile";
+
+
+            }
+          }}]}
+
         ],
       }
     
