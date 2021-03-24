@@ -128,9 +128,9 @@ instrument_components.push(
                 }.bind(null,e.form.get('sample_weight')) 
               )
               if(closestFind>=0 && typeof closestFind !== 'undefined'){
-                if(sample_id == 'indium'){
+                if(sample_id == 'Indium'){
                   // debugger;
-                  if(e.form.get('sample_id') == "indium_calibration"){
+                  if(e.form.get('sample_id') == "Indium_calibration"){
                     closestFind = _.random(0, 3);
                     globalIndium = closestFind;
                   }else{
@@ -188,12 +188,12 @@ instrument_components.push(
     )
 
     mass_map = {
-      indium:[5.8998],
-      dppc:[3.040, 3.880, 3.960, 4.210, 3.700],
-      dspc:[2.920, 3.100, 3.980, 3.980, 3.800]
+      Indium:[5.8998],
+      DPPC:[3.040, 3.880, 3.960, 4.210, 3.700],
+      DSPC:[2.920, 3.100, 3.980, 3.980, 3.800]
     }
-    gform.collections.add('DSC',[{label:"Indium Calibration",value:"indium_calibration",search:'indium',display:"Indium"},
-    {label:"DPPC",value:"dppc",search:"dppc",display:"DPPC"},
-    {label:"DSPC",value:"dspc",search:"dspc",display:"DsPC"},
-    {label:"Indium Post-check",value:"indium_post_check"},
+    gform.collections.add('DSC',[{label:"Indium Calibration",value:"Indium_calibration",search:'Indium',display:"Indium"},
+    {label:"DPPC",value:"DPPC",search:"DPPC",display:"DPPC"},
+    {label:"DSPC",value:"DSPC",search:"DSPC",display:"DSPC"},
+    {label:"Indium Post-check",value:"Indium_post_check"},
     ])
