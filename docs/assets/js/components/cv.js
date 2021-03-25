@@ -100,7 +100,7 @@ if(!e.form.validate())return false;
 
               if(!testForm.validate(true)){
                 var errors = _.values(testForm.errors);
-                debugger;
+                // debugger;
                 if(errors.length>1){
                   $('.chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
                 }else{

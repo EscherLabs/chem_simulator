@@ -6,7 +6,7 @@ instrument_components.push(
         chart:function(file, settings){
 
           $.get('assets/data/f/'+file+'.csv',function(file,e){
-            debugger;
+            // debugger;
             globaltemp = _.csvToArray('nm,a.u.\n'+e,{skip:0});
             keys = ['nm','a.u.']//_.keys(globaltemp[0]);
             var x = []
@@ -77,12 +77,12 @@ instrument_components.push(
               
                             // var errors = [];
                             // var data = e.form.get();
-              debugger;
+              // debugger;
               var testForm = new gform({fields:_.find(instrument_components,{legend:instruments['F'].label}).validationFields,data:e.form.get()})
 
               if(!testForm.validate(true)){
                 var errors = _.uniq(_.values(testForm.errors));
-                debugger;
+                // debugger;
                 if(errors.length>1){
                   $('.chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
                 }else{

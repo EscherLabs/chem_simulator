@@ -96,7 +96,7 @@ instrument_components = [
               $('.main >.row >.col-md-8 > .target,.main >.row >.col-md-12 > .target').html('').removeClass('well').parent().removeClass('col-md-8').addClass('col-md-12')
 
 
-              debugger;
+              // debugger;
               globdata = JSON.parse(file.contents);
 
                if(hash(globdata.name) !== globdata.check){

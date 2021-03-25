@@ -79,13 +79,15 @@ setTimeout(function(){
   var sorted = _.sortBy(dscregions,'value')
   var workingArr =globaltemp.slice(_.findIndex(globaltemp,{sec:sorted[0].value+''}), _.findIndex(globaltemp,{sec:sorted[1].value+''})+1);
   var temp = _.reduce(workingArr,function(total,a,b,c){
-if(b>0){
-  // (parseFloat(c[b]['J/s'])+parseFloat(c[b-1]['J/s']))/2
+    if(b>0){
+      // (parseFloat(c[b]['J/s'])+parseFloat(c[b-1]['J/s']))/2
 
-total+=((parseFloat(c[b]['J/s'])+parseFloat(c[b-1]['J/s']))/2)*(c[b]['sec']-c[b-1]['sec'])
-}
-return total;
-  },0).toFixed(6)
+    total+=((parseFloat(c[b]['J/s'])+parseFloat(c[b-1]['J/s']))/2)*(c[b]['sec']-c[b-1]['sec'])
+    }
+    return total;
+  },0)
+  temp = temp - ((parseFloat(workingArr[workingArr.length-1]['J/s'])+parseFloat(workingArr[0]['J/s']))/2)*(workingArr[workingArr.length-1]['sec']-workingArr[0]['sec']);
+  temp = temp.toFixed(6);
   gform.instances.DSC.find('integration').set(temp)
   c3chart.regions([
     {axis: 'x', start: sorted[0].value, end: sorted[1].value, class: 'regionX',label:temp},
@@ -98,7 +100,7 @@ return total;
                   show: true
               },
               zoom: {
-                enabled: true
+                enabled: false
             },
               // tooltip: {
               //   format: {
@@ -157,10 +159,12 @@ return total;
                 if(datapointer<dataLength && gform.instances.DSC.get('running')){
                   setTimeout(caller, 50);
                 }else{
+                  gform.instances.DSC.find('run').update({label:"Run","modifiers": "btn btn-success"})
+
                   // gform.types.button.edit.call(gform.instances.DSC.find('run'),true)
                 }
               }
-              setTimeout(caller, 200);
+              setTimeout(caller, 50);
             })(globaltemp);
 
             if(typeof gform.instances.modal !== 'undefined')gform.instances.modal.trigger('close');
@@ -244,7 +248,7 @@ return total;
               case "DSPC":
                 if(a.form.options.data.temperature_program[0].temperature != 30 ||
                 a.form.options.data.temperature_program[0].rate != 0 ||
-                a.form.options.data.temperature_program[0].hold_time != 0 ||
+                a.form.options.data.temperature_program[0].hold_time != 1 ||
                 a.form.options.data.temperature_program[1].temperature != 60 ||
                 a.form.options.data.temperature_program[1].rate != 5 ||
                 a.form.options.data.temperature_program[1].hold_time != 0 
@@ -253,7 +257,7 @@ return total;
               default:
                 if(a.form.options.data.temperature_program[0].temperature != 100 ||
                   a.form.options.data.temperature_program[0].rate != 0 ||
-                  a.form.options.data.temperature_program[0].hold_time != 0 ||
+                  a.form.options.data.temperature_program[0].hold_time != 1 ||
                   a.form.options.data.temperature_program[1].temperature != 180 ||
                   a.form.options.data.temperature_program[1].rate != 20 ||
                   a.form.options.data.temperature_program[1].hold_time != 0 

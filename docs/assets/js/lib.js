@@ -309,7 +309,7 @@ function processFilter(options){
 
 filterTimer = null;
 $('body').on('keyup','[name=filter]', function(event){
-debugger;
+// debugger;
 	this.currentTarget = event.currentTarget;
 	this.selector = $(this).data('selector');
 	if(!$(this).hasClass("delay")){
@@ -330,7 +330,7 @@ function localAcceptHandler(file, done) {
       done(); // empty done signals success
     }
   }).catch(result => {
-    debugger;
+    // debugger;
     if(typeof(this.localFailure) === 'function') {
       file.contents = result;
       this.localFailure(file, done);
