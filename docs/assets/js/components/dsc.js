@@ -26,7 +26,8 @@ instrument_components.push(
               {label:"Rate (°C/min)",name:"rate",type:"number",value:10,min:10,max:20,step:1},
               {label:"Hold time (min)",name:"hold_time",type:"number",value:0,min:0,max:5,step:1}
             ]},          
-            {label:false,value:false,name:"running",type:"switch",options:[{label:'',value:false},{label:"Collecting Data",value:true}],show:[{type:"matches",name:"running",value:true}]},
+            {label:false,value:false,name:"running",type:"switch",options:[{label:'',value:false},{label:"Collecting Data",value:true}],show:false},
+            {label:false,value:false,name:"integration",type:"output",value:"",target:".gform-footer",format:{value:"<h4>Area: {{value}}</h4>"},show:[{type:"not_matches",name:"integration",value:''}]},
 
             
           // ]}
@@ -40,7 +41,6 @@ instrument_components.push(
             var x = []
 
             var y = []
-           debugger;
             c3chart =  c3.generate({
               bindto: '.chart',
               data: {
@@ -49,10 +49,49 @@ instrument_components.push(
                   columns: [['x'],[_.find(gform.collections.get('DSC'),{search:file}).display]], 
                   type: 'line',
                   onclick: function(d, i) {
-debugger;
-c3chart.regions([
-  {axis: 'x', start: 0, end: d.x, class: 'regionX'},
-])
+                    if(_.findIndex(dscregions,{value:d.x}) !== -1){
+                      dscregions.splice(_.findIndex(dscregions,{value:d.x}),1)
+                      
+                    }else{
+                      dscregions.push({value: d.x, text: d.value})
+                    }
+                    dscregions = _.uniqBy(dscregions,'value');
+                    c3chart.regions([]);
+                    gform.instances.DSC.find('integration').set('')
+
+
+                    if(dscregions.length>2){  
+                      // c3chart.regions([]);
+                      // c3chart.regions.remove({classes: ['regionX']});
+                      dscregions.shift()
+                    }
+// if(c3chart.regions().length){
+  c3chart.xgrids(dscregions);
+  // c3chart.regions([])
+// }else{
+//   c3chart.regions([
+//     {axis: 'x', start: 0, end: d.x, class: 'regionX'},
+//   ])
+// }
+
+if(dscregions.length>1){  
+setTimeout(function(){
+  var sorted = _.sortBy(dscregions,'value')
+  var workingArr =globaltemp.slice(_.findIndex(globaltemp,{sec:sorted[0].value+''}), _.findIndex(globaltemp,{sec:sorted[1].value+''})+1);
+  var temp = _.reduce(workingArr,function(total,a,b,c){
+if(b>0){
+  // (parseFloat(c[b]['J/s'])+parseFloat(c[b-1]['J/s']))/2
+
+total+=((parseFloat(c[b]['J/s'])+parseFloat(c[b-1]['J/s']))/2)*(c[b]['sec']-c[b-1]['sec'])
+}
+return total;
+  },0).toFixed(6)
+  gform.instances.DSC.find('integration').set(temp)
+  c3chart.regions([
+    {axis: 'x', start: sorted[0].value, end: sorted[1].value, class: 'regionX',label:temp},
+  ])
+  },400)
+}
                   },
               },
               point: {
@@ -102,9 +141,9 @@ c3chart.regions([
             //     }
             //   // }
             // },500))
-            gform.instances.DSC.find('running').set(true)
-            gform.types.button.edit.call(gform.instances.DSC.find('run'),false);
-
+            gform.instances.DSC.find('running').set(true);
+            // gform.types.button.edit.call(gform.instances.DSC.find('run'),false);
+            gform.instances.DSC.find('run').update({label:"<i class=\"fa fa-times\"></i> Stop","modifiers": "btn btn-danger"});
             (function (data) {
               var dataLength = data.length;
               var datapointer = 0;
@@ -118,7 +157,7 @@ c3chart.regions([
                 if(datapointer<dataLength && gform.instances.DSC.get('running')){
                   setTimeout(caller, 50);
                 }else{
-                  gform.types.button.edit.call(gform.instances.DSC.find('run'),true)
+                  // gform.types.button.edit.call(gform.instances.DSC.find('run'),true)
                 }
               }
               setTimeout(caller, 200);
@@ -131,7 +170,12 @@ c3chart.regions([
           {
             "event":"save",
             "handler":function(e){
+              if(gform.instances.DSC.get('running')){
+                gform.instances.DSC.find('running').set(false)
+                gform.instances.DSC.find('run').update({label:"Run","modifiers": "btn btn-success"})
 
+                return;
+              }
               if(typeof c3chart !== 'undefined'){c3chart.destroy();delete c3chart;              }
               $('.chart').html('')
 
@@ -226,9 +270,10 @@ c3chart.regions([
 
     mass_map = {
       Indium:[5.8998],
-      DPPC:[3.040, 3.880, 3.960, 4.210, 3.700],
-      DSPC:[2.920, 3.100, 3.980, 3.980, 3.800]
+      DPPC:[3.040, 3.880, 3.960, 4.210],//, 3.700],
+      DSPC:[2.920, 3.100, 3.980, 3.980]//, 3.800]
     }
+    dscregions = [];
     gform.collections.add('DSC',[{label:"Indium Calibration",value:"Indium_calibration",search:'Indium',display:"Indium"},
     {label:"DPPC",value:"DPPC",search:"DPPC",display:"DPPC"},
     {label:"DSPC",value:"DSPC",search:"DSPC",display:"DSPC"},

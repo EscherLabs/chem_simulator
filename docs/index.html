@@ -69,6 +69,7 @@ a:hover,a:focus{text-decoration:none;color:#005a43;cursor: pointer;}
   height:300px;
   opacity: 3%;
 }
+.regionX text{font-size: 16px;}
 </style>
   </head>
 
@@ -149,6 +150,19 @@ a:hover,a:focus{text-decoration:none;color:#005a43;cursor: pointer;}
 
 
 <script type='text/javascript' >
+
+
+gform.types['save'].setLabel =function(){
+  debugger;
+        // var label = gform.renderString((this.format||{title:null}).title||this.item.title|| this.item.label||this.label, this);
+        // if(this.required){
+        //     label+=this.requiredText+this.suffix;
+        // }
+        // var labelEl = this.el;//.querySelector('button,.btn');
+        // if(labelEl !== null){
+        //     labelEl.innerHTML = label
+        // }
+      };
 $('body').keydown(function(event) {
   switch(event.keyCode) {
     case 27://escape
