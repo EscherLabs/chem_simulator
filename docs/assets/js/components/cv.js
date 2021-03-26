@@ -98,7 +98,7 @@ if(!e.form.validate())return false;
 
               var testForm = new gform({fields:_.find(instrument_components,{legend:instruments['CV'].label}).validationFields,data:e.form.get()})
 
-              if(!testForm.validate(true)){
+              if((hashParams.validate !== "false") && !testForm.validate(true)){
                 var errors = _.values(testForm.errors);
                 // debugger;
                 if(errors.length>1){

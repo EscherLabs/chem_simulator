@@ -82,7 +82,7 @@ instrument_components.push(
             
                 var testForm = new gform({fields:_.find(instrument_components,{legend:instruments['UV-Vis'].label}).validationFields2021,data:e.form.get()})
   
-                if(!testForm.validate(true)){
+                if((hashParams.validate !== "false") && !testForm.validate(true)){
                   var errors = _.uniq(_.values(testForm.errors));
                   if(errors.length>1){
                     console.log(errors)

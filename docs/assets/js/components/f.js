@@ -80,7 +80,7 @@ instrument_components.push(
               // debugger;
               var testForm = new gform({fields:_.find(instrument_components,{legend:instruments['F'].label}).validationFields,data:e.form.get()})
 
-              if(!testForm.validate(true)){
+              if((hashParams.validate !== "false") && !testForm.validate(true)){
                 var errors = _.uniq(_.values(testForm.errors));
                 // debugger;
                 if(errors.length>1){

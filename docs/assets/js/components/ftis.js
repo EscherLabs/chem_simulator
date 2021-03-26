@@ -73,12 +73,12 @@ instrument_components.push(
               
                             // var errors = [];
                             // var data = e.form.get();
-              debugger;
+              // debugger;
                             var testForm = new gform({fields:_.find(instrument_components,{legend:instruments['FTIR'].label}).validationFields,data:e.form.get()})
               
-                            if(!testForm.validate(true)){
+                            if((hashParams.validate !== "false") && !testForm.validate(true)){
                               var errors = _.uniq(_.values(testForm.errors));
-                              debugger;
+                              // debugger;
                               if(errors.length>1){
                                 $('.chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
                               }else{
