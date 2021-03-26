@@ -160,6 +160,7 @@ setTimeout(function(){
                   setTimeout(caller, 50);
                 }else{
                   gform.instances.DSC.find('run').update({label:"Run","modifiers": "btn btn-success"})
+                  gform.instances.DSC.find('running').set(false)
 
                   // gform.types.button.edit.call(gform.instances.DSC.find('run'),true)
                 }
