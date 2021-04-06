@@ -176,10 +176,10 @@ hash = function(s){
 }
   download = function(){
 
-    var actions = [{type:'cancel'},{type:'save',label:"Download Configuration"}];
+    var actions = [{type:'cancel'},{type:'save',label:"<i class=\"fa fa-cogs\"></i> Download Configuration"}];
     debugger;
     if(typeof globalDownloadableData !== 'undefined'){
-      actions = [{type:'cancel'},{type:'save',label:"Download Configuration"},{type:'button',action:'getdata',label:"Data","label":"<i class=\"fa fa-grid\"></i> Data",
+      actions = [{type:'cancel'},{type:'save',label:"<i class=\"fa fa-cogs\"></i> Download Configuration"},{type:'button',action:'getdata',label:"Data","label":"<i class=\"fa fa-bar-chart-o\"></i> Data",
 	"modifiers": "btn btn-info"}];
     }
     var user = new gform({legend:"Download",fields:[{label:"Your name",name:"name"}],actions:actions}).on('save',function(e){
