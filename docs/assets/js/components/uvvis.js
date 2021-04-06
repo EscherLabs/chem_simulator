@@ -103,6 +103,7 @@ instrument_components.push(
                 {type:"smallcombo",name:"file",label:false,options:'uvvis',value:"BLANK2"}
               ]
             }).on('save',function(form,e){
+              if(typeof globalDownloadableData !== 'undefined')delete globalDownloadableData;
 
 
               var a = '<center><div style="width:510px;height: 310px;background-position:0px -8px;background-image:url(assets/img/uv_vis_2.png)"></div></center>';
@@ -118,8 +119,9 @@ instrument_components.push(
                 // function(){field.set('<center><i class=\"fa fa-spinner fa-spin\" style=\"font-size:60px;margin:20px auto;color:#d8d8d8\"></i></center>')},,
                 function(){gform.instances.animate.trigger('close');},
                 function(){
-
                   globalfile = e.form.get('file');
+                  globalDownloadableData = 'assets/data/uvvis/'+e.form.get('file');
+
                   _.find(instrument_components,{legend:instruments['UV-Vis'].label}).chart(e.form.get('file'),gform.instances['UV-Vis'].get())
                 }
               ];
@@ -139,7 +141,8 @@ instrument_components.push(
                 {"label":"1.00 ppm Dye",value:"2021-1ppm"},
                 {"label":"5.00 ppm Dye",value:"2021-5ppm"},
                 {"label":"10.00 ppm Dye",value:"2021-10ppm"},
-                {"label":"Dye Unknown",value:"2021-unknown"}
+                {"label":"Dye Unknown",value:"2021-unknown"},
+                {"label":"100ppb Riboflavin",value:"100pp_Riboflavin"}
               ])
             }.bind(null,e.form)).on('cancel',function(e){e.form.trigger('close');}).modal()
           }
@@ -178,40 +181,97 @@ instrument_components.push(
           ]}
           ]},
         ],
-        validationFields2021:[
+        validationFieldsFluorimeter:[
 
           {legend: 'Acquisition', type: 'fieldset',fields:[
-            {label:"Wavelength range from (nm)",name:"from",type:"number",min:300,step:1,max:450,validate:[{type:"numeric"}]},
-            {label:"Wavelength range to (nm)",name:"to",type:"number",min:700,step:1,max:750,validate:[{type:"numeric"}]},
-            {label:"Integration time (s)",type:"number",value:0.25,min:0.25,step:0.25,max:2,validate:[{type:"matches",value:0.5,message:"Check Integration time "}]},
+            {label:"Wavelength range from (nm)",name:"from",type:"number",min:300,step:1,max:450,validate:[{type:"matches",value:380,message:"Check Wavelength range from"}]},
+            {label:"Wavelength range to (nm)",name:"to",type:"number",min:700,step:1,max:750,validate:[{type:"matches",value:500,message:"Check Wavelength range to"}]},
+            {label:"Integration time (s)",type:"number",value:0.25,min:0.25,step:0.25,max:2,validate:[{type:"matches",value:0.5,message:"Check Integration time"}]},
             {label:"Interval (nm)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"matches",value:1, message:"Check Interval"}]},
             {label:"Path Length (cm)",type:"number",value:0.5,min:0.5,step:0.5,max:1,validate:[{type:"matches",value:1, message:"Check Path Length"}]}
           ]},
           {legend: 'Lamps',name:'lamps', type: 'fieldset',fields:[
-            {label:"Tungsten",type:"switch",options:["Off","On"],validate:[{type:"matches", value:"On", message:"Check Lamp Settings","conditions": [
-              {
-                  "type": "test",
-                  "test": function(e){
-                    return ((e.owner.find({map:'acquisition.to'}).value >400) || (e.owner.find({map:'lamps.deuterium'}).value == "Off" && e.owner.find({map:'acquisition.from'}).value < 400 ));
-                  }
-              }
-            ]}
-          ]},
-            {label:"Deuterium",type:"switch",options:["Off","On"],validate:[{type:"matches", value:"On", message:"Check Lamp Settings","conditions": [
-              {
-                    "type": "test",
-                    "test": function(e){
-                      return ((e.owner.find({map:'acquisition.from'}).value <300) || (e.owner.find({map:'lamps.tungsten'}).value == "Off" && e.owner.find({map:'acquisition.to'}).value > 300 ));
-                    }
-              }
-            ]}
+          //   {label:"Tungsten",type:"switch",options:["Off","On"],validate:[{type:"matches", value:"On", message:"Check Lamp Settings","conditions": [
+          //     {
+          //         "type": "test",
+          //         "test": function(e){
+          //           return ((e.owner.find({map:'acquisition.to'}).value >400) || (e.owner.find({map:'lamps.deuterium'}).value == "Off" && e.owner.find({map:'acquisition.from'}).value < 400 ));
+          //         }
+          //     }
+          //   ]}
+          // ]},
+          //   {label:"Deuterium",type:"switch",options:["Off","On"],validate:[{type:"matches", value:"On", message:"Check Lamp Settings","conditions": [
+          //     {
+          //           "type": "test",
+          //           "test": function(e){
+          //             return ((e.owner.find({map:'acquisition.from'}).value <300) || (e.owner.find({map:'lamps.tungsten'}).value == "Off" && e.owner.find({map:'acquisition.to'}).value > 300 ));
+          //           }
+          //     }
+          //   ]}
+          // ]}
+          {label:"Tungsten",type:"switch",options:["Off","On"],validate:[{type:"matches", value:"On", message:"Check Lamp Settings","conditions": [
+            {
+              "type": "matches",
+              "value": "On"
+            }
           ]}
+        ]},
+      ]},
+      {legend: 'Spectrum/Peak detection',name:"detection", type: 'fieldset',fields:[
+        {label:"Find and annotate up to ___ peaks",type:"number",min:1,step:1,max:2,validate:[{type:"matches",value:1, message:"Check Peak Annotation"}]},
+        {label:"Data Type",type:"custom_radio",value:"Absorbance",options:["Absorbance","Transmittance"],validate:[{type:"matches",value:"Absorbance", message:"Check Data Type"}]},
+        {label:"Display spectrum from (nm)",name:"from",type:"number",min:300,step:1,max:450,validate:[{type:"matches",value:380,message:"Check Display spectrum from"}]},
+        {label:"Display spectrum to (nm)",name:"to",type:"number",min:700,step:1,max:750,validate:[{type:"matches",value:500,message:"Check Display spectrum to"}]},
+      ]}
+    ],
+        validationFields2021:[
+
+          {legend: 'Acquisition', type: 'fieldset',fields:[
+            {label:"Wavelength range from (nm)",name:"from",type:"number",min:300,step:1,max:450,validate:[{type:"matches",value:380,message:"Check Wavelength range from"}]},
+            {label:"Wavelength range to (nm)",name:"to",type:"number",min:700,step:1,max:750,validate:[{type:"matches",value:500,message:"Check Wavelength range to"}]},
+            {label:"Integration time (s)",type:"number",value:0.25,min:0.25,step:0.25,max:2,validate:[{type:"matches",value:0.5,message:"Check Integration time"}]},
+            {label:"Interval (nm)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"matches",value:1, message:"Check Interval"}]},
+            {label:"Path Length (cm)",type:"number",value:0.5,min:0.5,step:0.5,max:1,validate:[{type:"matches",value:1, message:"Check Path Length"}]}
+          ]},
+          {legend: 'Lamps',name:'lamps', type: 'fieldset',fields:[
+          //   {label:"Tungsten",type:"switch",options:["Off","On"],validate:[{type:"matches", value:"On", message:"Check Lamp Settings","conditions": [
+          //     {
+          //         "type": "test",
+          //         "test": function(e){
+          //           return ((e.owner.find({map:'acquisition.to'}).value >400) || (e.owner.find({map:'lamps.deuterium'}).value == "Off" && e.owner.find({map:'acquisition.from'}).value < 400 ));
+          //         }
+          //     }
+          //   ]}
+          // ]},
+          //   {label:"Deuterium",type:"switch",options:["Off","On"],validate:[{type:"matches", value:"On", message:"Check Lamp Settings","conditions": [
+          //     {
+          //           "type": "test",
+          //           "test": function(e){
+          //             return ((e.owner.find({map:'acquisition.from'}).value <300) || (e.owner.find({map:'lamps.tungsten'}).value == "Off" && e.owner.find({map:'acquisition.to'}).value > 300 ));
+          //           }
+          //     }
+          //   ]}
+          // ]}
+          {label:"Tungsten",type:"switch",options:["Off","On"],validate:[{type:"matches", value:"On", message:"Check Lamp Settings","conditions": [
+            {
+              "type": "matches",
+              "value": "On"
+            }
+          ]}
+        ]},
+          {label:"Deuterium",type:"switch",options:["Off","On"],validate:[{type:"matches", value:"On", message:"Check Lamp Settings","conditions": [
+            {
+              "type": "matches",
+              "value": "On"
+            }
+          ]}
+        ]}
           ]},
           {legend: 'Spectrum/Peak detection',name:"detection", type: 'fieldset',fields:[
-            {label:"Find and annotate up to ___ peaks",type:"number",min:1,step:1,max:2,validate:[{type:"numeric"}]},
+            {label:"Find and annotate up to ___ peaks",type:"number",min:1,step:1,max:2,validate:[{type:"matches",value:1, message:"Check Peak Annotation"}]},
             {label:"Data Type",type:"custom_radio",value:"Absorbance",options:["Absorbance","Transmittance"],validate:[{type:"matches",value:"Absorbance", message:"Check Data Type"}]},
-            {label:"Display spectrum from (nm)",name:"from",type:"number",min:300,step:1,max:450,validate:[{type:"numeric"}]},
-            {label:"Display spectrum to (nm)",name:"to",type:"number",min:700,step:1,max:750,validate:[{type:"numeric"}]},
+            {label:"Display spectrum from (nm)",name:"from",type:"number",min:300,step:1,max:450,validate:[{type:"matches",value:380,message:"Check Display spectrum from"}]},
+            {label:"Display spectrum to (nm)",name:"to",type:"number",min:700,step:1,max:750,validate:[{type:"matches",value:500,message:"Check Display spectrum to"}]},
           ]}
         ],
         fields:[

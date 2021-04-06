@@ -193,8 +193,21 @@ return {name:component,data:JSON.stringify(gform.instances[component])}
 e.form.trigger('close');
 }).on('getdata',function(e){
 
-
-  window.open('assets/data/f/'+globalDownloadableData+".csv", "_blank");
+  if(typeof globalDownloadableData == "string") window.open(globalDownloadableData+".csv", "_blank");
+  if(typeof globalDownloadableData == "object") {
+    _.each(globalDownloadableData,function(file){
+      window.open(file+".csv", "_blank");
+    })
+    // var downloader = function () {
+    //   window.open(globalDownloadableData.pop()+".csv", "_blank");
+    //   if(globalDownloadableData.length){
+    //     setTimeout(downloader, 50);
+    //   }else{
+    //     delete globalDownloadableData
+    //   }
+    // }
+    // setTimeout(downloader, 50);
+  }
   e.form.trigger('close');
 
 

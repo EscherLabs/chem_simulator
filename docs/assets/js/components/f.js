@@ -144,6 +144,7 @@ switch(document.body.querySelector('.tab-pane.active').id){
   case 'tabsprescan':
     waiting.push('PreScan_Emission')
     _.find(instrument_components,{legend:instruments['F'].label}).chart('PreScan_Excitation')
+    globalDownloadableData = ['assets/data/f/PreScan_Excitation','assets/data/f/PreScan_Emission'];
 
     // _.find(instrument_components,{legend:instruments['F'].label}).chart('PreScan_Emission')
 
@@ -161,8 +162,7 @@ switch(document.body.querySelector('.tab-pane.active').id){
         }}
       ]
     }).on('save',function(form,e){
-
-      globalDownloadableData = 'session/'+gform.instances.F.get('session')+'/'+e.form.get('file');
+      globalDownloadableData = 'assets/data/f/session/'+gform.instances.F.get('session')+'/'+e.form.get('file');
       _.find(instrument_components,{legend:instruments['F'].label}).chart(e.form.get('file'))
     }.bind(null,e.form)
   ).on('cancel',function(e){e.form.trigger('close');}).modal()}
