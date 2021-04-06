@@ -122,7 +122,7 @@ instrument_components.push(
                 function(){gform.instances.animate.trigger('close');},
                 function(){
                   globalfile = e.form.get('file');
-                  globalDownloadableData = 'assets/data/uvvis/'+e.form.get('file')+".csv";
+                  globalDownloadableData = 'assets/data/uvvis/'+e.form.get('file')+".CSV";
 
                   _.find(instrument_components,{legend:instruments['UV-Vis'].label}).chart(e.form.get('file'),gform.instances['UV-Vis'].get())
                 }
