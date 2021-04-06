@@ -196,7 +196,7 @@ e.form.trigger('close');
   if(typeof globalDownloadableData == "string") window.open(globalDownloadableData+".csv", "_blank");
   if(typeof globalDownloadableData == "object") {
     _.each(globalDownloadableData,function(file){
-      window.open(file+".csv", "_blank");
+      window.open(file, "_blank");
     })
     // var downloader = function () {
     //   window.open(globalDownloadableData.pop()+".csv", "_blank");
