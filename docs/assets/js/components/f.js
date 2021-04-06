@@ -132,6 +132,7 @@ instrument_components.push(
               
                 return;
               }
+              debugger;
 // if(document.body.querySelector('.tab-pane.active').id == 'tabsemission'){console.log(e.form.get('session'))}
 switch(document.body.querySelector('.tab-pane.active').id){
   case 'tabsprescan':
@@ -141,8 +142,8 @@ switch(document.body.querySelector('.tab-pane.active').id){
     // _.find(instrument_components,{legend:instruments['F'].label}).chart('PreScan_Emission')
 
     break;
-  default:
-
+  // default:
+    case 'tabsemission':
 
     var modalForm = new gform({
       legend:"Sample Name",
