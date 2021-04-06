@@ -99,6 +99,8 @@ instrument_components.push(
             new gform({
               legend:"Sample Name",
               name:"modal",
+
+              actions:[{type:'cancel'},{type:'save',label:"Run"}],
               fields:[
                 {type:"smallcombo",name:"file",label:false,options:'uvvis',value:"BLANK2"}
               ]
@@ -142,7 +144,7 @@ instrument_components.push(
                 {"label":"5.00 ppm Dye",value:"2021-5ppm"},
                 {"label":"10.00 ppm Dye",value:"2021-10ppm"},
                 {"label":"Dye Unknown",value:"2021-unknown"},
-                {"label":"100ppb Riboflavin",value:"100pp_Riboflavin"}
+                {"label":"100ppb Riboflavin",value:"100ppb_Riboflavin"}
               ])
             }.bind(null,e.form)).on('cancel',function(e){e.form.trigger('close');}).modal()
           }
