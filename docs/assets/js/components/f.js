@@ -179,13 +179,7 @@ switch(document.body.querySelector('.tab-pane.active').id){
           {legend: 'Emission-Scan', type: 'fieldset',fields:[
             {label:"Start (nm)",name:"ems_start",type:"number",validate:[{type:"matches",value:475,message:"Check Emission-Scan Start"}]},
             {label:"End (nm)",name:"ems_end",type:"number",validate:[{type:"matches",value:600,message:"Check Emission-Scan End"}]},
-            {label:"Excitation (nm)",name:"ems_excitation",type:"number",value:390,min:390,step:1,max:500,validate:[
-              {type:"numeric",min:440,max:451,message:"Check Emission-Scan Excitation"}
-            //   {type:"custom",test:function(e){
-            //   if(!((e.value >=280 && e.value<=400) ||(e.value >=460 && e.value<=490)))return "Check Emission-Scan Excitation";
-
-            // }}
-              ]
+            {label:"Excitation (nm)",name:"ems_excitation",type:"number",value:390,min:390,step:1,max:500,validate:[{type:"numeric",min:440,max:451,message:"Check Emission-Scan Excitation"}]
             },
             {label:"Scan Speed (nm/min)",name:"ems_scan_speed",type:"number",validate:[{type:"numeric",min:250,max:1000,message:"Check Scan Speed"}]},
           ]}
@@ -193,6 +187,14 @@ switch(document.body.querySelector('.tab-pane.active').id){
         validationFields:[
           {label:"Slit Width (nm)",name:"slit_width",type:"number",validate:[{type:"matches",value:10,message:"Slit Width"}]},
          
+          {legend: 'Pre-Scan',name:"prescan", type: 'fieldset', id:"prescan",fields:[
+            {label:"Excitation range from (nm)",name:"ps_excitation_range_from",type:"number",value:390,min:370,step:1,max:490,validate:[{type:"matches",value:380,message:"Check Excitation Range from"}]},
+            {label:"Excitation range to (nm)",name:"ps_excitation_range_to",type:"number",value:490,min:490,step:1,max:500,validate:[{type:"matches",value:500,message:"Check Excitation Range to"}]},
+            {label:"Emission range from (nm)",name:"ps_emission_range_from",type:"number",value:400,min:400,step:1,max:740,validate:[{type:"matches",value:475,message:"Check Emission Range from"}]},
+            {label:"Emission range to (nm)",name:"ps_emission_range_to",type:"number",value:410,min:410,step:1,max:750,validate:[{type:"matches",value:600,message:"Check Emission Range to"}]},
+            {label:"Scan Speed (nm/min)",name:"ps_scan_speed",type:"number",value:250,min:250,step:10,max:1000,validate:[{type:"numeric",min:250,max:1000,message:"Check Scan Speed"}]},
+            
+          ]},
           {label:"Session ID",name:"session",validate:[{type:"custom",test:function(a){
             return (typeof sessions[a.value] == "undefined")?"Invalid Session ID":false;
           }}]},
