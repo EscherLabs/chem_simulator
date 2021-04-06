@@ -112,7 +112,11 @@ instrument_components.push(
                             // var errors = [];
                             // var data = e.form.get();
               // debugger;
-              var testForm = new gform({fields:_.find(instrument_components,{legend:instruments['F'].label}).validationFields,data:e.form.get()})
+              var validationConfig = _.find(instrument_components,{legend:instruments['F'].label}).validationFields;
+              if(document.body.querySelector('.tab-pane.active').id == "tabsemission"){
+                validationConfig = _.find(instrument_components,{legend:instruments['F'].label}).emissionValidationFields;
+              }
+              var testForm = new gform({fields:validationConfig,data:e.form.get()})
 
   
               if((hashParams.validate !== "false") && !testForm.validate(true)){
@@ -127,12 +131,12 @@ instrument_components.push(
               }
               testForm.destroy();
 
-              if(typeof sessions[gform.instances.F.get('session')] == "undefined"){
-                $('.chart').append('<div class="alert alert-danger">Invalid Session</div>')
+              // if(typeof sessions[gform.instances.F.get('session')] == "undefined"){
+              //   $('.chart').append('<div class="alert alert-danger">Invalid Session ID</div>')
               
-                return;
-              }
-              debugger;
+              //   return;
+              // }
+              // debugger;
 // if(document.body.querySelector('.tab-pane.active').id == 'tabsemission'){console.log(e.form.get('session'))}
 switch(document.body.querySelector('.tab-pane.active').id){
   case 'tabsprescan':
@@ -151,24 +155,10 @@ switch(document.body.querySelector('.tab-pane.active').id){
       fields:[
         {type:"smallcombo",name:"file",label:false,options:function(){
           return sessions[gform.instances.F.get('session')];
-          //gform.collections.get('f_sessions')
         }}
       ]
     }).on('save',function(form,e){
-      // var temp = gform.instances.F.get()['emission-scan']['Excitation (nm)'];
-
-      // globalfile = e.form.get('file');
-
-      // if(
-      //   (temp >=280 && temp<=400  && globalfile == "Fluorescein_emission_2")||
-      //   (temp >=460 && temp<=490 && globalfile == "Fluorescein_emission_1")
-      // ){
-      //   $('.chart').append('<div class="alert alert-danger">Invalid Sample - Check Emission-Scan Excitation</div>')
-      //   if(typeof gform.instances.modal !== 'undefined')gform.instances.modal.trigger('close');
-      //   return false;
-      // }
       _.find(instrument_components,{legend:instruments['F'].label}).chart(e.form.get('file'))
-
     }.bind(null,e.form)
   ).on('cancel',function(e){e.form.trigger('close');}).modal()}
 
@@ -180,22 +170,28 @@ switch(document.body.querySelector('.tab-pane.active').id){
           
         ],
         sections:'tab',
+        emissionValidationFields:[
+          {legend: 'Emission-Scan', type: 'fieldset',fields:[
+            {label:"Start (nm)",name:"ems_start",type:"number",validate:[{type:"matches",value:475,message:"Check Emission-Scan Start"}]},
+            {label:"End (nm)",name:"ems_end",type:"number",validate:[{type:"matches",value:600,message:"Check Emission-Scan End"}]},
+            {label:"Excitation (nm)",name:"ems_excitation",type:"number",value:390,min:390,step:1,max:500,validate:[
+              {type:"numeric",min:440,max:451,message:"Check Emission-Scan Excitation"}
+            //   {type:"custom",test:function(e){
+            //   if(!((e.value >=280 && e.value<=400) ||(e.value >=460 && e.value<=490)))return "Check Emission-Scan Excitation";
 
+            // }}
+              ]
+            },
+            {label:"Scan Speed (nm/min)",name:"ems_scan_speed",type:"number",validate:[{type:"numeric",min:250,max:1000,message:"Check Scan Speed"}]},
+          ]}
+        ],
         validationFields:[
           {label:"Slit Width (nm)",name:"slit_width",type:"number",validate:[{type:"matches",value:10,message:"Slit Width"}]},
-          // {legend: 'Emission-Scan', type: 'fieldset',fields:[
-          //   {label:"Start (nm)",name:"ems_start",type:"number",validate:[{type:"numeric",min:490,max:490,message:"Check Emission-Scan Start"}]},
-          //   {label:"End (nm)",name:"ems_end",type:"number",validate:[{type:"numeric",min:600,max:600,message:"Check Emission-Scan End"}]},
-          //   {label:"Excitation (nm)",name:"ems_excitation",type:"number",value:390,min:390,step:1,max:500,validate:[
-          //     {type:"numeric",min:449,max:451,message:"Check Emission-Scan Excitation"}
-          //   //   {type:"custom",test:function(e){
-          //   //   if(!((e.value >=280 && e.value<=400) ||(e.value >=460 && e.value<=490)))return "Check Emission-Scan Excitation";
+         
+          {label:"Session ID",name:"session",validate:[{type:"custom",test:function(a){
+            return (typeof sessions[a.value] == "undefined")?"Invalid Session ID":false;
+          }}]},
 
-          //   // }}
-          //     ]
-          //   },
-          //   {label:"Scan Speed (nm/min)",name:"slit_width",type:"number",validate:[{type:"numeric",min:250,max:1000,message:"Check Scan Speed"}]},
-          // ]}
         ],
         fields:[
         //   {legend: 'Session',name:"session_container", type: 'fieldset', id:"",fields:[
@@ -203,7 +199,7 @@ switch(document.body.querySelector('.tab-pane.active').id){
         // ]},
         // {label:false,type:"output",target:".gform-footer"},
 
-        {label:"Session",name:"session",target:function(){return document.querySelector('#preform')}},
+        {label:"Session ID",name:"session",target:function(){return document.querySelector('#preform')}},
 
           {legend: 'Pre-Scan',name:"prescan", type: 'fieldset', id:"prescan",fields:[
             {label:"Excitation range from (nm)",name:"ps_excitation_range_from",type:"number",value:390,min:370,step:1,max:490},
