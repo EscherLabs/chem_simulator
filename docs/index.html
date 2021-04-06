@@ -193,7 +193,7 @@ return {name:component,data:JSON.stringify(gform.instances[component])}
 e.form.trigger('close');
 }).on('getdata',function(e){
 
-  if(typeof globalDownloadableData == "string") window.open(globalDownloadableData+".csv", "_blank");
+  if(typeof globalDownloadableData == "string") window.open(globalDownloadableData, "_blank");
   if(typeof globalDownloadableData == "object") {
     _.each(globalDownloadableData,function(file){
       window.open(file, "_blank");
