@@ -2,6 +2,7 @@ instrument_components.push(
     {
         legend:'Differential Scanning Calorimeter',
         name:"DSC",
+        preform:true,
         // sections:'tab',
         fields:[
 
@@ -27,7 +28,10 @@ instrument_components.push(
               {label:"Hold time (min)",name:"hold_time",type:"number",value:0,min:0,max:5,step:1}
             ]},          
             {label:false,value:false,name:"running",type:"switch",options:[{label:'',value:false},{label:"Collecting Data",value:true}],show:false},
-            {label:false,value:false,name:"integration",type:"output",value:"",target:".gform-footer",format:{value:"<h4>Area: {{value}}</h4>"},show:[{type:"not_matches",name:"integration",value:''}]},
+            {label:false,value:false,name:"integration",type:"output",value:"",
+              target:function(){return document.querySelector('#preform')}
+              // target:".gform-footer"
+            ,format:{value:"{{#value}}<h4>Area: {{value}}</h4>{{/value}}"},show:[{type:"not_matches",name:"integration",value:''}]},
 
             
           // ]}
@@ -35,9 +39,9 @@ instrument_components.push(
         chart:function(file,index, settings){
 
           $.get('assets/data/dsc/'+file+index+'.csv',function(file,e){
-            globaltemp = _.csvToArray('sec,J/s\n'+e,{skip:0});
-            keys = ['sec','J/s']//_.keys(globaltemp[0]);
-            // Time (sec),Heat Flow (J/s)
+            globaltemp = _.csvToArray('sec,mJ/s\n'+e,{skip:0});
+            keys = ['sec','mJ/s']//_.keys(globaltemp[0]);
+            // Time (sec),Heat Flow (mJ/s)
             var x = []
 
             var y = []
@@ -61,32 +65,24 @@ instrument_components.push(
 
 
                     if(dscregions.length>2){  
-                      // c3chart.regions([]);
-                      // c3chart.regions.remove({classes: ['regionX']});
                       dscregions.shift()
                     }
-// if(c3chart.regions().length){
   c3chart.xgrids(dscregions);
-  // c3chart.regions([])
-// }else{
-//   c3chart.regions([
-//     {axis: 'x', start: 0, end: d.x, class: 'regionX'},
-//   ])
-// }
 
-if(dscregions.length>1){  
+
+if(dscregions.length>1){
 setTimeout(function(){
   var sorted = _.sortBy(dscregions,'value')
   var workingArr =globaltemp.slice(_.findIndex(globaltemp,{sec:sorted[0].value+''}), _.findIndex(globaltemp,{sec:sorted[1].value+''})+1);
   var temp = _.reduce(workingArr,function(total,a,b,c){
     if(b>0){
-      // (parseFloat(c[b]['J/s'])+parseFloat(c[b-1]['J/s']))/2
+      // (parseFloat(c[b]['mJ/s'])+parseFloat(c[b-1]['mJ/s']))/2
 
-    total+=((parseFloat(c[b]['J/s'])+parseFloat(c[b-1]['J/s']))/2)*(c[b]['sec']-c[b-1]['sec'])
+    total+=((parseFloat(c[b]['mJ/s'])+parseFloat(c[b-1]['mJ/s']))/2)*(c[b]['sec']-c[b-1]['sec'])
     }
     return total;
   },0)
-  temp = temp - ((parseFloat(workingArr[workingArr.length-1]['J/s'])+parseFloat(workingArr[0]['J/s']))/2)*(workingArr[workingArr.length-1]['sec']-workingArr[0]['sec']);
+  temp = temp - ((parseFloat(workingArr[workingArr.length-1]['mJ/s'])+parseFloat(workingArr[0]['mJ/s']))/2)*(workingArr[workingArr.length-1]['sec']-workingArr[0]['sec']);
   temp = temp.toFixed(6);
   gform.instances.DSC.find('integration').set(temp)
   c3chart.regions([

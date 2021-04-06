@@ -209,7 +209,7 @@ if(typeof c3chart !== 'undefined'){
   $('#'+hashParams.device).addClass('active')
     
   compontent = `<div class="row">
-      <div class="col-md-4 form-horizontal" style=""><div class="well form"></div></div>
+      <div class="col-md-4 form-horizontal" style="">{{#preform}}<div class="well" id="preform"></div>{{/preform}}<div class="well form"></div></div>
       <div class="col-md-8" style="">
         {{#image}}<div class="well" style="overflow:hidden"><div><img style="float:right;height:150px" src="assets/img/{{image}}"></div><span><h3>{{legend}}</h3><p>{{description}}</p></span></div>{{/image}}
         <div class="well target" style="height:550px;"><div class="chart"></div></div></div>
@@ -228,9 +228,10 @@ if(typeof c3chart !== 'undefined'){
     if(_.find(instrument_components, {name:instrument_component||"HOME"}).fields){
       el = gform.create(gform.renderString(compontent,_.find(instrument_components, {name:instrument_component||"HOME"})));
       document.querySelector('.main').append(el)
-
+      debugger;
       myForm = new gform(_.extend({
         "actions":[{type:"save",label:"Run",target:".gform-footer"}],
+        strict:false,
         "data":hashParams,
         "default": {
           "horizontal": true
