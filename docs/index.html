@@ -175,16 +175,36 @@ hash = function(s){
   return s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);              
 }
   download = function(){
-    var user = new gform({fields:[{label:"Your name",name:"name"}]}).on('save',function(e){
+
+    var actions = [{type:'cancel'},{type:'save',label:"Download Configuration"}];
+    debugger;
+    if(typeof globalDownloadableData !== 'undefined'){
+      actions = [{type:'cancel'},{type:'save',label:"Download Configuration"},{type:'button',action:'getdata',label:"Data","label":"<i class=\"fa fa-grid\"></i> Data",
+	"modifiers": "btn btn-info"}];
+    }
+    var user = new gform({legend:"Download",fields:[{label:"Your name",name:"name"}],actions:actions}).on('save',function(e){
 
 
 
-      _.download({name:e.form.get('name'),file:(globalfile||""),data:_.map(instruments[hashParams.device].components
-      ,function(component){
-      return {name:component,data:JSON.stringify(gform.instances[component])}
-      }),check:hash(e.form.get('name'))},e.form.get('name')+'_'+hashParams.device)
-      e.form.trigger('close');
-    }).on('cancel',function(e){e.form.trigger('close');}).modal();
+_.download({name:e.form.get('name'),file:(globalfile||""),data:_.map(instruments[hashParams.device].components
+,function(component){
+return {name:component,data:JSON.stringify(gform.instances[component])}
+}),check:hash(e.form.get('name'))},e.form.get('name')+'_'+hashParams.device)
+e.form.trigger('close');
+}).on('getdata',function(e){
+
+
+  window.open('assets/data/f/'+globalDownloadableData+".csv", "_blank");
+  e.form.trigger('close');
+
+
+// _.download({name:e.form.get('name'),file:(globalDownloadableData||""),data:_.map(instruments[hashParams.device].components
+// ,function(component){
+// return {name:component,data:JSON.stringify(gform.instances[component])}
+// }),check:hash(e.form.get('name'))},e.form.get('name')+'_'+hashParams.device)
+// e.form.trigger('close');
+
+}).on('cancel',function(e){e.form.trigger('close');}).modal();
   }
 
 

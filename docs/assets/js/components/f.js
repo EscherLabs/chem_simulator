@@ -99,6 +99,8 @@ instrument_components.push(
 
                 return;
               }
+              if(typeof globalDownloadableData !== 'undefined')delete globalDownloadableData;
+
               $('.chart').html('')
               if(!e.form.validate())return false;
               globalChart = {
@@ -151,6 +153,7 @@ switch(document.body.querySelector('.tab-pane.active').id){
 
     var modalForm = new gform({
       legend:"Sample Name",
+      actions:[{type:'cancel'},{type:'save',label:"Run"}],
       name:"modal",
       fields:[
         {type:"smallcombo",name:"file",label:false,options:function(){
@@ -158,6 +161,8 @@ switch(document.body.querySelector('.tab-pane.active').id){
         }}
       ]
     }).on('save',function(form,e){
+
+      globalDownloadableData = 'session/'+gform.instances.F.get('session')+'/'+e.form.get('file');
       _.find(instrument_components,{legend:instruments['F'].label}).chart(e.form.get('file'))
     }.bind(null,e.form)
   ).on('cancel',function(e){e.form.trigger('close');}).modal()}
