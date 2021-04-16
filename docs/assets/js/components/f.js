@@ -247,8 +247,8 @@ switch(document.body.querySelector('.tab-pane.active').id){
       {label:"Standard 2",value:"standard_2"},
       {label:"Standard 3",value:"standard_3"},
       {label:"Standard 4",value:"standard_4"},
-      {label:"Cereal 1",value:"cereal_1"},
-      {label:"Cereal 2",value:"cereal_2"}
+      {label:"Cereal 1",value:"Cereal_1"},
+      {label:"Cereal 2",value:"Cereal_2"}
     ])    
     gform.collections.add('f_sessions',[
       {label:"221413",value:"221413"},
@@ -270,8 +270,8 @@ switch(document.body.querySelector('.tab-pane.active').id){
         {label:"Standard 2",value:"Std2_20"},
         {label:"Standard 3",value:"Std3_30"},
         {label:"Standard 4",value:"Std4_40"},
-        {label:"Cereal 1",value:"cereal_1"},
-        {label:"Cereal 2",value:"cereal_2"}
+        {label:"Cereal 1",value:"Cereal_1"},
+        {label:"Cereal 2",value:"Cereal_2"}
       ],
       221413:[
         // {label:"Pre-Scan",value:"prescan"},
@@ -297,8 +297,8 @@ switch(document.body.querySelector('.tab-pane.active').id){
         {label:"Standard 2",value:"Std2_20"},
         {label:"Standard 3",value:"Std3_30"},
         {label:"Standard 4",value:"Std4_40"},
-        {label:"Cereal 1",value:"cereal_1"},
-        {label:"Cereal 2",value:"cereal_2"}
+        {label:"Cereal 1",value:"Cereal_1"},
+        {label:"Cereal 2",value:"Cereal_2"}
       ],      
       221441:[
         // {label:"Pre-Scan",value:"prescan"},
@@ -306,8 +306,8 @@ switch(document.body.querySelector('.tab-pane.active').id){
         {label:"Standard 2",value:"Std2_20"},
         {label:"Standard 3",value:"Std3_30"},
         {label:"Standard 4",value:"Std4_40"},
-        {label:"Cereal 1",value:"cereal_1"},
-        {label:"Cereal 2",value:"cereal_2"}
+        {label:"Cereal 1",value:"Cereal_1"},
+        {label:"Cereal 2",value:"Cereal_2"}
       ],      
       221459:[
         // {label:"Pre-Scan",value:"prescan"},
@@ -315,8 +315,8 @@ switch(document.body.querySelector('.tab-pane.active').id){
         {label:"Standard 2",value:"Std2_20"},
         {label:"Standard 3",value:"Std3_30"},
         {label:"Standard 4",value:"Std4_40"},
-        {label:"Cereal 1",value:"cereal_1"},
-        {label:"Cereal 2",value:"cereal_2"}
+        {label:"Cereal 1",value:"Cereal_1"},
+        {label:"Cereal 2",value:"Cereal_2"}
       ],      
       221461:[
         // {label:"Pre-Scan",value:"prescan"},
@@ -324,8 +324,8 @@ switch(document.body.querySelector('.tab-pane.active').id){
         {label:"Standard 2",value:"Std2_20"},
         {label:"Standard 3",value:"Std3_30"},
         {label:"Standard 4",value:"Std4_40"},
-        {label:"Cereal 1",value:"cereal_1"},
-        {label:"Cereal 2",value:"cereal_2"}
+        {label:"Cereal 1",value:"Cereal_1"},
+        {label:"Cereal 2",value:"Cereal_2"}
       ],      
       221477:[
         // {label:"Pre-Scan",value:"prescan"},
@@ -333,8 +333,8 @@ switch(document.body.querySelector('.tab-pane.active').id){
         {label:"Standard 2",value:"KLNN_20"},
         {label:"Standard 3",value:"KLNN_30"},
         {label:"Standard 4",value:"KLNN_40"},
-        {label:"Cereal 1",value:"cereal_1"},
-        {label:"Cereal 2",value:"cereal_2"}
+        {label:"Cereal 1",value:"Cereal_1"},
+        {label:"Cereal 2",value:"Cereal_2"}
       ],      
       221482:[
         // {label:"Pre-Scan",value:"prescan"},
@@ -342,8 +342,8 @@ switch(document.body.querySelector('.tab-pane.active').id){
         {label:"Standard 2",value:"KLNN_20"},
         {label:"Standard 3",value:"KLNN_30"},
         {label:"Standard 4",value:"KLNN_40"},
-        {label:"Cereal 1",value:"cereal_1"},
-        {label:"Cereal 2",value:"cereal_2"}
+        {label:"Cereal 1",value:"Cereal_1"},
+        {label:"Cereal 2",value:"Cereal_2"}
       ],      
       221493:[
         // {label:"Pre-Scan",value:"prescan"},
@@ -351,8 +351,8 @@ switch(document.body.querySelector('.tab-pane.active').id){
         {label:"Standard 2",value:"Std2_20"},
         {label:"Standard 3",value:"Std3_30"},
         {label:"Standard 4",value:"Std4_40"},
-        {label:"Cereal 1",value:"cereal_1"},
-        {label:"Cereal 2",value:"cereal_2"}
+        {label:"Cereal 1",value:"Cereal_1"},
+        {label:"Cereal 2",value:"Cereal_2"}
       ],
   }
 
