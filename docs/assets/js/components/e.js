@@ -1,4 +1,4 @@
-instrument_components.push(
+device_components.push(
     {
         legend:'Electrophoresis',
         name:"E",

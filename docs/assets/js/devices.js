@@ -1,5 +1,5 @@
 
-instruments ={
+devices ={
 
   "HOME":{
     device:"HOME",
@@ -20,11 +20,17 @@ instruments ={
       label:"Cyclic Voltammeter",
       image:"CV1.png"
     },
+    "FTIS":{
+      device:"FTIS",
+      components:['FTIS'],
+      label:"Fourier Transform Infrared Spectrometer",
+      image:"spectrum 2.png"
+    },
     "FTIR":{
       device:"FTIR",
       components:['FTIR'],
-      label:"Fourier Transform Infrared Spectrometer",
-      image:"spectrum 2.png"
+      label:"Fourier Transform Infrared Spectrometer (FTIR)",
+      image:"ftir.png"
     },
     "F":{
       device:"F",

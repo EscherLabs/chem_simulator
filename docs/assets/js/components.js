@@ -1,4 +1,4 @@
-instrument_components = [
+device_components = [
   {
     // legend:'',
     name:"HOME",
@@ -33,17 +33,10 @@ instrument_components = [
       </div>
       `,{filter:{selector:"#home"}})+'<div id="home" style="background-image:url(assets/img/molecule_40.png);overflow:hidden;background-repeat:no-repeat;background-position:center;min-height:1000px">'+
       // '<center><img style="width:100px" src="assets/img/molecule.png"></a></center>'+
-      _.reduce(instruments,function(template,r,instrument){
-        if(['Home','Upload'].indexOf(instrument.label) >=0)return r;
-        return r+ gform.renderString(template,instrument);
+      _.reduce(devices,function(template,r,device){
+        if(['Home','Upload'].indexOf(device.label) >=0)return r;
+        return r+ gform.renderString(template,device);
       }.bind(null,template),"")+
-      // gform.renderString(template,instruments["GC"])+
-      // gform.renderString(template,instruments["CV"])+
-      // gform.renderString(template,instruments["FTIR"])+
-      // gform.renderString(template,instruments["UV-Vis"])+
-      // gform.renderString(template,instruments["F"])+
-      // gform.renderString(template,instruments["GC-MS"])+
-      // gform.renderString(template,instruments["HPLC"])+
     '</div></div>';
   }()
     // fields:[
@@ -54,92 +47,141 @@ instrument_components = [
         legend:'Upload',
         name:"Upload",
         // "actions":[{type:"save",label:"View",target:".gform-footer"}],
-        html:'<div class="well"><div class="dropzone" id="my-dropzone"></div></div>',
+        html:'<div class="well" id="my-dropzone"></div>',
         actions:[],
         events:[
-          {event:"initialized",handler:function(e){
-            // if(typeof myDropzone !== 'undefined')return;
-            myDropzone = new Dropzone("#my-dropzone",{
-              maxFilesize: 10, // Mb
-              accept: localAcceptHandler,url:"#"
-            ,
-            init:function(){
-            this._sendIntercept = function(file, options={}) {
-              return new Promise((resolve,reject) => {
-                if(!options.readType) {
-                  const mime = file.type;
-                  // const textType = a(_textTypes).any(type => {
-                  //   const re = new RegExp(type);
-                  //   return re.test(mime);
-                  // });
-                  options.readType = 'readAsText';//textType ? 'readAsText' : 'readAsDataURL';
-                }
-                let reader = new window.FileReader();
-
-                reader.onload = () => {
-                  resolve(reader.result);
-                };
-                reader.onerror = () => {
-                  reject(reader.result);
-                };
-            
-                // run the reader
-                reader[options.readType](file);
-              });
-            }
-            this.localSuccess = function(file,done) {
-              _.each(gform.instances,function(form){
-                if(form.options.name !== "Upload"){
-                form.destroy();
-                }
-              })
-              $('.main >.row >.col-md-8 > .target,.main >.row >.col-md-12 > .target').html('').removeClass('well').parent().removeClass('col-md-8').addClass('col-md-12')
-
-
-              // debugger;
-              globdata = JSON.parse(file.contents);
-
-               if(hash(globdata.name) !== globdata.check){
+          {event:"success",handler:function(e){
+            gform.types[e.field.type].dataURItoBlob(e.field.value.dataURI).text().then(text => {
+              let uploadData = JSON.parse(text);
+                if(hash(uploadData.name) !== uploadData.check){
                 console.error("imposter")
                 done(`Imposter`);
                 return;
               }else{
-                globdata.data = _.map(globdata.data,function(i){
+                uploadData.data = _.map(uploadData.data,function(i){
                   i.data = JSON.parse(i.data);
                   return i;
                 })
-                // _.each()
+                resources.device = __.findDevice(uploadData.data[0].name)//__.findComponent(uploadData.data[0].name);
+              
+          //         el = __.renderCreate(compontent);
 
-                // document.querySelector('.main #errors').innerHTML = "";
-                
-                _.each(globdata.data,function(instrument_component){
-                  el = gform.create(gform.renderString(compontent,{}));
-
-                  $('.main >.row >.col-md-12 > .target').append(el);//.parent().removeClass('well')
-
-                  myForm = new gform(_.extend({
-                  "actions":[{type:"save",label:"Run",target:".gform-footer"}],
-                  "data":instrument_component.data,
-                  "default": {
-                    "horizontal": true,edit:false
-                  },"horizontal": true
-                  },_.find(instrument_components, {name:instrument_component.name})),el.querySelector('.form'))
-
+          //         $('.main >.row >.col-md-12 > .target').append(el);
+                _.each(uploadData.data, function(device_component){
+                  config = device_component.data
+                  resources.form.primary = new gform(_.extend({
+                    "actions":[],
+                    "strict": false,
+                    "name":"primary",
+                    "data": config,
+                    "default": {
+                      "horizontal": true, edit:false
+                    },"horizontal": true
+                  }, __.findComponent(device_component.name)), '.form')
                 })
 
+                resources.chart.data = {
+                  xs: {},
+                  columns: [],
+                  type: 'line',
+                  onclick:__.findComponent(uploadData.data[0].name).pointClick,
+                  // instance:resources.chart.instance
+                }
+                resources.data = uploadData.files;
+                if(uploadData.file)resources.data = [__.findComponent(uploadData.data[0].name).formatFile(uploadData.file,config)];
 
-                _.find(instrument_components,{legend:instruments[globdata.data[0].name].label}).chart(globdata.file,globdata.data[0].data);
+                __.fetchExternalData(resources.data).then(result => {
+                  resources.chart.waiting = __.yieldArray(result);
+                  __.chartFile(resources.chart.waiting.next().value)
+                })
+
+                // _.find(device_components,{legend:devices[uploadData.data[0].name].label}).chart(uploadData.file,uploadData.data[0].data);
               }
-              myDropzone.removeAllFiles()
-
-              done();
-
-            }
-          }});
-
+            });
           }}
+          // {event:"initialized",handler:function(e){
+          //   // if(typeof myDropzone !== 'undefined')return;
+          //   myDropzone = new Dropzone("#my-dropzone",{
+          //     maxFilesize: 10, // Mb
+          //     accept: localAcceptHandler,url:"#"
+          //   ,
+          //   init:function(){
+          //   this._sendIntercept = function(file, options={}) {
+          //     return new Promise((resolve,reject) => {
+          //       if(!options.readType) {
+          //         const mime = file.type;
+          //         // const textType = a(_textTypes).any(type => {
+          //         //   const re = new RegExp(type);
+          //         //   return re.test(mime);
+          //         // });
+          //         options.readType = 'readAsText';//textType ? 'readAsText' : 'readAsDataURL';
+          //       }
+          //       let reader = new window.FileReader();
+
+          //       reader.onload = () => {
+          //         resolve(reader.result);
+          //       };
+          //       reader.onerror = () => {
+          //         reject(reader.result);
+          //       };
+            
+          //       // run the reader
+          //       reader[options.readType](file);
+          //     });
+          //   }
+          //   this.localSuccess = function(file,done) {
+          //     _.each(gform.instances,function(form){
+          //       if(form.options.name !== "Upload"){
+          //         form.destroy();
+          //       }
+          //     })
+          //     $('.main >.row >.col-md-8 > .target,.main >.row >.col-md-12 > .target').html('').removeClass('well').parent().removeClass('col-md-8').addClass('col-md-12')
+
+
+          //     uploadData = JSON.parse(file.contents);
+
+          //      if(hash(uploadData.name) !== uploadData.check){
+          //       console.error("imposter")
+          //       done(`Imposter`);
+          //       return;
+          //     }else{
+          //       uploadData.data = _.map(uploadData.data,function(i){
+          //         i.data = JSON.parse(i.data);
+          //         return i;
+          //       })
+          //       // _.each()
+
+          //       // document.querySelector('.main #errors').innerHTML = "";
+                
+          //       _.each(uploadData.data,function(device_component){
+          //         el = __.renderCreate(compontent);
+
+          //         $('.main >.row >.col-md-12 > .target').append(el);//.parent().removeClass('well')
+
+          //         myForm = new gform(_.extend({
+          //         "actions":[{type:"save",label:"Run",target:".gform-footer"}],
+          //         "data":device_component.data,
+          //         "default": {
+          //           "horizontal": true,edit:false
+          //         },"horizontal": true
+          //         },_.find(device_components, {name:device_component.name})),el.querySelector('.form'))
+
+          //       })
+
+
+          //       _.find(device_components,{legend:devices[uploadData.data[0].name].label}).chart(uploadData.file,uploadData.data[0].data);
+          //     }
+          //     myDropzone.removeAllFiles()
+
+          //     done();
+
+          //   }
+          // }});
+
+          // }}
         ],
         fields:[
+          {type:"base64_file","label":false,target:function(){return document.querySelector('#my-dropzone')}}
         ]
       }
   ]

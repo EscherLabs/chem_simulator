@@ -1,4 +1,4 @@
-instrument_components.push(
+device_components.push(
     {
     legend:'High Performance Liquid Chromatograph',
     name:"HPLC",
@@ -6,8 +6,7 @@ instrument_components.push(
     methods:{
       onAdd:function(e){
         if(e.field.index >0){
-          var temp = e.form.find({map:'solvent_pump.gradient.'+(e.field.index-1)})
-          ;
+          var temp = e.form.find({map:'solvent_pump.gradient.'+(e.field.index-1)});
           e.field.fields[0].update({min:(temp.get('time')+1),value:(temp.get('time')+1)})
           e.field.fields[1].update({value:(100 - (temp.get('solvent_b')+1))})
           e.field.fields[2].update({min:(temp.get('solvent_b')+1),value:(temp.get('solvent_b')+1)})

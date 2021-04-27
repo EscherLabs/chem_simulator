@@ -1,9 +1,73 @@
-instrument_components.push(
+device_components.push(
     {
         legend:'Differential Scanning Calorimeter',
         name:"DSC",
         preform:true,
         // sections:'tab',
+        animate:50,
+        hideLines:true,
+        chartConfig:{   
+          xs: {},
+          columns: [],
+          type: 'line',     
+          axis: {
+            x: {
+                tick: {
+                    values: function(start,end,interval){
+                      var temp = [];
+                      for(var i = start; i<=end; i+=interval){
+                      temp.push(i)
+                      }
+                      return temp;
+                    }(0,550,10)
+                    
+                }
+            }
+          }
+      
+        },
+        pointClick:function(d, i) {
+          if(_.findIndex(dscregions,{value:d.x}) !== -1){
+            dscregions.splice(_.findIndex(dscregions,{value:d.x}),1)
+            
+          }else{
+            dscregions.push({value: d.x, text: d.value})
+          }
+          dscregions = _.uniqBy(dscregions,'value');
+          resources.chart.instance.regions([]);
+          gform.instances.DSC.find('integration').set('')
+
+
+          if(dscregions.length>2){  
+            dscregions.shift()
+          }
+          resources.chart.instance.xgrids(dscregions);
+
+
+          if(dscregions.length>1){
+          setTimeout(function(){
+            let globaltemp = resources.data[0].data;
+
+            var sorted = _.sortBy(dscregions,'value')
+            var workingArr =globaltemp.slice(_.findIndex(globaltemp,{sec:sorted[0].value+''}), _.findIndex(globaltemp,{sec:sorted[1].value+''})+1);
+            var temp = _.reduce(workingArr,function(total,a,b,c){
+            if(b>0){
+            // (parseFloat(c[b]['mJ/s'])+parseFloat(c[b-1]['mJ/s']))/2
+
+            total+=((parseFloat(c[b]['mJ/s'])+parseFloat(c[b-1]['mJ/s']))/2)*(c[b]['sec']-c[b-1]['sec'])
+            }
+            return total;
+            },0)
+            temp = temp - ((parseFloat(workingArr[workingArr.length-1]['mJ/s'])+parseFloat(workingArr[0]['mJ/s']))/2)*(workingArr[workingArr.length-1]['sec']-workingArr[0]['sec']);
+            temp = temp.toFixed(6);
+            gform.instances.DSC.find('integration').set(temp)
+            resources.chart.instance.regions([
+            {axis: 'x', start: sorted[0].value, end: sorted[1].value, class: 'regionX',label:temp},
+            ])
+          },400)
+          }
+        }
+        ,
         fields:[
 
           {label:"Sample ID",name:"sample_id",type:"select",options:"DSC",edit:[{type:"matches",name:"running",value:false}]},
@@ -27,7 +91,7 @@ instrument_components.push(
               {label:"Rate (°C/min)",name:"rate",type:"number",value:10,min:10,max:20,step:1},
               {label:"Hold time (min)",name:"hold_time",type:"number",value:0,min:0,max:5,step:1}
             ]},          
-            {label:false,value:false,name:"running",type:"switch",options:[{label:'',value:false},{label:"Collecting Data",value:true}],show:false},
+            // {label:false,value:false,name:"running",type:"switch",options:[{label:'',value:false},{label:"Collecting Data",value:true}],show:false},
             {label:false,value:false,name:"integration",type:"output",value:"",
               target:function(){return document.querySelector('#preform')}
               // target:".gform-footer"
@@ -45,7 +109,7 @@ instrument_components.push(
             var x = []
 
             var y = []
-            c3chart =  c3.generate({
+            resources.chart.instance =  c3.generate({
               bindto: '.chart',
               data: {
                   x: 'x',
@@ -60,18 +124,19 @@ instrument_components.push(
                       dscregions.push({value: d.x, text: d.value})
                     }
                     dscregions = _.uniqBy(dscregions,'value');
-                    c3chart.regions([]);
+                    resources.chart.instance.regions([]);
                     gform.instances.DSC.find('integration').set('')
 
 
                     if(dscregions.length>2){  
                       dscregions.shift()
                     }
-  c3chart.xgrids(dscregions);
+  resources.chart.instance.xgrids(dscregions);
 
 
 if(dscregions.length>1){
 setTimeout(function(){
+  let globaltemp = resource.chart.data;
   var sorted = _.sortBy(dscregions,'value')
   var workingArr =globaltemp.slice(_.findIndex(globaltemp,{sec:sorted[0].value+''}), _.findIndex(globaltemp,{sec:sorted[1].value+''})+1);
   var temp = _.reduce(workingArr,function(total,a,b,c){
@@ -85,7 +150,7 @@ setTimeout(function(){
   temp = temp - ((parseFloat(workingArr[workingArr.length-1]['mJ/s'])+parseFloat(workingArr[0]['mJ/s']))/2)*(workingArr[workingArr.length-1]['sec']-workingArr[0]['sec']);
   temp = temp.toFixed(6);
   gform.instances.DSC.find('integration').set(temp)
-  c3chart.regions([
+  resources.chart.instance.regions([
     {axis: 'x', start: sorted[0].value, end: sorted[1].value, class: 'regionX',label:temp},
   ])
   },400)
@@ -101,7 +166,6 @@ setTimeout(function(){
               // tooltip: {
               //   format: {
               //     title: function (x, index) {
-              //       debugger;
               //        return x+'cm-1'; 
               //     }
               //   }
@@ -130,15 +194,17 @@ setTimeout(function(){
             });
             $('.c3-lines').hide();
             // _.each(globaltemp,_.delay(function(i){
-            //   debugger;
             //   // if(parseInt(i[keys[0]]) >= gform.instances['F'].get('sample_holder')['Range start (cm-1)'] && parseInt(i[keys[0]]) <= gform.instances['FTIR'].get('sample_holder')['Range end (cm-1)']){
             //     if(!isNaN(i[keys[0]] ) ) {
             //     x.push(i[keys[0]]);
             //     y.push(i[keys[1]]);
-            //     c3chart.load({columns:[['x'].concat(x),[_.find(gform.collections.get('DSC'),{search:file}).display].concat(y)]})
+            //     resources.chart.instance.load({columns:[['x'].concat(x),[_.find(gform.collections.get('DSC'),{search:file}).display].concat(y)]})
             //     }
             //   // }
             // },500))
+
+
+
             gform.instances.DSC.find('running').set(true);
             // gform.types.button.edit.call(gform.instances.DSC.find('run'),false);
             gform.instances.DSC.find('run').update({label:"<i class=\"fa fa-times\"></i> Stop","modifiers": "btn btn-danger"});
@@ -150,7 +216,7 @@ setTimeout(function(){
                 if(!isNaN(i[keys[0]] ) ) {
                   x.push(i[keys[0]]);
                   y.push(i[keys[1]]);
-                  c3chart.load({columns:[['x'].concat(x),[_.find(gform.collections.get('DSC'),{search:file}).display].concat(y)]})
+                  resources.chart.instance.load({columns:[['x'].concat(x),[_.find(gform.collections.get('DSC'),{search:file}).display].concat(y)]})
                 }
                 if(datapointer<dataLength && gform.instances.DSC.get('running')){
                   setTimeout(caller, 50);
@@ -164,6 +230,9 @@ setTimeout(function(){
               setTimeout(caller, 50);
             })(globaltemp);
 
+
+
+
             if(typeof gform.instances.modal !== 'undefined')gform.instances.modal.trigger('close');
           }.bind(null,file))
         },
@@ -171,36 +240,43 @@ setTimeout(function(){
           {
             "event":"save",
             "handler":function(e){
-              if(gform.instances.DSC.get('running')){
-                gform.instances.DSC.find('running').set(false)
-                gform.instances.DSC.find('run').update({label:"Run","modifiers": "btn btn-success"})
-
+              if(state.running){
+                state.running = false;
+                resources.form.primary.find('run').update({label:"Run","modifiers": "btn btn-success"})
                 return;
               }
-              if(typeof c3chart !== 'undefined'){c3chart.destroy();delete c3chart;              }
+              if(typeof resources.data !== 'undefined')resources.data=[];
+
+              // if(typeof resources.chart.instance !== 'undefined'){resources.chart.instance.destroy();delete resources.chart.instance;              }
               $('.chart').html('')
 
-              if(!e.form.validate())return false;
-  
-              //todo -- look at using gform validation for the following
-              
-                            // var errors = [];
-                            // var data = e.form.get();
-              var testForm = new gform({fields:_.find(instrument_components,{legend:instruments['DSC'].label}).validationFields,data:e.form.get()})
-              if((hashParams.validate !== "false") && !testForm.validate(true)){
-                var errors = _.uniq(_.values(testForm.errors));
-                if(errors.length>1){
-                  $('.chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
-                }else{
-                  $('.chart').append('<div class="alert alert-danger">'+errors[0]+'</div>')
-                }
-                testForm.destroy();
-                return false;
-              }
-              testForm.destroy();
-              // var temp = gform.instances.F.get()['emission-scan']['Excitation (nm)'];
+              // if(!e.form.validate())return false;
 
-              // globalfile = e.form.get('file');
+              if(!e.form.validate() || __.validate(__.findComponent().validationFields))return false;
+
+              // var testForm = new gform({fields:__.findComponent().validationFields,data:e.form.get()})
+
+              // if((config.validate !== "false") && !testForm.validate(true)){
+              //   var errors = _.uniq(_.values(testForm.errors));
+              //   if(errors.length>1){
+              //     console.log(errors)
+
+              //     $('.chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
+              //   }else{
+              //     $('.chart').append('<div class="alert alert-danger">'+errors[0]+'</div>')
+              //   }
+              //   testForm.destroy();
+              //   return false;
+              // }
+              // testForm.destroy();
+              // var temp = gform.instances.F.get()['emission-scan']['Excitation (nm)'];
+              resources.chart.data ={
+                xs: {},
+                columns: [],
+                type: 'line',
+                
+                onclick:__.findComponent().pointClick,
+              }
 
  //               $('.chart').append('<div class="alert alert-danger">Invalid Sample - Check Emission-Scan Excitation</div>')
               var sample_id = e.form.get('sample_id').split('_')[0]
@@ -211,7 +287,6 @@ setTimeout(function(){
               )
               if(closestFind>=0 && typeof closestFind !== 'undefined'){
                 if(sample_id == 'Indium'){
-                  // debugger;
                   if(e.form.get('sample_id') == "Indium_calibration"){
                     closestFind = _.random(0, 3);
                     globalIndium = closestFind;
@@ -222,13 +297,23 @@ setTimeout(function(){
                     }
                   }
                 }
-                _.find(instrument_components,{legend:instruments['DSC'].label}).chart(sample_id,(closestFind+1))
+                // __.findComponent().chart(sample_id,(closestFind+1))
+                resources.data = [{
+                  label: sample_id,
+                  url: 'assets/data/dsc/'+sample_id+(closestFind+1)+'.csv',
+                  skip:1,
+                  keys:['sec','mJ/s']
+                }]
+
+                  __.fetchExternalData(resources.data).then(result => {
+                    resources.chart.waiting = __.yieldArray(result);
+                    __.chartFile(resources.chart.waiting.next().value)
+                  })
+
+
               }else{
                $('.chart').append('<div class="alert alert-danger">Invalid Sample - Check Sample Mass</div>')
               } 
-              
-            
-
           }
           }
           
@@ -269,14 +354,15 @@ setTimeout(function(){
     
     )
 
-    mass_map = {
-      Indium:[5.8998],
-      DPPC:[3.040, 3.880, 3.960, 4.210],//, 3.700],
-      DSPC:[2.920, 3.100, 3.980, 3.980]//, 3.800]
-    }
-    dscregions = [];
-    gform.collections.add('DSC',[{label:"Indium Calibration",value:"Indium_calibration",search:'Indium',display:"Indium"},
-    {label:"DPPC",value:"DPPC",search:"DPPC",display:"DPPC"},
-    {label:"DSPC",value:"DSPC",search:"DSPC",display:"DSPC"},
-    {label:"Indium Post-check",value:"Indium_post_check"},
-    ])
+mass_map = {
+  Indium:[5.8998],
+  DPPC:[3.040, 3.880, 3.960, 4.210],//, 3.700],
+  DSPC:[2.920, 3.100, 3.980, 3.980]//, 3.800]
+}
+dscregions = [];
+gform.collections.add('DSC',[{label:"Indium Calibration",value:"Indium_calibration",search:'Indium',display:"Indium"},
+{label:"DPPC",value:"DPPC",search:"DPPC",display:"DPPC"},
+{label:"DSPC",value:"DSPC",search:"DSPC",display:"DSPC"},
+{label:"Indium Post-check",value:"Indium_post_check"},
+])
+//{"sample_id":"Indium_calibration","nitrogen_flow":"20","sample_weight":5.8998,"temperature_program":[{"time":0,"temperature":100,"rate":0,"hold_time":1},{"time":1,"temperature":180,"rate":20,"hold_time":0}],"integration":""}

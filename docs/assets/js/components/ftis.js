@@ -1,10 +1,10 @@
-instrument_components.push(
+device_components.push(
     {
         legend:'Fourier Transform Infrared Spectrometer',
-        image:"spectrum 2.jpg",
+        image:"spectrum 2.png",
         chart:function(file, settings){
 
-          $.get('assets/data/ftir/'+file+'.csv',function(file,e){
+          $.get('assets/data/ftis/'+file+'.csv',function(file,e){
             globaltemp = _.csvToArray(e,{skip:1});
             keys = _.keys(globaltemp[0]);
             var x = []
@@ -12,12 +12,12 @@ instrument_components.push(
             //herer eist asdfwe
             var y = [file]
             _.each(globaltemp,function(i){
-              if(parseInt(i[keys[0]]) >= gform.instances['FTIR'].get('sample_holder')['Range start (cm-1)'] && parseInt(i[keys[0]]) <= gform.instances['FTIR'].get('sample_holder')['Range end (cm-1)']){
+              if(parseInt(i[keys[0]]) >= gform.instances['FTIS'].get('sample_holder')['Range start (cm-1)'] && parseInt(i[keys[0]]) <= gform.instances['FTIS'].get('sample_holder')['Range end (cm-1)']){
                 x.push(i[keys[0]]);
                 y.push(i[keys[1]]);
               }
             })
-            c3chart =  c3.generate({
+            resources.chart.instance =  c3.generate({
               bindto: '.chart',
               data: {
                   x: 'x',
@@ -31,7 +31,6 @@ instrument_components.push(
               // tooltip: {
               //   format: {
               //     title: function (x, index) {
-              //       debugger;
               //        return x+'cm-1'; 
               //     }
               //   }
@@ -73,12 +72,10 @@ instrument_components.push(
               
                             // var errors = [];
                             // var data = e.form.get();
-              // debugger;
-                            var testForm = new gform({fields:_.find(instrument_components,{legend:instruments['FTIR'].label}).validationFields,data:e.form.get()})
+                            var testForm = new gform({fields:__.findComponent().validationFields,data:e.form.get()})
               
-                            if((hashParams.validate !== "false") && !testForm.validate(true)){
+                            if((config.validate !== "false") && !testForm.validate(true)){
                               var errors = _.uniq(_.values(testForm.errors));
-                              // debugger;
                               if(errors.length>1){
                                 $('.chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
                               }else{
@@ -97,24 +94,24 @@ instrument_components.push(
                 legend:"Sample Name",
                 name:"modal",
                 fields:[
-                  {type:"smallcombo",name:"file",label:false,options:'ftir',value:"Background"}
+                  {type:"smallcombo",name:"file",label:false,options:'ftis',value:"Background"}
                 ]
               }).on('save',function(form,e){
-                globalfile = e.form.get('file');
-                _.find(instrument_components,{legend:instruments['FTIR'].label}).chart(e.form.get('file'))
-                if(globalfile == "Background"){
-                  gform.collections.update('ftir',["Background",
-                  "Cyclohexane reference",
-                  "Polystyrene standard",
-                  "Sample 1 in Cyclohexane"])
+                __.findComponent().chart(e.form.get('file'))
+                if(e.form.get('file') == "Background"){
+                  gform.collections.update('ftis', [
+                    "Background",
+                    "Cyclohexane reference",
+                    "Polystyrene standard",
+                    "Sample 1 in Cyclohexane"
+                  ])
                 }
-
               }.bind(null,e.form)
             ).on('cancel',function(e){e.form.trigger('close');}).modal()}
           }
           
         ],
-        name:"FTIR",
+        name:"FTIS",
         sections:'tab',
 
         validationFields:[
@@ -145,6 +142,6 @@ instrument_components.push(
     
     )
 
-    gform.collections.add('ftir',["Background"])
+    gform.collections.add('ftis',["Background"])
 
 
