@@ -12,13 +12,13 @@ device_components.push(
                       // format(d) {
                       //   return this.data.xs[_.keys(this.data.xs)[0]][this.data.xs[_.keys(this.data.xs)[0]].length-(1+this.data.xs[_.keys(this.data.xs)[0]].indexOf(d))]
                       // },
-                      values: function(start,end,interval){
+                      values: (function(start,end,interval){
                         var temp = [];
                         for(var i = start; i<=end; i+=interval){
                         temp.push(i)
                         }
                         return temp;
-                      }(400,4000,200)
+                      })(400,4000,200)
                       
                   }
               }
@@ -168,7 +168,7 @@ device_components.push(
             {label:"Interval (cm<sup>-1</sup>)",name:"interval",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"numeric"}]},
     
             {label:"Units",type:"custom_radio",value:"A",raw:true,options:["A","T"]},
-            {label:"Background",type:"custom_radio",value:"Air",options:["Air","Nitrogen","Sample matrix"]},
+            {label:"Background",type:"custom_radio",value:"Air",raw:true,options:["Air","Nitrogen","Sample matrix"]},
           ]}
         ]
       }
