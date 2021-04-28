@@ -27,28 +27,28 @@ device_components.push(
       
         },
         pointClick:function(d, i) {
-          if(_.findIndex(dscregions,{value:d.x}) !== -1){
-            dscregions.splice(_.findIndex(dscregions,{value:d.x}),1)
+          if(_.findIndex(resources.chart.regions,{value:d.x}) !== -1){
+            resources.chart.regions.splice(_.findIndex(resources.chart.regions,{value:d.x}),1)
             
           }else{
-            dscregions.push({value: d.x, text: d.value})
+            resources.chart.regions.push({value: d.x, text: d.value})
           }
-          dscregions = _.uniqBy(dscregions,'value');
+          resources.chart.regions = _.uniqBy(resources.chart.regions,'value');
           resources.chart.instance.regions([]);
           gform.instances.DSC.find('integration').set('')
 
 
-          if(dscregions.length>2){  
-            dscregions.shift()
+          if(resources.chart.regions.length>2){  
+            resources.chart.regions.shift()
           }
-          resources.chart.instance.xgrids(dscregions);
+          resources.chart.instance.xgrids(resources.chart.regions);
 
 
-          if(dscregions.length>1){
+          if(resources.chart.regions.length>1){
           setTimeout(function(){
             let globaltemp = resources.data[0].data;
 
-            var sorted = _.sortBy(dscregions,'value')
+            var sorted = _.sortBy(resources.chart.regions,'value')
             var workingArr =globaltemp.slice(_.findIndex(globaltemp,{sec:sorted[0].value+''}), _.findIndex(globaltemp,{sec:sorted[1].value+''})+1);
             var temp = _.reduce(workingArr,function(total,a,b,c){
             if(b>0){
@@ -100,142 +100,142 @@ device_components.push(
             
           // ]}
         ],
-        chart:function(file,index, settings){
+//         chart:function(file,index, settings){
 
-          $.get('assets/data/dsc/'+file+index+'.csv',function(file,e){
-            globaltemp = _.csvToArray('sec,mJ/s\n'+e,{skip:0});
-            keys = ['sec','mJ/s']//_.keys(globaltemp[0]);
-            // Time (sec),Heat Flow (mJ/s)
-            var x = []
+//           $.get('assets/data/dsc/'+file+index+'.csv',function(file,e){
+//             globaltemp = _.csvToArray('sec,mJ/s\n'+e,{skip:0});
+//             keys = ['sec','mJ/s']//_.keys(globaltemp[0]);
+//             // Time (sec),Heat Flow (mJ/s)
+//             var x = []
 
-            var y = []
-            resources.chart.instance =  c3.generate({
-              bindto: '.chart',
-              data: {
-                  x: 'x',
-                  // xFormat: format,
-                  columns: [['x'],[_.find(gform.collections.get('DSC'),{search:file}).display]], 
-                  type: 'line',
-                  onclick: function(d, i) {
-                    if(_.findIndex(dscregions,{value:d.x}) !== -1){
-                      dscregions.splice(_.findIndex(dscregions,{value:d.x}),1)
+//             var y = []
+//             resources.chart.instance =  c3.generate({
+//               bindto: '.chart',
+//               data: {
+//                   x: 'x',
+//                   // xFormat: format,
+//                   columns: [['x'],[_.find(gform.collections.get('DSC'),{search:file}).display]], 
+//                   type: 'line',
+//                   onclick: function(d, i) {
+//                     if(_.findIndex(resources.chart.regions,{value:d.x}) !== -1){
+//                       resources.chart.regions.splice(_.findIndex(resources.chart.regions,{value:d.x}),1)
                       
-                    }else{
-                      dscregions.push({value: d.x, text: d.value})
-                    }
-                    dscregions = _.uniqBy(dscregions,'value');
-                    resources.chart.instance.regions([]);
-                    gform.instances.DSC.find('integration').set('')
+//                     }else{
+//                       resources.chart.regions.push({value: d.x, text: d.value})
+//                     }
+//                     resources.chart.regions = _.uniqBy(resources.chart.regions,'value');
+//                     resources.chart.instance.regions([]);
+//                     gform.instances.DSC.find('integration').set('')
 
 
-                    if(dscregions.length>2){  
-                      dscregions.shift()
-                    }
-  resources.chart.instance.xgrids(dscregions);
+//                     if(resources.chart.regions.length>2){  
+//                       resources.chart.regions.shift()
+//                     }
+//   resources.chart.instance.xgrids(resources.chart.regions);
 
 
-if(dscregions.length>1){
-setTimeout(function(){
-  let globaltemp = resource.chart.data;
-  var sorted = _.sortBy(dscregions,'value')
-  var workingArr =globaltemp.slice(_.findIndex(globaltemp,{sec:sorted[0].value+''}), _.findIndex(globaltemp,{sec:sorted[1].value+''})+1);
-  var temp = _.reduce(workingArr,function(total,a,b,c){
-    if(b>0){
-      // (parseFloat(c[b]['mJ/s'])+parseFloat(c[b-1]['mJ/s']))/2
+// if(resources.chart.regions.length>1){
+// setTimeout(function(){
+//   let globaltemp = resource.chart.data;
+//   var sorted = _.sortBy(resources.chart.regions,'value')
+//   var workingArr =globaltemp.slice(_.findIndex(globaltemp,{sec:sorted[0].value+''}), _.findIndex(globaltemp,{sec:sorted[1].value+''})+1);
+//   var temp = _.reduce(workingArr,function(total,a,b,c){
+//     if(b>0){
+//       // (parseFloat(c[b]['mJ/s'])+parseFloat(c[b-1]['mJ/s']))/2
 
-    total+=((parseFloat(c[b]['mJ/s'])+parseFloat(c[b-1]['mJ/s']))/2)*(c[b]['sec']-c[b-1]['sec'])
-    }
-    return total;
-  },0)
-  temp = temp - ((parseFloat(workingArr[workingArr.length-1]['mJ/s'])+parseFloat(workingArr[0]['mJ/s']))/2)*(workingArr[workingArr.length-1]['sec']-workingArr[0]['sec']);
-  temp = temp.toFixed(6);
-  gform.instances.DSC.find('integration').set(temp)
-  resources.chart.instance.regions([
-    {axis: 'x', start: sorted[0].value, end: sorted[1].value, class: 'regionX',label:temp},
-  ])
-  },400)
-}
-                  },
-              },
-              point: {
-                  show: true
-              },
-              zoom: {
-                enabled: false
-            },
-              // tooltip: {
-              //   format: {
-              //     title: function (x, index) {
-              //        return x+'cm-1'; 
-              //     }
-              //   }
-              // },
-              axis: {
-                  x: {
-                      tick: {
-                          // format(d) {
-                          //   return this.data.xs[_.keys(this.data.xs)[0]][this.data.xs[_.keys(this.data.xs)[0]].length-(1+this.data.xs[_.keys(this.data.xs)[0]].indexOf(d))]
-                          // },
-                          values: function(start,end,interval){
-                            var temp = [];
-                            for(var i = start; i<=end; i+=interval){
-                            temp.push(i)
-                            }
-                            return temp;
-                          }(0,550,10)
+//     total+=((parseFloat(c[b]['mJ/s'])+parseFloat(c[b-1]['mJ/s']))/2)*(c[b]['sec']-c[b-1]['sec'])
+//     }
+//     return total;
+//   },0)
+//   temp = temp - ((parseFloat(workingArr[workingArr.length-1]['mJ/s'])+parseFloat(workingArr[0]['mJ/s']))/2)*(workingArr[workingArr.length-1]['sec']-workingArr[0]['sec']);
+//   temp = temp.toFixed(6);
+//   gform.instances.DSC.find('integration').set(temp)
+//   resources.chart.instance.regions([
+//     {axis: 'x', start: sorted[0].value, end: sorted[1].value, class: 'regionX',label:temp},
+//   ])
+//   },400)
+// }
+//                   },
+//               },
+//               point: {
+//                   show: true
+//               },
+//               zoom: {
+//                 enabled: false
+//             },
+//               // tooltip: {
+//               //   format: {
+//               //     title: function (x, index) {
+//               //        return x+'cm-1'; 
+//               //     }
+//               //   }
+//               // },
+//               axis: {
+//                   x: {
+//                       tick: {
+//                           // format(d) {
+//                           //   return this.data.xs[_.keys(this.data.xs)[0]][this.data.xs[_.keys(this.data.xs)[0]].length-(1+this.data.xs[_.keys(this.data.xs)[0]].indexOf(d))]
+//                           // },
+//                           values: function(start,end,interval){
+//                             var temp = [];
+//                             for(var i = start; i<=end; i+=interval){
+//                             temp.push(i)
+//                             }
+//                             return temp;
+//                           }(0,550,10)
                           
-                      },
-                      label: keys[0]
-                  },
-                  y: {
-                      label: keys[1]
-                  }
-              }
-            });
-            $('.c3-lines').hide();
-            // _.each(globaltemp,_.delay(function(i){
-            //   // if(parseInt(i[keys[0]]) >= gform.instances['F'].get('sample_holder')['Range start (cm-1)'] && parseInt(i[keys[0]]) <= gform.instances['FTIR'].get('sample_holder')['Range end (cm-1)']){
-            //     if(!isNaN(i[keys[0]] ) ) {
-            //     x.push(i[keys[0]]);
-            //     y.push(i[keys[1]]);
-            //     resources.chart.instance.load({columns:[['x'].concat(x),[_.find(gform.collections.get('DSC'),{search:file}).display].concat(y)]})
-            //     }
-            //   // }
-            // },500))
+//                       },
+//                       label: keys[0]
+//                   },
+//                   y: {
+//                       label: keys[1]
+//                   }
+//               }
+//             });
+//             $('.c3-lines').hide();
+//             // _.each(globaltemp,_.delay(function(i){
+//             //   // if(parseInt(i[keys[0]]) >= gform.instances['F'].get('sample_holder')['Range start (cm-1)'] && parseInt(i[keys[0]]) <= gform.instances['FTIR'].get('sample_holder')['Range end (cm-1)']){
+//             //     if(!isNaN(i[keys[0]] ) ) {
+//             //     x.push(i[keys[0]]);
+//             //     y.push(i[keys[1]]);
+//             //     resources.chart.instance.load({columns:[['x'].concat(x),[_.find(gform.collections.get('DSC'),{search:file}).display].concat(y)]})
+//             //     }
+//             //   // }
+//             // },500))
 
 
 
-            gform.instances.DSC.find('running').set(true);
-            // gform.types.button.edit.call(gform.instances.DSC.find('run'),false);
-            gform.instances.DSC.find('run').update({label:"<i class=\"fa fa-times\"></i> Stop","modifiers": "btn btn-danger"});
-            (function (data) {
-              var dataLength = data.length;
-              var datapointer = 0;
-              var caller = function () {
-                var i = data[datapointer++];
-                if(!isNaN(i[keys[0]] ) ) {
-                  x.push(i[keys[0]]);
-                  y.push(i[keys[1]]);
-                  resources.chart.instance.load({columns:[['x'].concat(x),[_.find(gform.collections.get('DSC'),{search:file}).display].concat(y)]})
-                }
-                if(datapointer<dataLength && gform.instances.DSC.get('running')){
-                  setTimeout(caller, 50);
-                }else{
-                  gform.instances.DSC.find('run').update({label:"Run","modifiers": "btn btn-success"})
-                  gform.instances.DSC.find('running').set(false)
+//             gform.instances.DSC.find('running').set(true);
+//             // gform.types.button.edit.call(gform.instances.DSC.find('run'),false);
+//             gform.instances.DSC.find('run').update({label:"<i class=\"fa fa-times\"></i> Stop","modifiers": "btn btn-danger"});
+//             (function (data) {
+//               var dataLength = data.length;
+//               var datapointer = 0;
+//               var caller = function () {
+//                 var i = data[datapointer++];
+//                 if(!isNaN(i[keys[0]] ) ) {
+//                   x.push(i[keys[0]]);
+//                   y.push(i[keys[1]]);
+//                   resources.chart.instance.load({columns:[['x'].concat(x),[_.find(gform.collections.get('DSC'),{search:file}).display].concat(y)]})
+//                 }
+//                 if(datapointer<dataLength && gform.instances.DSC.get('running')){
+//                   setTimeout(caller, 50);
+//                 }else{
+//                   gform.instances.DSC.find('run').update({label:"Run","modifiers": "btn btn-success"})
+//                   gform.instances.DSC.find('running').set(false)
 
-                  // gform.types.button.edit.call(gform.instances.DSC.find('run'),true)
-                }
-              }
-              setTimeout(caller, 50);
-            })(globaltemp);
-
-
+//                   // gform.types.button.edit.call(gform.instances.DSC.find('run'),true)
+//                 }
+//               }
+//               setTimeout(caller, 50);
+//             })(globaltemp);
 
 
-            if(typeof gform.instances.modal !== 'undefined')gform.instances.modal.trigger('close');
-          }.bind(null,file))
-        },
+
+
+//             if(typeof gform.instances.modal !== 'undefined')gform.instances.modal.trigger('close');
+//           }.bind(null,file))
+//         },
         events:[
           {
             "event":"save",
@@ -359,7 +359,7 @@ mass_map = {
   DPPC:[3.040, 3.880, 3.960, 4.210],//, 3.700],
   DSPC:[2.920, 3.100, 3.980, 3.980]//, 3.800]
 }
-dscregions = [];
+// resources.chart.regions = [];
 gform.collections.add('DSC',[{label:"Indium Calibration",value:"Indium_calibration",search:'Indium',display:"Indium"},
 {label:"DPPC",value:"DPPC",search:"DPPC",display:"DPPC"},
 {label:"DSPC",value:"DSPC",search:"DSPC",display:"DSPC"},

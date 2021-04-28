@@ -3,9 +3,10 @@ device_components.push(
         legend:'Fourier Transform Infrared Spectrometer (FTIR)',
         image:"ftir.png",
         points:false,
-
         reverse:true,
+        
         chartConfig:{
+          transition:{duration:0},
           axis: {
               x: {
                   tick: {
@@ -24,6 +25,42 @@ device_components.push(
               }
           }
         },
+        pointClick:function(d, i) {
+          resources.chart.instance.regions.remove();
+          if(_.findIndex(resources.chart.regions,{value:d.x}) !== -1){
+            resources.chart.regions.splice(_.findIndex(resources.chart.regions,{value:d.x}),1)
+            
+          }else{
+            resources.chart.regions.push({value: d.x, text: d.value})
+          }
+          resources.chart.regions = _.uniqBy(resources.chart.regions,'value');
+          resources.chart.instance.regions([]);
+
+          if(resources.chart.regions.length>2){  
+            resources.chart.regions.shift()
+          }
+          resources.chart.instance.xgrids(resources.chart.regions);
+
+          
+          gform.types.button.show.call(resources.form.primary.find('zoom'),(resources.chart.regions.length>1))
+
+
+
+
+
+          var sorted = _.sortBy(resources.chart.regions,'value')
+
+          if(resources.chart.regions.length>1){ 
+            resources.chart.instance.regions([
+            {axis: 'x', start: sorted[0].value, end: sorted[1].value, class: 'regionX',label:''},
+            ])
+          }
+          // setTimeout(function(){
+            // resources.chart.instance.zoom(resources.chart.instance.zoom())
+          // },360)
+
+        },
+
         // chart:function(file, settings){
 
         //   $.get('assets/data/ftir/'+file+'.csv',function(file,e){
@@ -74,7 +111,63 @@ device_components.push(
         //     if(typeof gform.instances.modal !== 'undefined')gform.instances.modal.trigger('close');
         //   }.bind(null,file))
         // },
+        "actions": [
+        {
+          type:"save",
+          label:"Run",
+          target:".gform-footer"
+        },{
+          type:"button",
+          label:"<i fa fa-zoom></i> Zoom to selection",
+          target:()=> document.querySelector(".col-md-8 .well p"),
+          action:'zoom',
+          show:false,
+          name:"zoom"
+        }],
         events:[
+          {
+            event:'zoom2',
+            handler:function(){
+
+              resources.chart.regions = [];
+    
+              resources.chart.instance.xgrids(resources.chart.regions);
+              resources.chart.instance.zoom(_.map(resources.chart.regions,'value'))
+            }
+          },
+          {
+            event:'zoom',
+            handler: function(){
+              let globaltemp = resources.data[0].data;
+
+              var sorted = _.sortBy(resources.chart.regions,'value')
+              // var workingArr = globaltemp.slice(_.findIndex(globaltemp,{'cm-1':sorted[0].value+''}), _.findIndex(globaltemp,{'cm-1':sorted[1].value+''})+1);
+    
+              // var workingArr = globaltemp.slice(_.findIndex(globaltemp,{'cm-1':sorted[0].value+''}), _.findIndex(globaltemp,{'cm-1':sorted[1].value+''})+1);
+              var zoomData = _.cloneDeep(resources.chart.data)
+    var searchStart = {}
+    var searchend = {}
+    searchStart[_.keys(globaltemp[0])[0]] = sorted[0].value+'';
+    searchend[_.keys(globaltemp[0])[0]] = sorted[1].value+'';
+              zoomData.columns[0] = zoomData.columns[0].slice(_.findIndex(globaltemp,{searchStart})+1,_.findIndex(globaltemp,searchend)+2)
+              zoomData.columns[1] = zoomData.columns[1].slice(_.findIndex(globaltemp,{searchStart})+1,_.findIndex(globaltemp,searchend)+2)
+              zoomData.columns[0].unshift(resources.chart.data.columns[0][0])
+              zoomData.columns[1].unshift(resources.chart.data.columns[1][0])
+              // debugger;
+              resources.chart.regions = [];
+    
+              resources.chart.instance.xgrids(resources.chart.regions);
+    
+              // resources.chart.instance.load(zoomData)
+              // zoomData.transition = {duration:0}
+              // setTimeout(function(zoomData){
+              resources.chart.instance.load(zoomData)
+              gform.types.button.show.call(resources.form.primary.find('zoom'),(resources.chart.regions.length>1))
+              resources.chart.instance.regions.remove();
+
+    
+            }
+          },
           {
             "event":"save",
             "handler":function(e){
@@ -85,6 +178,8 @@ device_components.push(
                 xs: {},
                 columns: [],
                 type: 'line',
+                onclick:__.findComponent().pointClick,
+
                 // instance:resources.chart.instance
               }
               if(!e.form.validate() || __.validate(__.findComponent().validationFields))return false;
@@ -123,6 +218,7 @@ device_components.push(
                   label: e.form.get('file'),
                   url: url,
                   skip:1,
+                  keys:['Wavenumber (cm-1)','% Transmittance'],
                   min:gform.instances['FTIR'].get('sample_holder')['range_start'],
                   max:gform.instances['FTIR'].get('sample_holder')['range_end'],
                 }]
@@ -151,7 +247,7 @@ device_components.push(
           {legend: 'Sample Holder', type: 'fieldset',fields:[
 
           {label:"Number of Accumulations",name:"accumulations",type:"number",value:1,min:1,step:1,max:16,validate:[{type:"matches",value:16,message:"Check Accumulations"}]},
-          {label:"Range start (cm<sup>-1</sup>)",name:"range_start",type:"number",value:360,min:360,step:10,max:8300,validate:[{type:"matches",value:400,message:"Check Range Start"}]},
+          {label:"Range start (cm<sup>-1</sup>)",name:"range_start",type:"number",value:360,min:360,step:10,max:8300,validate:[{type:"numeric",min:400, max:2500,message:"Check Range Start"}]},
           {label:"Range end (cm<sup>-1</sup>)",name:"range_end",type:"number",value:820,min:820,step:10,max:4000,validate:[{type:"numeric",message:"Check Range End"}]},
           {label:"Resolution (cm<sup>-1</sup>)",name:"resolution",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"matches",value:1,message:"Check Resolution"}]},
           {label:"Interval (cm<sup>-1</sup>)",name:"interval",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"matches",value:1,message:"Check Interval"}]},

@@ -523,9 +523,21 @@ const __ = (function(){
             chart.data.columns.push([file.label+' ']);
           }
         }
-  //      
+
         let settings = _.defaultsDeep({},activeComponent.chartConfig,{
+          zoom:{enabled: true,onzoom: () => {  
+            let regions = d3.selectAll(".chart .c3-region")._groups[0];  
+            regions.forEach(regionElement => {
+                let region = d3.select(regionElement);
+                let rectangle = d3.select(regionElement).select("rect");
+                rectangle.transition().duration(0).attr('width', region.attr('width'));
+                rectangle.transition().duration(0).attr('x', region.attr('x'));
+            });
+        }},
           bindto: '.chart',
+          // transition: {
+          //   duration: 0
+          // },
           data: chart.data,
           point: {
               show: __.attr('points', true, null, "on")
@@ -534,15 +546,16 @@ const __ = (function(){
               x: {
                 tick: {
                   format(d) {
+                    // debugger;
                     // if(this.data.targets[0].values.length){
                     //data = this.data.xs[_.keys(this.data.xs)[0]][this.data.xs[_.keys(this.data.xs)[0]]
-                    var data = __.findComponent().chartConfig.axis.x.tick.values;
+                      var data = __.findComponent().chartConfig.axis.x.tick.values;
                       var result = (__.findComponent().reverse)? data[data.length-(1+data.indexOf(d))] :null;
                       if(!result)result = (__.findComponent().reverse)?this.data.xs[_.keys(this.data.xs)[0]][this.data.xs[_.keys(this.data.xs)[0]].length-(1+this.data.xs[_.keys(this.data.xs)[0]].indexOf(d))]:d;
                    return result;
                       // }else{
                     //   var data = __.findComponent().chartConfig.axis.x.tick.values;
-                    //   return (__.findComponent().reverse)? data[data.length-(1+data.indexOf(d))] :d;
+                      // return (__.findComponent().reverse)? data[data.length-(1+data.indexOf(d))] :d;
 
 
                     // }
