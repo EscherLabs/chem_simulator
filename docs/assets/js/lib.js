@@ -534,12 +534,10 @@ const __ = (function(){
               x: {
                 tick: {
                   format(d) {
-                    debugger;
                     // if(this.data.targets[0].values.length){
                     //data = this.data.xs[_.keys(this.data.xs)[0]][this.data.xs[_.keys(this.data.xs)[0]]
                     var data = __.findComponent().chartConfig.axis.x.tick.values;
                       var result = (__.findComponent().reverse)? data[data.length-(1+data.indexOf(d))] :null;
-                      debugger;
                       if(!result)result = (__.findComponent().reverse)?this.data.xs[_.keys(this.data.xs)[0]][this.data.xs[_.keys(this.data.xs)[0]].length-(1+this.data.xs[_.keys(this.data.xs)[0]].indexOf(d))]:d;
                    return result;
                       // }else{

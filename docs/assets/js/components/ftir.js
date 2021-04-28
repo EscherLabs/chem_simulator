@@ -18,7 +18,7 @@ device_components.push(
                         temp.push(i)
                         }
                         return temp;
-                      })(400,4000,200)
+                      })(400,3500,100)
                       
                   }
               }
@@ -117,10 +117,11 @@ device_components.push(
               }).on('save',function(form,e){
                 // __.findComponent().chart(e.form.get('file'),resources.form.primary.get());
                 // if(parseInt(i[keys[0]]) >= gform.instances['FTIR'].get('sample_holder')['range_start'] && parseInt(i[keys[0]]) <= gform.instances['FTIR'].get('sample_holder')['range_end']){
-
+                let url = 'assets/data/ftir/'+e.form.get('file')+'.csv';
+                if(e.form.get('file') == "HCl")url = 'assets/data/ftir/'+e.form.get('file')+(_.random()+1)+'.csv';
                 resources.data = [{
                   label: e.form.get('file'),
-                  url: 'assets/data/ftir/'+e.form.get('file')+'.csv',
+                  url: url,
                   skip:1,
                   min:gform.instances['FTIR'].get('sample_holder')['range_start'],
                   max:gform.instances['FTIR'].get('sample_holder')['range_end'],
@@ -133,8 +134,7 @@ device_components.push(
                 if(e.form.get('file') == "Background"){
                   gform.collections.update('ftir',[
                     "Background",
-                    "HCL1",
-                    "HCL2",
+                    "HCl",
                     "Polystyrene"
                   ])
                 }
