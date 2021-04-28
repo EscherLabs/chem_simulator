@@ -1,4 +1,4 @@
-instrument_components.push(
+device_components.push(
     {
         legend:'Flame Atomic Absorption Spectrophotometer',
         name:"FAAS",

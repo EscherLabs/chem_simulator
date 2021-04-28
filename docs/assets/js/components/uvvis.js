@@ -1,145 +1,234 @@
-instrument_components.push(
+device_components.push(
     {
         legend:'UV-Vis Spectrophotometer',
         image:"UVVis1.png",
-        chart:function(file, settings){
-          $.get('assets/data/uvvis/'+file+'.CSV',function(e){
-            globaltemp = _.csvToArray(e,{skip:0});
-            keys = _.keys(globaltemp[0]);
-            var x = ['x']
-            var y = []
-            _.each(globaltemp,function(i){
-              if(parseInt(i[keys[0]]) >= settings['detection']['from'] && parseInt(i[keys[0]]) <= settings['detection']['to']){
-                x.push(i[keys[0]]);
-                y.push(i[keys[1]]);
-              }
-            })
-            var maxKey = _.maxBy(_.keys(y), function (o) {
-              return parseFloat(y[o])||0; 
-            });
-            maxKey++;
-            c3chart =  c3.generate({
-              bindto: '.chart',
-              data: {
-                  x: 'x',
-                  // xFormat: format,
-                  columns: [x,[_.find(gform.collections.get('uvvis'),{value:file}).label].concat(y)], 
-                  type: 'line'
-              },
-              point: {
-                  show: false
-              },
-              grid:{
-                x:{
-                  lines: [
-                    {value: x[maxKey], text: x[maxKey]+"nm ( "+y[maxKey]+")", position: 'start'},
-                ],
-                }
-              },
-              tooltip: {
-                format: {
-                  title: function (x, index) { return x+'nm'; }
-                }
-              },
-              axis: {
-                  x: {
-                      // type: 'timeseries',
-                      tick: {
-                          // format: format
-  
-                          // culling: {
-                          //   max: 19
-                          // }
-                          values: function(start,end,interval){
-                            // [400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000]
-                            var temp = [];
-                            for(var i = start; i<=end; i+=interval){
-                            temp.push(i)
-                            }
-                            return temp;
-                          }(100,1200,10)
-                          
-                      },
-                      label: keys[0]
-  
-                  },
-                  y: {
-                      label: keys[1]
-                  }
-              }
-            });
-            if(typeof gform.instances.modal !== 'undefined')gform.instances.modal.trigger('close');
-          })
+        points:false,
+        animatePreview:true,
+        formatFile: (name, settings) => {
+            return {
+            label: name,
+            url :`assets/data/uvvis/${name}.CSV`,
+            min: settings.acquisition.from,
+            max: settings.acquisition.to}
         },
+        chartConfig:{   
+          xs: {},
+          columns: [],
+          type: 'line',     
+          axis: {
+            x: {
+                tick: {
+                    values: function(start,end,interval){
+                      var temp = [];
+                      for(var i = start; i<=end; i+=interval){
+                      temp.push(i)
+                      }
+                      return temp;
+                    }(100,1200,10)
+                    
+                }
+            }
+          },tooltip: {
+            format: {
+              title: function (x, index) { return x+'nm'; }
+            }
+          }
+        },
+        post:()=>{
+          
+          let columns = resources.chart.data.columns;
+          let x = columns[0].slice(1)
+          let y = columns[1].slice(1)
+
+          var maxKey = _.maxBy(_.keys(y), function (o) {
+            return parseFloat(y[o])||0; 
+          });
+          maxKey++;
+          resources.chart.instance.xgrids(
+            [
+              {value: x[maxKey], text: x[maxKey]+"nm ( "+y[maxKey]+")", position: 'start'}
+              ]
+          );
+        },
+        // chart:function(file, settings){
+        //   // const fetchExternalData = files => {
+        //   //   return Promise.all(
+        //   //     files.map(file =>
+        //   //       fetch(file.url)
+        //   //     )
+        //   //   )
+        //   //   .then(
+        //   //     responses => Promise.all(
+        //   //       responses.map(response => response.text())
+        //   //     )
+        //   //   ).then(results =>
+        //   //     results.reduce((files, result, idx) => {
+        //   //       files[idx].content = result;
+        //   //       files[idx].data = _.csvToArray(result,{skip:0});
+        //   //       return files;
+        //   //       // return {...acc,[items[idx].label]:processedData}
+        //   //     }, files)
+        //   //   );
+        //   // };
+
+        //   var chartData;
+        //   var filename = 'assets/data/f/'+((document.body.querySelector('.tab-pane.active').id == 'tabsprescan')?file:'session/'+resources.form.primary.get('session')+'/'+file)+'.csv'
+        //   // resources.data = [{
+        //   //   label: 'F',
+        //   //   url: filename
+        //   // }]
+        //   // fetchExternalData(resources.data)
+        //   // .then(result => {
+        //   //   console.log("result", result[0].data);
+        //   //   // console.log('todo1', result["todo1"]);
+        //   // })
+
+          
+        //   $.get('assets/data/uvvis/'+file+'.CSV',function(e){
+        //     globaltemp = _.csvToArray(e,{skip:0});
+        //     keys = _.keys(globaltemp[0]);
+        //     var x = ['x']
+        //     var y = []
+        //     _.each(globaltemp,function(i){
+        //       if(parseInt(i[keys[0]]) >= settings['detection']['from'] && parseInt(i[keys[0]]) <= settings['detection']['to']){
+        //         x.push(i[keys[0]]);
+        //         y.push(i[keys[1]]);
+        //       }
+        //     })
+        //     var maxKey = _.maxBy(_.keys(y), function (o) {
+        //       return parseFloat(y[o])||0; 
+        //     });
+        //     maxKey++;
+        //     resources.chart.instance =  c3.generate({
+        //       bindto: '.chart',
+        //       data: {
+        //           x: 'x',
+        //           // xFormat: format,
+        //           columns: [x,[_.find(gform.collections.get('uvvis'),{value:file}).label].concat(y)], 
+        //           type: 'line'
+        //       },
+        //       point: {
+        //           show: false
+        //       },
+        //       grid:{
+        //         x:{
+        //           lines: [
+        //             {value: x[maxKey], text: x[maxKey]+"nm ( "+y[maxKey]+")", position: 'start'},
+        //         ],
+        //         }
+        //       },
+        //       tooltip: {
+        //         format: {
+        //           title: function (x, index) { return x+'nm'; }
+        //         }
+        //       },
+        //       axis: {
+        //           x: {
+        //               // type: 'timeseries',
+        //               tick: {
+        //                   // format: format
+  
+        //                   // culling: {
+        //                   //   max: 19
+        //                   // }
+        //                   values: function(start,end,interval){
+        //                     // [400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000]
+        //                     var temp = [];
+        //                     for(var i = start; i<=end; i+=interval){
+        //                     temp.push(i)
+        //                     }
+        //                     return temp;
+        //                   }(100,1200,10)
+                          
+        //               },
+        //               label: keys[0]
+  
+        //           },
+        //           y: {
+        //               label: keys[1]
+        //           }
+        //       }
+        //     });
+        //     if(typeof gform.instances.modal !== 'undefined')gform.instances.modal.trigger('close');
+        //   })
+        // },
         events:[{
           "event": "save",
           "handler": function(e){
             $('.chart').html('')
 
-            if(!e.form.validate())return false;
+            resources.chart.data ={
+              xs: {},
+              columns: [],
+              type: 'line',
+              // instance:resources.chart.instance
+            }
 
-            //todo -- look at using gform validation for the following
-            
-                var testForm = new gform({fields:_.find(instrument_components,{legend:instruments['UV-Vis'].label}).validationFields2021,data:e.form.get()})
-  
-                if((hashParams.validate !== "false") && !testForm.validate(true)){
-                  var errors = _.uniq(_.values(testForm.errors));
-                  if(errors.length>1){
-                    console.log(errors)
-                    $('.chart').append('<div class="alert alert-danger">Method Incorrect Please check your values</div>')
-                  }else{
-                    $('.chart').append('<div class="alert alert-danger">'+errors[0]+'</div>')
-                  }
-                  testForm.destroy();
-                  return false;
-                }
-                testForm.destroy();
-  
+            // validationFieldsFluorimeter
+            if(!e.form.validate() || __.validate(__.findComponent().validationFields2021))return false;
 
-            new gform({
+            resources.form.modal = new gform({
               legend:"Sample Name",
               name:"modal",
 
               actions:[{type:'cancel'},{type:'save',label:"Run"}],
               fields:[
-                {type:"smallcombo",name:"file",label:false,options:'uvvis',value:"BLANK2"}
+                {type:"smallcombo",name:"file",label:false,options:'uvvis',value:"BLANK2_2"}
               ]
             }).on('save',function(form,e){
-              if(typeof globalDownloadableData !== 'undefined')delete globalDownloadableData;
+              if(typeof resources.data !== 'undefined')resources.data =[];
+
+     
+              let settings = resources.form.primary.get();
 
 
-              var a = '<center><div style="width:510px;height: 310px;background-position:0px -8px;background-image:url(assets/img/uv_vis_2.png)"></div></center>';
-              var b = '<center><div style="width:510px;height: 310px;background-position: -1px -8px;background-image:url(assets/img/uv_vis_1.png)"></div></center>';
-    
-              new gform({legend:"Scanning...",name:"animate",fields:[{type:"output",value:'<div style="height:0">'+a+'</div>'+b}],actions:[]}).modal()
-              var field = gform.instances.animate.fields[0];
-              var fA = function(){field.set(a)};
-              var fB = function(){field.set(b)};
-    
-              var actions = [
-                fA,fB,fA,fB,//fA,fB,//,
-                // function(){field.set('<center><i class=\"fa fa-spinner fa-spin\" style=\"font-size:60px;margin:20px auto;color:#d8d8d8\"></i></center>')},,
-                function(){gform.instances.animate.trigger('close');},
-                function(){
-                  globalfile = e.form.get('file');
-                  globalDownloadableData = 'assets/data/uvvis/'+e.form.get('file')+".CSV";
+              resources.data = [{
+                label: _.find(gform.collections.get('uvvis'),{value:e.form.get('file')}).label||e.form.get('file'),
+                url: 'assets/data/uvvis/'+e.form.get('file')+".CSV",
 
-                  _.find(instrument_components,{legend:instruments['UV-Vis'].label}).chart(e.form.get('file'),gform.instances['UV-Vis'].get())
-                }
-              ];
-    
-              myint = launchInterval(actions,1000);
+                min: settings.acquisition.from,
+                max: settings.acquisition.to,
+                //skip:1,
+                //keys:['Wavelength (nm)','Absorbance (AU)']
+              }]
+              if(__.attr('animatePreview',false,__.findComponent())){
+                var a = '<center><div style="width:510px;height: 310px;background-position:0px -8px;background-image:url(assets/img/uv_vis_2.png)"></div></center>';
+                var b = '<center><div style="width:510px;height: 310px;background-position: -1px -8px;background-image:url(assets/img/uv_vis_1.png)"></div></center>';
+      
+                new gform({legend:"Scanning...",name:"animate",fields:[{type:"output",value:'<div style="height:0">'+a+'</div>'+b}],actions:[]}).modal()
+                var field = gform.instances.animate.fields[0];
+                var fA = function(){field.set(a)};
+                var fB = function(){field.set(b)};
+      
+                var actions = [
+                  fA,fB,fA,fB,
+                  function(){gform.instances.animate.trigger('close');},
+                  function(){
+                    __.fetchExternalData(resources.data).then(result => {
+                      resources.chart.waiting = __.yieldArray(result);
+                      __.chartFile(resources.chart.waiting.next().value)
+                    })
+                  }
+                ];
+                __.schedule(actions)
+              }else{
+                __.fetchExternalData(resources.data).then(result => {
+                  resources.chart.waiting = __.yieldArray(result);
+                  __.chartFile(resources.chart.waiting.next().value)
+                })
+                // __.findComponent().chart(e.form.get('file'),resources.form.primary.get())
+              }
               e.form.trigger('close')
 
               gform.collections.update('uvvis',[
-                // {"label":"Blank",value:"BLANK2"},
+                // {"label":"Blank",value:"BLANK2_2"},
                 // {"label":"1.00 PPM",value:"1PPM1"},
                 // {"label":"4.00 PPM",value:"4PPM1"},
                 // {"label":"10.0 PPM",value:"10PPM1"},
                 // {"label":"25.0 PPM",value:"25PPM1"},
                 // {"label":"Unknown Solution",value:"UNKNOWN1"}
 
-                {"label":"Blank",value:"BLANK2"},
+                {"label":"Blank",value:"BLANK2_2"},
                 {"label":"1.00 ppm Dye",value:"2021-1ppm"},
                 {"label":"5.00 ppm Dye",value:"2021-5ppm"},
                 {"label":"10.00 ppm Dye",value:"2021-10ppm"},
@@ -193,24 +282,7 @@ instrument_components.push(
             {label:"Path Length (cm)",type:"number",value:0.5,min:0.5,step:0.5,max:1,validate:[{type:"matches",value:1, message:"Check Path Length"}]}
           ]},
           {legend: 'Lamps',name:'lamps', type: 'fieldset',fields:[
-          //   {label:"Tungsten",type:"switch",options:["Off","On"],validate:[{type:"matches", value:"On", message:"Check Lamp Settings","conditions": [
-          //     {
-          //         "type": "test",
-          //         "test": function(e){
-          //           return ((e.owner.find({map:'acquisition.to'}).value >400) || (e.owner.find({map:'lamps.deuterium'}).value == "Off" && e.owner.find({map:'acquisition.from'}).value < 400 ));
-          //         }
-          //     }
-          //   ]}
-          // ]},
-          //   {label:"Deuterium",type:"switch",options:["Off","On"],validate:[{type:"matches", value:"On", message:"Check Lamp Settings","conditions": [
-          //     {
-          //           "type": "test",
-          //           "test": function(e){
-          //             return ((e.owner.find({map:'acquisition.from'}).value <300) || (e.owner.find({map:'lamps.tungsten'}).value == "Off" && e.owner.find({map:'acquisition.to'}).value > 300 ));
-          //           }
-          //     }
-          //   ]}
-          // ]}
+
           {label:"Tungsten",type:"switch",options:["Off","On"],validate:[{type:"matches", value:"On", message:"Check Lamp Settings","conditions": [
             {
               "type": "matches",
@@ -299,7 +371,7 @@ instrument_components.push(
     
     )
     gform.collections.add('uvvis',[
-      {"label":"Blank",value:"BLANK2"}
+      {"label":"Blank",value:"BLANK2_2"}
     ])
 
 
