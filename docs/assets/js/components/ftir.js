@@ -4,7 +4,12 @@ device_components.push(
         image:"ftir.png",
         points:false,
         reverse:true,
-        
+        description:`
+        <div id="zoom-actions">
+        <span class="zoom" style="width:12opx;display: inline-block;"></span>
+        <span class="reset" style="width:12opx;display: inline-block;"></span>
+        <span class="undo" style="width:12opx;display: inline-block;"></span>
+        </div>`,
         chartConfig:{
           transition:{duration:0},
           axis: {
@@ -28,7 +33,7 @@ device_components.push(
         tickValues: () => (function(start,end,interval){
           var temp = [];
           for(var i = start; i<=end; i+=interval){
-          temp.push(i)
+            temp.push(i)
           }
           return temp;
         })(resources.data[0].min,resources.data[0].max,100),
@@ -50,11 +55,7 @@ device_components.push(
           resources.chart.instance.xgrids(resources.chart.regions);
 
           
-          gform.types.button.show.call(resources.form.primary.find('zoom'),(resources.chart.regions.length>1))
-
-
-
-
+          __.findComponent().updateActions();
 
           var sorted = _.sortBy(resources.chart.regions,'value')
 
@@ -68,7 +69,12 @@ device_components.push(
           // },360)
 
         },
-
+        updateActions: ()=>{
+          gform.types.button.edit.call(resources.form.primary.find('zoom'),(resources.chart.regions.length>1))
+          gform.types.button.show.call(resources.form.primary.find('zoom'),(resources.chart.regions.length>1 || resources.chart.zooms.length))
+          gform.types.button.show.call(resources.form.primary.find('zoom_reset'),(resources.chart.zooms.length))
+          gform.types.button.show.call(resources.form.primary.find('zoom_undo'),(resources.chart.zooms.length>1))
+        },
         // chart:function(file, settings){
 
         //   $.get('assets/data/ftir/'+file+'.csv',function(file,e){
@@ -127,20 +133,51 @@ device_components.push(
         },{
           type:"button",
           label:"<i fa fa-zoom></i> Zoom to selection",
-          target:()=> document.querySelector(".col-md-8 .well p"),
+          target:()=> document.querySelector("#zoom-actions .zoom"),
           action:'zoom',
+          columns:4,
           show:false,
           name:"zoom"
+        },{
+          type:"button",
+          label:"<i fa fa-zoom></i>Reset Zoom",
+          target:()=> document.querySelector("#zoom-actions .reset"),
+          action:'zoom_reset',
+          show:false,
+          columns:4,"modifiers": "btn btn-primary",
+          name:"zoom_reset"
+        },{
+          type:"button",
+          label:"<i fa fa-zoom></i>Undo Zoom",
+          target:()=> document.querySelector("#zoom-actions .undo"),
+          action:'zoom_undo',
+          show:false,
+          columns:4,
+          "modifiers": "btn btn-info",
+          name:"zoom_undo"
         }],
         events:[
           {
-            event:'zoom2',
+            event:'zoom_reset',
             handler:function(){
 
+              resources.chart.zooms = [];
               resources.chart.regions = [];
-    
               resources.chart.instance.xgrids(resources.chart.regions);
-              resources.chart.instance.zoom(_.map(resources.chart.regions,'value'))
+              resources.chart.instance.regions([])
+              resources.chart.instance.load(resources.chart.data)
+              __.findComponent().updateActions();
+
+            }
+          },{
+            event:'zoom_undo',
+            handler:function(){
+              resources.chart.zooms.shift()
+              resources.chart.regions = [];
+              resources.chart.instance.xgrids(resources.chart.regions);
+              resources.chart.instance.regions([])
+              resources.chart.instance.load(resources.chart.zooms[0]||resources.chart.data)
+              __.findComponent().updateActions();
             }
           },
           {
@@ -153,6 +190,7 @@ device_components.push(
               var zoomData = _.cloneDeep(resources.chart.data)
               var searchStart = {}
               var searchend = {}
+
               searchStart[_.keys(globaltemp[0])[0]] = sorted[0].value+'';
               searchend[_.keys(globaltemp[0])[0]] = sorted[1].value+'';
               zoomData.offsets = _.cloneDeep(resources.chart.data).columns[0].reverse().slice(_.findIndex(globaltemp,searchStart)+1,_.findIndex(globaltemp,searchend)+2)
@@ -161,21 +199,17 @@ device_components.push(
               zoomData.columns[1] = zoomData.columns[1].slice(_.findIndex(globaltemp,searchStart)+1,_.findIndex(globaltemp,searchend)+2)
               zoomData.columns[0].unshift(resources.chart.data.columns[0][0])
               zoomData.columns[1].unshift(resources.chart.data.columns[1][0])
-              // debugger;
+              
               resources.chart.regions = [];
-    
               resources.chart.instance.xgrids(resources.chart.regions);
               resources.chart.instance.regions([])
 
-              // resources.chart.instance.load(zoomData)
-              // zoomData.transition = {duration:0}
-              // setTimeout(function(zoomData){
               resources.chart.zooms.unshift(zoomData);
+
+              __.findComponent().updateActions();
+
               resources.chart.instance.load(zoomData)
 
-              gform.types.button.show.call(resources.form.primary.find('zoom'),(resources.chart.regions.length>1))
-
-    
             }
           },
           {

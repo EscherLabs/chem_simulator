@@ -671,7 +671,7 @@ const component_template = `<div class="row">
 <div class="col-md-8" style="">
   {{#image}}<div class="well" style="overflow:hidden">
     <div><img style="float:right;height:150px" src="assets/img/{{image}}"></div>
-    <span><h3>{{legend}}</h3><p>{{description}}</p></span>
+    <span><h3>{{legend}}</h3><p>{{{description}}}</p></span>
   </div>{{/image}}
   <div class="well target" style="height:550px;">
     <div class="chart"></div>
