@@ -149,8 +149,9 @@ device_components.push(
     var searchend = {}
     searchStart[_.keys(globaltemp[0])[0]] = sorted[0].value+'';
     searchend[_.keys(globaltemp[0])[0]] = sorted[1].value+'';
-              zoomData.columns[0] = zoomData.columns[0].slice(_.findIndex(globaltemp,{searchStart})+1,_.findIndex(globaltemp,searchend)+2)
-              zoomData.columns[1] = zoomData.columns[1].slice(_.findIndex(globaltemp,{searchStart})+1,_.findIndex(globaltemp,searchend)+2)
+    debugger;
+              zoomData.columns[0] = zoomData.columns[0].slice(_.findIndex(globaltemp,searchStart)+1,_.findIndex(globaltemp,searchend)+2)
+              zoomData.columns[1] = zoomData.columns[1].slice(_.findIndex(globaltemp,searchStart)+1,_.findIndex(globaltemp,searchend)+2)
               zoomData.columns[0].unshift(resources.chart.data.columns[0][0])
               zoomData.columns[1].unshift(resources.chart.data.columns[1][0])
               // debugger;
