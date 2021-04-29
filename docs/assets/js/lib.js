@@ -570,6 +570,8 @@ const __ = (function(){
                           // this.data.xs[_.keys(this.data.xs)[0]][this.data.xs[_.keys(this.data.xs)[0]].length-(1+index)]
                         :d;
                         // result = this.data.xs[_.keys(this.data.xs)[0]].reverse()[index]; 
+                      }else{
+                        result +=(resources.data[0].max-resources.data[0].min)%100;
                       }
                    return result;
                       // }else{

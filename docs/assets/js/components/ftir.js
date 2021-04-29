@@ -149,16 +149,13 @@ device_components.push(
               let globaltemp = resources.data[0].data;
 
               var sorted = _.sortBy(resources.chart.regions,'value')
-              // var workingArr = globaltemp.slice(_.findIndex(globaltemp,{'cm-1':sorted[0].value+''}), _.findIndex(globaltemp,{'cm-1':sorted[1].value+''})+1);
     
-              // var workingArr = globaltemp.slice(_.findIndex(globaltemp,{'cm-1':sorted[0].value+''}), _.findIndex(globaltemp,{'cm-1':sorted[1].value+''})+1);
               var zoomData = _.cloneDeep(resources.chart.data)
-    var searchStart = {}
-    var searchend = {}
-    searchStart[_.keys(globaltemp[0])[0]] = sorted[0].value+'';
-    searchend[_.keys(globaltemp[0])[0]] = sorted[1].value+'';
-    debugger;
-    zoomData.offsets = _.cloneDeep(resources.chart.data).columns[0].reverse().slice(_.findIndex(globaltemp,searchStart)+1,_.findIndex(globaltemp,searchend)+2)
+              var searchStart = {}
+              var searchend = {}
+              searchStart[_.keys(globaltemp[0])[0]] = sorted[0].value+'';
+              searchend[_.keys(globaltemp[0])[0]] = sorted[1].value+'';
+              zoomData.offsets = _.cloneDeep(resources.chart.data).columns[0].reverse().slice(_.findIndex(globaltemp,searchStart)+1,_.findIndex(globaltemp,searchend)+2)
 
               zoomData.columns[0] = zoomData.columns[0].slice(_.findIndex(globaltemp,searchStart)+1,_.findIndex(globaltemp,searchend)+2)
               zoomData.columns[1] = zoomData.columns[1].slice(_.findIndex(globaltemp,searchStart)+1,_.findIndex(globaltemp,searchend)+2)
@@ -173,7 +170,7 @@ device_components.push(
               // resources.chart.instance.load(zoomData)
               // zoomData.transition = {duration:0}
               // setTimeout(function(zoomData){
-                resources.chart.zooms.unshift(zoomData);
+              resources.chart.zooms.unshift(zoomData);
               resources.chart.instance.load(zoomData)
 
               gform.types.button.show.call(resources.form.primary.find('zoom'),(resources.chart.regions.length>1))
