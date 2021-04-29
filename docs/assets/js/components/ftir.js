@@ -13,18 +13,26 @@ device_components.push(
                       // format(d) {
                       //   return this.data.xs[_.keys(this.data.xs)[0]][this.data.xs[_.keys(this.data.xs)[0]].length-(1+this.data.xs[_.keys(this.data.xs)[0]].indexOf(d))]
                       // },
-                      values: (function(start,end,interval){
-                        var temp = [];
-                        for(var i = start; i<=end; i+=interval){
-                        temp.push(i)
-                        }
-                        return temp;
-                      })(400,3500,100)
+                      // values: (function(start,end,interval){
+                      //   var temp = [];
+                      //   for(var i = start; i<=end; i+=interval){
+                      //   temp.push(i)
+                      //   }
+                      //   return temp;
+                      // })(400,4000,100)
                       
                   }
               }
           }
         },
+        tickValues: () => (function(start,end,interval){
+          var temp = [];
+          for(var i = start; i<=end; i+=interval){
+          temp.push(i)
+          }
+          return temp;
+        })(resources.data[0].min,resources.data[0].max,100),
+
         pointClick:function(d, i) {
           resources.chart.instance.regions.remove();
           if(_.findIndex(resources.chart.regions,{value:d.x}) !== -1){
@@ -150,6 +158,8 @@ device_components.push(
     searchStart[_.keys(globaltemp[0])[0]] = sorted[0].value+'';
     searchend[_.keys(globaltemp[0])[0]] = sorted[1].value+'';
     debugger;
+    zoomData.offsets = _.cloneDeep(resources.chart.data).columns[0].reverse().slice(_.findIndex(globaltemp,searchStart)+1,_.findIndex(globaltemp,searchend)+2)
+
               zoomData.columns[0] = zoomData.columns[0].slice(_.findIndex(globaltemp,searchStart)+1,_.findIndex(globaltemp,searchend)+2)
               zoomData.columns[1] = zoomData.columns[1].slice(_.findIndex(globaltemp,searchStart)+1,_.findIndex(globaltemp,searchend)+2)
               zoomData.columns[0].unshift(resources.chart.data.columns[0][0])
@@ -158,13 +168,15 @@ device_components.push(
               resources.chart.regions = [];
     
               resources.chart.instance.xgrids(resources.chart.regions);
-    
+              resources.chart.instance.regions([])
+
               // resources.chart.instance.load(zoomData)
               // zoomData.transition = {duration:0}
               // setTimeout(function(zoomData){
+                resources.chart.zooms.unshift(zoomData);
               resources.chart.instance.load(zoomData)
+
               gform.types.button.show.call(resources.form.primary.find('zoom'),(resources.chart.regions.length>1))
-              resources.chart.instance.regions.remove();
 
     
             }

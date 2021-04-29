@@ -549,9 +549,28 @@ const __ = (function(){
                     // debugger;
                     // if(this.data.targets[0].values.length){
                     //data = this.data.xs[_.keys(this.data.xs)[0]][this.data.xs[_.keys(this.data.xs)[0]]
-                      var data = __.findComponent().chartConfig.axis.x.tick.values;
+                    let data = [];
+                    if(typeof __.findComponent().tickValues == 'function'){
+                      data = __.findComponent().tickValues();
+                    }else{
+                      data = __.findComponent().chartConfig.axis.x.tick.values;
+                    }
                       var result = (__.findComponent().reverse)? data[data.length-(1+data.indexOf(d))] :null;
-                      if(!result)result = (__.findComponent().reverse)?this.data.xs[_.keys(this.data.xs)[0]][this.data.xs[_.keys(this.data.xs)[0]].length-(1+this.data.xs[_.keys(this.data.xs)[0]].indexOf(d))]:d;
+                      if(!result){
+                        // let serarch =
+                        // resources.chart.zooms[0]
+
+                        let index = this.data.xs[_.keys(this.data.xs)[0]].indexOf(d);
+
+                        result = (__.findComponent().reverse)?
+                          (resources.chart.zooms.length)?
+                            resources.chart.zooms[0].offsets[index-1]:
+
+                            this.data.xs[_.keys(this.data.xs)[0]].reverse()[index]
+                          // this.data.xs[_.keys(this.data.xs)[0]][this.data.xs[_.keys(this.data.xs)[0]].length-(1+index)]
+                        :d;
+                        // result = this.data.xs[_.keys(this.data.xs)[0]].reverse()[index]; 
+                      }
                    return result;
                       // }else{
                     //   var data = __.findComponent().chartConfig.axis.x.tick.values;
@@ -568,6 +587,9 @@ const __ = (function(){
               }
           },
         });
+        if(typeof __.findComponent().tickValues == 'function'){
+          settings.axis.x.tick.values = __.findComponent().tickValues();
+        }
         chart.instance =  c3.generate(settings);
 
         $('.c3-lines').toggle(!activeComponent.hideLines);

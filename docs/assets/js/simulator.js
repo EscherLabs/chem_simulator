@@ -106,7 +106,7 @@ downloadForm = function() {
 
 
 let resources = {
-    chart: {regions:[]},
+    chart: {regions:[],zooms:[]},
     file: {},
     form: {},
     data: [],
