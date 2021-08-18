@@ -340,7 +340,7 @@ const __ = (function(){
   let timer = null;
   let jsZip = null;
   let folder;
-  return {
+  let api = {
     schedule: function (actions, opts){
       let options = _.extend({period:1000},opts);
       actionBuffer = actionBuffer.concat(actions||[]);
@@ -401,7 +401,7 @@ const __ = (function(){
           }
         }
       });
-      x = (__.findComponent().reverse)?_.reverse(x):x;
+      x = (__.component.reverse)?_.reverse(x):x;
       if(file.split){
         let splitKey = _.maxBy(_.keys(x), function (o) {
           return parseFloat(x[o])||0; 
@@ -412,7 +412,6 @@ const __ = (function(){
         x2 = _.reverse(x.splice(splitKey))
         y2 = _.reverse(y.splice(splitKey))
       }
-
       return x.map((element, index) => {
         let obj = {}
         obj[keys[0]] = element;
@@ -463,7 +462,7 @@ const __ = (function(){
       let fileName =  (options.label||"data")+'.'+options.extension;
 
 
-      if(jsZip == null || options.extension == 'zip'){
+      if(typeof jsZip == "undefined" || jsZip == null || options.extension == 'zip'){
         var link = document.createElement("a");
         link.setAttribute("href", (typeof options.data !== 'undefined' && options.data.indexOf('data:')!== 0)?options.url + encodeURIComponent(options.data):options.url);
     
@@ -505,13 +504,13 @@ const __ = (function(){
 
     },
     //check if attributes is set on component or is overridden via config options
-    attr:(attr,defaultVal, activeComponent, overRide)=> (config[attr] !== (overRide||"false") && typeof (activeComponent||__.findComponent())[attr] !== 'undefined')?(activeComponent||__.findComponent())[attr]:defaultVal,
+    attr:(attr,defaultVal, activeComponent, overRide)=> (config[attr] !== (overRide||"false") && typeof (activeComponent||__.component)[attr] !== 'undefined')?(activeComponent||__.component)[attr]:defaultVal,
     chartFile: (file, fileIndex=0) => {
         let chart = resources.chart;
         let columns = chart.data.columns;
         let keys = file.keys;
         let run = resources.form.primary.find('run');
-        const activeComponent = __.findComponent();
+        const activeComponent = __.component;
 
         if(typeof chart.data.xs[file.label] == 'undefined') {
           chart.data.xs[file.label] = "x"+gform.getUID()
@@ -550,19 +549,19 @@ const __ = (function(){
                     // if(this.data.targets[0].values.length){
                     //data = this.data.xs[_.keys(this.data.xs)[0]][this.data.xs[_.keys(this.data.xs)[0]]
                     let data = [];
-                    if(typeof __.findComponent().tickValues == 'function'){
-                      data = __.findComponent().tickValues();
+                    if(typeof __.component.tickValues == 'function'){
+                      data = __.component.tickValues();
                     }else{
-                      data = __.findComponent().chartConfig.axis.x.tick.values;
+                      data = __.component.chartConfig.axis.x.tick.values;
                     }
-                      var result = (__.findComponent().reverse)? data[data.length-(1+data.indexOf(d))] :null;
+                      var result = (__.component.reverse)? data[data.length-(1+data.indexOf(d))] :null;
                       if(!result){
                         // let serarch =
                         // resources.chart.zooms[0]
 
                         let index = this.data.xs[_.keys(this.data.xs)[0]].indexOf(d);
 
-                        result = (__.findComponent().reverse)?
+                        result = (__.component.reverse)?
                           (resources.chart.zooms.length)?
                             resources.chart.zooms[0].offsets[index-1]:
 
@@ -575,8 +574,8 @@ const __ = (function(){
                       }
                    return result;
                       // }else{
-                    //   var data = __.findComponent().chartConfig.axis.x.tick.values;
-                      // return (__.findComponent().reverse)? data[data.length-(1+data.indexOf(d))] :d;
+                    //   var data = __.component.chartConfig.axis.x.tick.values;
+                      // return (__.component.reverse)? data[data.length-(1+data.indexOf(d))] :d;
 
 
                     // }
@@ -589,8 +588,8 @@ const __ = (function(){
               }
           },
         });
-        if(typeof __.findComponent().tickValues == 'function'){
-          settings.axis.x.tick.values = __.findComponent().tickValues();
+        if(typeof __.component.tickValues == 'function'){
+          settings.axis.x.tick.values = __.component.tickValues();
         }
         chart.instance =  c3.generate(settings);
 
@@ -608,8 +607,11 @@ const __ = (function(){
             columns[index].push(point.value[keys[0]]);
             columns[index+1].push(point.value[keys[1]]);
             if(file.split){
-              columns[index+2].push(point.value[keys[2]]);
-              columns[index+3].push(point.value[keys[3]]);
+              debugger;
+              if(typeof point.value[keys[2]] !== 'undefined'){
+                columns[index+2].push(point.value[keys[2]]);
+                columns[index+3].push(point.value[keys[3]]);
+              }
             }
             if(state.running){
             
@@ -663,6 +665,11 @@ const __ = (function(){
       }
 
   }
+  Object.defineProperty(api, "component", {
+    get: () => _.find(device_components, {name:(typeof resources.device!== 'undefined' && resources.device.components.length)?resources.device.components[0]:"HOME"}),
+    enumerable: true
+  });
+  return api;
   }())
   
 
@@ -684,7 +691,7 @@ function setHash(params) {
 status.skipInit = true;
 if(typeof params !== 'undefined') {
 config = $.param(_.extend(config,params));
-esources.form.set(config)
+resources.form.set(config)
 }else{
 config = $.param(_.reduce(resources.form.primary.get(), function(config, item, key){
   if(typeof item == "object"){

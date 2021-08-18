@@ -221,19 +221,19 @@ device_components.push(
               e.form.trigger('close')
 
               gform.collections.update('uvvis',[
-                // {"label":"Blank",value:"BLANK2_2"},
-                // {"label":"1.00 PPM",value:"1PPM1"},
-                // {"label":"4.00 PPM",value:"4PPM1"},
-                // {"label":"10.0 PPM",value:"10PPM1"},
-                // {"label":"25.0 PPM",value:"25PPM1"},
-                // {"label":"Unknown Solution",value:"UNKNOWN1"}
-
                 {"label":"Blank",value:"BLANK2_2"},
-                {"label":"1.00 ppm Dye",value:"2021-1ppm"},
-                {"label":"5.00 ppm Dye",value:"2021-5ppm"},
-                {"label":"10.00 ppm Dye",value:"2021-10ppm"},
-                {"label":"Dye Unknown",value:"2021-unknown"},
-                {"label":"100ppb Riboflavin",value:"100ppb_Riboflavin"}
+                {"label":"1.00 PPM",value:"1PPM1"},
+                {"label":"4.00 PPM",value:"4PPM1"},
+                {"label":"10.0 PPM",value:"10PPM1"},
+                {"label":"25.0 PPM",value:"25PPM1"},
+                {"label":"Unknown Solution",value:"UNKNOWN1"}
+
+                // {"label":"Blank",value:"BLANK2_2"},
+                // {"label":"1.00 ppm Dye",value:"2021-1ppm"},
+                // {"label":"5.00 ppm Dye",value:"2021-5ppm"},
+                // {"label":"10.00 ppm Dye",value:"2021-10ppm"},
+                // {"label":"Dye Unknown",value:"2021-unknown"},
+                // {"label":"100ppb Riboflavin",value:"100ppb_Riboflavin"}
               ])
             }.bind(null,e.form)).on('cancel',function(e){e.form.trigger('close');}).modal()
           }

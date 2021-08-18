@@ -5,27 +5,47 @@ device_components.push(
         description:"",
         // reverse:true,
         hideLines:true,
-        post: () => {
-          let columns = resources.chart.data.columns;
-          let x = columns[0].slice(1)
-          let y = columns[1].slice(1)
-          let x2 = columns[2].slice(1)
-          let y2 = columns[3].slice(1)
-
-          var maxKey = _.maxBy(_.keys(y), function (o) {
-            return parseFloat(y[o])||0; 
-          });
-
-          var minKey = _.minBy(_.keys(y2), function (o) {
-            return parseFloat(y2[o])||0; 
-          });
-          resources.chart.instance.xgrids(
-            [
-              {value: x[maxKey], text: x[maxKey]+"V ( "+y[maxKey]+")", position: 'start'},
-              {value: x2[minKey], text: x2[minKey]+"V ( "+y2[minKey]+")", position: 'start'},
-              ]
-          );
+        chartConfig:{
+          transition:{duration:0},
+          axis: {
+              x: {
+                  tick: {
+                      // format(d) {
+                      //   return this.data.xs[_.keys(this.data.xs)[0]][this.data.xs[_.keys(this.data.xs)[0]].length-(1+this.data.xs[_.keys(this.data.xs)[0]].indexOf(d))]
+                      // },
+                      // values: (function(start,end,interval){
+                      //   var temp = [];
+                      //   for(var i = start; i<=end; i+=interval){
+                      //   temp.push(i)
+                      //   }
+                      //   return temp;
+                      // })(400,4000,100)
+                      
+                  }
+              }
+          }
         },
+        // post: () => {
+        //   let columns = resources.chart.data.columns;
+        //   let x = columns[0].slice(1)
+        //   let y = columns[1].slice(1)
+        //   let x2 = columns[2].slice(1)
+        //   let y2 = columns[3].slice(1)
+
+        //   var maxKey = _.maxBy(_.keys(y), function (o) {
+        //     return parseFloat(y[o])||0; 
+        //   });
+
+        //   var minKey = _.minBy(_.keys(y2), function (o) {
+        //     return parseFloat(y2[o])||0; 
+        //   });
+        //   resources.chart.instance.xgrids(
+        //     [
+        //       {value: x[maxKey], text: x[maxKey]+"V ( "+y[maxKey]+")", position: 'start'},
+        //       {value: x2[minKey], text: x2[minKey]+"V ( "+y2[minKey]+")", position: 'start'},
+        //       ]
+        //   );
+        // },
         validationFields:[
           {name:'scan_rate',options:[{value:null,label:''},.02,.05,.1,.15],type:"select",validate:[{type:"required",message:"Check your Scan Rate"}]},
           {name:'e_begin',validate:[{type:"numeric",min:-0.25,message:'Check your E Begin Voltage'}]},

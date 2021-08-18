@@ -2,8 +2,8 @@ device_components.push(
     {
         legend:'Fluorimeter',
         name:"F",
-        id:"f1",
-        // preform:true,
+        id:"f0",
+        preform:true,
         animate:50,
         image:"ls-45.png",
         hideLines:true,
@@ -81,80 +81,54 @@ device_components.push(
               // testForm.destroy();
 
 
-              if(!e.form.validate() || __.validate(__.findComponent().validationFields2021))return false;
+              if(!e.form.validate() || __.validate(validationConfig))return false;
 
-              let settings = resources.form.primary.get('emission-scan')
               switch(document.body.querySelector('.tab-pane.active').id){
-                // case 'tabsprescan':
-                //   resources.data = [{
-                //     label: 'PreScan_Excitation',
-                //     url: 'assets/data/f/PreScan_Excitation.csv',
-                //     skip:1,
-                //     keys:['nm','a.u.']
-                //   },
-                //   {
-                //     label: 'PreScan_Emission',
-                //     url: 'assets/data/f/PreScan_Emission.csv',
-                //     skip:1,
-                //     keys:['nm','a.u.']
-                //   }]
-                //     __.fetchExternalData(resources.data).then(result => {
-                //       resources.chart.waiting = __.yieldArray(result);
-                //       __.chartFile(resources.chart.waiting.next().value)
-                //     })
-                //   break;
-                case 'tabsemission':
+                case 'tabsprescan':
                   resources.data = [{
-                    label: 'Fluorescein Emission',
-                    url: 'assets/data/f/Fluorescein_emission_'+settings.ems_excitation+'_'+(_.random(1,1))+".csv",
-                    skip:1,keys:['nm','a.u.'],
-                    min: settings.ems_start,
-                    max: settings.ems_end,
+                    label: 'PreScan_Excitation',
+                    url: 'assets/data/f/PreScan_Excitation.csv',
+                    skip:1,
+                    keys:['nm','a.u.']
+                  },
+                  {
+                    label: 'PreScan_Emission',
+                    url: 'assets/data/f/PreScan_Emission.csv',
+                    skip:1,
+                    keys:['nm','a.u.']
                   }]
-                  
-                  __.fetchExternalData(resources.data).then(result => {
-                    resources.chart.waiting = __.yieldArray(result);
-                    __.chartFile(resources.chart.waiting.next().value)
-                  })
-                  // console.log(resources.form.primary.get('emission-scan.ems_excitation'))
-                //   resources.form.modal = new gform({
-                //     legend:"Sample Name",
-                //     actions:[{type:'cancel'},{type:'save',label:"Run"}],
-                //     name:"modal",
-                //     fields:[
-                //       {type:"smallcombo", name:"file",label:false,options:() => sessions[resources.form.primary.get('session')]}
-                //     ]
-                //   }).on('save',function(form,e){
-                //     resources.data = [{
-                //       label: 'PreScan_Excitation',
-                //       url: 'assets/data/f/session/'+resources.form.primary.get('session')+'/'+e.form.get('file')+".csv",
-                //       skip:1,keys:['nm','a.u.']
-                //     }]
-                //     __.fetchExternalData(resources.data).then(result => {
-                //       resources.chart.waiting = __.yieldArray(result);
-                //       __.chartFile(resources.chart.waiting.next().value)
-                //     })
-                //   }.bind(null,e.form)
+                    __.fetchExternalData(resources.data).then(result => {
+                      resources.chart.waiting = __.yieldArray(result);
+                      __.chartFile(resources.chart.waiting.next().value)
+                    })
+                  break;
+                case 'tabsemission':
+
+                  resources.form.modal = new gform({
+                    legend:"Sample Name",
+                    actions:[{type:'cancel'},{type:'save',label:"Run"}],
+                    name:"modal",
+                    fields:[
+                      {type:"smallcombo", name:"file",label:false,options:() => sessions[resources.form.primary.get('session')]}
+                    ]
+                  }).on('save',function(form,e){
+                    resources.data = [{
+                      label: 'PreScan_Excitation',
+                      url: 'assets/data/f/session/'+resources.form.primary.get('session')+'/'+e.form.get('file')+".csv",
+                      skip:1,keys:['nm','a.u.']
+                    }]
+                    __.fetchExternalData(resources.data).then(result => {
+                      resources.chart.waiting = __.yieldArray(result);
+                      __.chartFile(resources.chart.waiting.next().value)
+                    })
+                  }.bind(null,e.form)
 
 
-                // ).on('cancel',function(e){e.form.trigger('close');}).modal()
-              
-              }
+                ).on('cancel',function(e){e.form.trigger('close');}).modal()}
               }
           }
         ],
         sections:'tab',
-        validationFields2021:[
-          {label:"Slit Width (nm)",name:"slit_width",type:"number",validate:[{type:"matches",value:10,message:"Slit Width"}]},
-
-          {legend: 'Emission-Scan', type: 'fieldset',fields:[
-            {label:"Start (nm)",name:"ems_start",type:"number",validate:[{type:"matches",value:490,message:"Check Emission-Scan Start"}]},
-            {label:"End (nm)",name:"ems_end",type:"number",validate:[{type:"matches",value:540,message:"Check Emission-Scan End"}]},
-            {label:"Excitation (nm)",name:"ems_excitation",type:"number",value:390,min:390,step:1,max:500,validate:[{type:"matches",value:[388,488],message:"Check Emission-Scan Excitation"}]
-            },
-            {label:"Scan Speed (nm/min)",name:"ems_scan_speed",type:"number",validate:[{type:"numeric",min:250,max:1000,message:"Check Scan Speed"}]},
-          ]}
-        ],
         emissionValidationFields:[
           {legend: 'Emission-Scan', type: 'fieldset',fields:[
             {label:"Start (nm)",name:"ems_start",type:"number",validate:[{type:"matches",value:475,message:"Check Emission-Scan Start"}]},
@@ -181,26 +155,26 @@ device_components.push(
 
         ],
         fields:[
-        // {label:"Session ID",name:"session",target:function(){return document.querySelector('#preform')}},
+        {label:"Session ID",name:"session",target:function(){return document.querySelector('#preform')}},
 
-          // {legend: 'Pre-Scan',name:"prescan", type: 'fieldset', id:"prescan",fields:[
-          //   {label:"Excitation range from (nm)",name:"ps_excitation_range_from",type:"number",value:390,min:370,step:1,max:490},
-          //   {label:"Excitation range to (nm)",name:"ps_excitation_range_to",type:"number",value:490,min:490,step:1,max:500},
-          //   {label:"Emission range from (nm)",name:"ps_emission_range_from",type:"number",value:400,min:400,step:1,max:740},
-          //   {label:"Emission range to (nm)",name:"ps_emission_range_to",type:"number",value:410,min:410,step:1,max:750},
-          //   {label:"Scan Speed (nm/min)",name:"ps_scan_speed",type:"number",value:250,min:250,step:10,max:1000},
+          {legend: 'Pre-Scan',name:"prescan", type: 'fieldset', id:"prescan",fields:[
+            {label:"Excitation range from (nm)",name:"ps_excitation_range_from",type:"number",value:390,min:370,step:1,max:490},
+            {label:"Excitation range to (nm)",name:"ps_excitation_range_to",type:"number",value:490,min:490,step:1,max:500},
+            {label:"Emission range from (nm)",name:"ps_emission_range_from",type:"number",value:400,min:400,step:1,max:740},
+            {label:"Emission range to (nm)",name:"ps_emission_range_to",type:"number",value:410,min:410,step:1,max:750},
+            {label:"Scan Speed (nm/min)",name:"ps_scan_speed",type:"number",value:250,min:250,step:10,max:1000},
             
-          // ]},
-          // {legend: 'Excitation-Scan', type: 'fieldset', id:"excitation", fields:[
-          //   {label:"Start (nm)",name:"exs_start",type:"number",value:390,min:390,step:1,max:590},
-          //   {label:"End (nm)",name:"exs_end",type:"number",value:490,min:490,step:1,max:600},
-          //   {label:"Emission (nm)",name:"exs_emission",type:"number",value:400,min:400,step:1,max:740},
-          //   {label:"Scan Speed (nm/min)",name:"exs_scan_speed",type:"number",value:250,min:250,step:10,max:1000},
-          // ]},
+          ]},
+          {legend: 'Excitation-Scan', type: 'fieldset', id:"excitation", fields:[
+            {label:"Start (nm)",name:"exs_start",type:"number",value:390,min:390,step:1,max:590},
+            {label:"End (nm)",name:"exs_end",type:"number",value:490,min:490,step:1,max:600},
+            {label:"Emission (nm)",name:"exs_emission",type:"number",value:400,min:400,step:1,max:740},
+            {label:"Scan Speed (nm/min)",name:"exs_scan_speed",type:"number",value:250,min:250,step:10,max:1000},
+          ]},
           {legend: 'Emission-Scan', type: 'fieldset',id:"emission",fields:[
             {label:"Start (nm)",name:"ems_start",type:"number",value:400,min:400,step:1,max:740},
             {label:"End (nm)",name:"ems_end",type:"number",value:410,min:410,step:1,max:750},
-            {label:"Excitation (nm)",name:"ems_excitation",type:"number",value:390,min:380,step:1,max:500},
+            {label:"Excitation (nm)",name:"ems_excitation",type:"number",value:390,min:390,step:1,max:500},
             {label:"Scan Speed (nm/min)",name:"ems_scan_speed",type:"number",value:250,min:250,step:10,max:1000},
           ]},
           {label:"Slit Width (nm)",name:"slit_width",type:"number",value:5,min:5,step:1,max:10}

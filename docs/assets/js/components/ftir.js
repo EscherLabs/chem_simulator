@@ -188,11 +188,12 @@ device_components.push(
               var sorted = _.sortBy(resources.chart.regions,'value')
     
               var zoomData = _.cloneDeep(resources.chart.data)
-              var searchStart = {}
-              var searchend = {}
+              var searchStart = {[_.keys(globaltemp[0])[0]]:sorted[0].value+''}
+              var searchend = {[_.keys(globaltemp[0])[0]]:sorted[1].value+''}
 
-              searchStart[_.keys(globaltemp[0])[0]] = sorted[0].value+'';
-              searchend[_.keys(globaltemp[0])[0]] = sorted[1].value+'';
+              // searchStart[_.keys(globaltemp[0])[0]] = sorted[0].value+'';
+              // searchend[_.keys(globaltemp[0])[0]] = sorted[1].value+'';
+              
               zoomData.offsets = _.cloneDeep(resources.chart.data).columns[0].reverse().slice(_.findIndex(globaltemp,searchStart)+1,_.findIndex(globaltemp,searchend)+2)
 
               zoomData.columns[0] = zoomData.columns[0].slice(_.findIndex(globaltemp,searchStart)+1,_.findIndex(globaltemp,searchend)+2)
