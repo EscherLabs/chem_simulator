@@ -130,6 +130,7 @@ _.mixin({
   },
 
   csvToArray: function(csvString,options) {
+    debugger;
     options = _.extend({skip:0},options)
     var trimQuotes = function (stringArray) {
       if(stringArray == null)return [];

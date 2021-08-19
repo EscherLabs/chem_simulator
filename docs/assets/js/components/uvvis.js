@@ -43,12 +43,13 @@ device_components.push(
           var maxKey = _.maxBy(_.keys(y), function (o) {
             return parseFloat(y[o])||0; 
           });
-          maxKey++;
+          // maxKey++;
           resources.chart.instance.xgrids(
             [
               {value: x[maxKey], text: x[maxKey]+"nm ( "+y[maxKey]+")", position: 'start'}
               ]
           );
+            
         },
         // chart:function(file, settings){
         //   // const fetchExternalData = files => {
@@ -173,7 +174,7 @@ device_components.push(
 
               actions:[{type:'cancel'},{type:'save',label:"Run"}],
               fields:[
-                {type:"smallcombo",name:"file",label:false,options:'uvvis',value:"BLANK2_2"}
+                {type:"smallcombo",name:"file",label:false,options:'uvvis',value:"BLANK"}
               ]
             }).on('save',function(form,e){
               if(typeof resources.data !== 'undefined')resources.data =[];
@@ -184,12 +185,12 @@ device_components.push(
 
               resources.data = [{
                 label: _.find(gform.collections.get('uvvis'),{value:e.form.get('file')}).label||e.form.get('file'),
-                url: 'assets/data/uvvis/'+e.form.get('file')+".CSV",
+                url: 'assets/data/uvvis/BLUEDYE/'+e.form.get('file')+".CSV",
 
                 min: settings.acquisition.from,
                 max: settings.acquisition.to,
-                //skip:1,
-                //keys:['Wavelength (nm)','Absorbance (AU)']
+                skip:1,
+                keys:['Wavelength (nm)','Absorbance (AU)']
               }]
               if(__.attr('animatePreview',false,__.findComponent())){
                 var a = '<center><div style="width:510px;height: 310px;background-position:0px -8px;background-image:url(assets/img/uv_vis_2.png)"></div></center>';
@@ -221,12 +222,23 @@ device_components.push(
               e.form.trigger('close')
 
               gform.collections.update('uvvis',[
-                {"label":"Blank",value:"BLANK2_2"},
-                {"label":"1.00 PPM",value:"1PPM1"},
-                {"label":"4.00 PPM",value:"4PPM1"},
-                {"label":"10.0 PPM",value:"10PPM1"},
-                {"label":"25.0 PPM",value:"25PPM1"},
-                {"label":"Unknown Solution",value:"UNKNOWN1"}
+                {"label":"Blank",value:"BLANK"},
+                {"label":"5.00 PPM",value:"5PPM"},
+                {"label":"10.0 PPM",value:"10PPM"},
+                {"label":"25.0 PPM",value:"20PPM"},
+                {"label":"Unknown Solution 1",value:"UNK1"},
+                {"label":"Unknown Solution 2",value:"UNK2"},
+                {"label":"Unknown Solution 3",value:"UNK3"},
+                {"label":"Unknown Solution 4",value:"UNK4"},
+                {"label":"Unknown Solution 5",value:"UNK5"},
+                {"label":"Unknown Solution 6",value:"UNK6"}
+
+                // {"label":"Blank",value:"BLANK2_2"},
+                // {"label":"1.00 PPM",value:"1PPM1"},
+                // {"label":"4.00 PPM",value:"4PPM1"},
+                // {"label":"10.0 PPM",value:"10PPM1"},
+                // {"label":"25.0 PPM",value:"25PPM1"},
+                // {"label":"Unknown Solution",value:"UNKNOWN1"}
 
                 // {"label":"Blank",value:"BLANK2_2"},
                 // {"label":"1.00 ppm Dye",value:"2021-1ppm"},
@@ -301,8 +313,8 @@ device_components.push(
         validationFields2021:[
 
           {legend: 'Acquisition', type: 'fieldset',fields:[
-            {label:"Wavelength range from (nm)",name:"from",type:"number",min:300,step:1,max:450,validate:[{type:"matches",value:380,message:"Check Wavelength range from"}]},
-            {label:"Wavelength range to (nm)",name:"to",type:"number",min:700,step:1,max:750,validate:[{type:"matches",value:500,message:"Check Wavelength range to"}]},
+            {label:"Wavelength range from (nm)",name:"from",type:"number",min:300,step:1,max:450,validate:[{type:"matches",value:500,message:"Check Wavelength range from"}]},
+            {label:"Wavelength range to (nm)",name:"to",type:"number",min:700,step:1,max:750,validate:[{type:"matches",value:700,message:"Check Wavelength range to"}]},
             {label:"Integration time (s)",type:"number",value:0.25,min:0.25,step:0.25,max:2,validate:[{type:"matches",value:0.5,message:"Check Integration time"}]},
             {label:"Interval (nm)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"matches",value:1, message:"Check Interval"}]},
             {label:"Path Length (cm)",type:"number",value:0.5,min:0.5,step:0.5,max:1,validate:[{type:"matches",value:1, message:"Check Path Length"}]}
@@ -344,8 +356,8 @@ device_components.push(
           {legend: 'Spectrum/Peak detection',name:"detection", type: 'fieldset',fields:[
             {label:"Find and annotate up to ___ peaks",type:"number",min:1,step:1,max:2,validate:[{type:"matches",value:1, message:"Check Peak Annotation"}]},
             {label:"Data Type",type:"custom_radio",value:"Absorbance",options:["Absorbance","Transmittance"],validate:[{type:"matches",value:"Absorbance", message:"Check Data Type"}]},
-            {label:"Display spectrum from (nm)",name:"from",type:"number",min:300,step:1,max:450,validate:[{type:"matches",value:380,message:"Check Display spectrum from"}]},
-            {label:"Display spectrum to (nm)",name:"to",type:"number",min:700,step:1,max:750,validate:[{type:"matches",value:500,message:"Check Display spectrum to"}]},
+            {label:"Display spectrum from (nm)",name:"from",type:"number",min:300,step:1,max:450,validate:[{type:"matches",value:500,message:"Check Display spectrum from"}]},
+            {label:"Display spectrum to (nm)",name:"to",type:"number",min:700,step:1,max:750,validate:[{type:"matches",value:700,message:"Check Display spectrum to"}]},
           ]}
         ],
         fields:[
@@ -371,7 +383,7 @@ device_components.push(
     
     )
     gform.collections.add('uvvis',[
-      {"label":"Blank",value:"BLANK2_2"}
+      {"label":"Blank",value:"BLANK"}
     ])
 
 

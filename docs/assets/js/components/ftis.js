@@ -1,7 +1,7 @@
 device_components.push(
     {
         legend:'Fourier Transform Infrared Spectrometer',
-        image:"ftis.png",
+        image:"spectrum 2.png",
         points:false,
         reverse:true,
         description:`
@@ -291,25 +291,25 @@ device_components.push(
         validationFields:[
           {legend: 'Sample Holder', type: 'fieldset',fields:[
 
-          {name:"Number of Accumulations",type:"number",value:1,min:1,step:1,max:16,validate:[{type:"matches",value:4,message:"Check Accumulations"}]},
-          {name:"Range start (cm<sup>-1</sup>)",type:"number",value:360,min:360,step:10,max:8300,validate:[{type:"matches",value:450,message:"Check Range Start"}]},
-          {name:"Range end (cm<sup>-1</sup>)",type:"number",value:820,min:820,step:10,max:4000,validate:[{type:"matches",value:4000,message:"Check Range End"}]},
-          {name:"Resolution (cm<sup>-1</sup>)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"matches",value:4,message:"Check Resolution"}]},
-          {name:"Interval (cm<sup>-1</sup>)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"matches",value:1,message:"Check Interval"}]},
+          {name:"accumulations",type:"number",value:1,min:1,step:1,max:16,validate:[{type:"matches",value:4,message:"Check Accumulations"}]},
+          {name:"range_start",type:"number",value:360,min:360,step:10,max:8300,validate:[{type:"matches",value:450,message:"Check Range Start"}]},
+          {name:"range_end",type:"number",value:820,min:820,step:10,max:4000,validate:[{type:"matches",value:4000,message:"Check Range End"}]},
+          {name:"resolution",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"matches",value:4,message:"Check Resolution"}]},
+          {name:"interval",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"matches",value:1,message:"Check Interval"}]},
   
-          {name:"Units",type:"custom_radio",value:"A",options:["A","T"],validate:[{type:"matches",value:"A",message:"Check Units"}]},
-          {name:"Background",type:"custom_radio",value:"Air",options:["Air","Sample matrix"],validate:[{type:"matches",value:"Air",message:"Check Background"}]},
+          {name:"units",type:"custom_radio",value:"A",raw:true,options:["A","T"],validate:[{type:"matches",value:"A",message:"Check Units"}]},
+          {name:"background",type:"custom_radio",value:"Air",raw:true,options:["Air","Sample matrix"],validate:[{type:"matches",value:"Air",message:"Check Background"}]},
         ]}],
         fields:[
           {legend: 'Sample Holder', type: 'fieldset',fields:[
-            {name:"Number of Accumulations",type:"number",value:1,min:1,step:1,max:16,validate:[{type:"numeric"}]},
-            {name:"Range start (cm<sup>-1</sup>)",type:"number",value:360,min:360,step:10,max:8300,validate:[{type:"numeric"}]},
-            {name:"Range end (cm<sup>-1</sup>)",type:"number",value:820,min:820,step:10,max:4000,validate:[{type:"numeric"}]},
-            {name:"Resolution (cm<sup>-1</sup>)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"numeric"}]},
-            {name:"Interval (cm<sup>-1</sup>)",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"numeric"}]},
+            {label:"Number of Accumulations",name:"accumulations",type:"number",value:1,min:1,step:1,max:16,validate:[{type:"numeric"}]},
+            {label:"Range start (cm<sup>-1</sup>)",name:"range_start",type:"number",value:360,min:360,step:10,max:8300,validate:[{type:"numeric"}]},
+            {label:"Range end (cm<sup>-1</sup>)",name:"range_end",type:"number",value:820,min:820,step:10,max:4000,validate:[{type:"numeric"}]},
+            {label:"Resolution (cm<sup>-1</sup>)",name:"resolution",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"numeric"}]},
+            {label:"Interval (cm<sup>-1</sup>)",name:"interval",type:"number",value:1,min:1,step:1,max:4,validate:[{type:"numeric"}]},
     
-            {name:"Units",type:"custom_radio",value:"A",options:["A","T"]},
-            {name:"Background",type:"custom_radio",value:"Air",options:["Air","Sample matrix"]},
+            {label:"Units",type:"custom_radio",value:"A",raw:true,options:["A","T"]},
+            {label:"Background",type:"custom_radio",value:"Air",raw:true,options:["Air","Sample matrix"]},
           ]}
         ],
 
