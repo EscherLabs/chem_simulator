@@ -130,7 +130,6 @@ _.mixin({
   },
 
   csvToArray: function(csvString,options) {
-    debugger;
     options = _.extend({skip:0},options)
     var trimQuotes = function (stringArray) {
       if(stringArray == null)return [];
@@ -608,7 +607,6 @@ const __ = (function(){
             columns[index].push(point.value[keys[0]]);
             columns[index+1].push(point.value[keys[1]]);
             if(file.split){
-              debugger;
               if(typeof point.value[keys[2]] !== 'undefined'){
                 columns[index+2].push(point.value[keys[2]]);
                 columns[index+3].push(point.value[keys[3]]);

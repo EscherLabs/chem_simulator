@@ -316,7 +316,6 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         this.combo.addEventListener('blur', function(e){
             if(!(gform.hasClass(e.relatedTarget,'dropdown-item') || gform.hasClass(e.relatedTarget,'dropdown-toggle') || this.mousedropdown )){
                 if(this.shown ){
-                    debugger;
                 var list = _.filter(this.options,{filter:true});
                 if(this.strict){
                     if(list.length == 1){
