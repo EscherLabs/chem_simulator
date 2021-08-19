@@ -223,7 +223,7 @@ device_components.push(
 
               gform.collections.update('uvvis',[
                 {"label":"Blank",value:"BLANK"},
-                {"label":"0.00 PPM",value:"0PPM"},
+                {"label":"0.00 PPM",value:"_0PPM"},
                 {"label":"5.00 PPM",value:"5PPM"},
                 {"label":"10.0 PPM",value:"10PPM"},
                 {"label":"25.0 PPM",value:"20PPM"},
